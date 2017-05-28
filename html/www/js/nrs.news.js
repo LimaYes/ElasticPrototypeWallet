@@ -51,15 +51,13 @@ var NRS = (function(NRS, $, undefined) {
             }
          },
          "filter": function(entry, tokens) {
-            return tokens.title.indexOf("Donations toward") == -1 && tokens.title.indexOf("NXT tipping bot has arrived") == -1
+            return tokens.title.indexOf("Donations toward") == -1 && tokens.title.indexOf("XEL tipping bot has arrived") == -1
          },
          "ssl": ssl
       };
 
-      $("#nxtforum_news").rss("https://nxtforum.org/index.php?type=rss;action=.xml", settings, NRS.newsLoaded);
-      $("#reddit_news").rss("http://www.reddit.com/r/NXT/.rss", settingsReddit, NRS.newsLoaded);
-      $("#nxtcoin_blogspot_news").rss("http://nxtcoin.blogspot.com/feeds/posts/default", settings, NRS.newsLoaded);
-      $("#nxter_news").rss("http://nxter.org/feed/", settings, NRS.newsLoaded);
+      $("#nxtforum_news").rss("https://talk.elasticexplorer.org/latest.rss", settings, NRS.newsLoaded);
+
 		NRS.pageLoaded();
 	};
 

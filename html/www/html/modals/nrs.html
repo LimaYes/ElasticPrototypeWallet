@@ -19,7 +19,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title" data-i18n="send_nxt">Send NXT</h4>
+                <h4 class="modal-title" data-i18n="send_nxt">Send XEL</h4>
             </div>
             <div class="modal-body">
                 <form role="form" autocomplete="off">
@@ -31,7 +31,7 @@
                                 <label for="send_money_amount" data-i18n="amount">AMOUNT</label>
                                 <div class="input-group">
                                     <input type="text" name="amountNXT" id="send_money_amount" step="any" min="0" class="form-control" placeholder="Amount" data-i18n="[placeholder]amount" tabindex="3">
-                                    <span class="input-group-addon">NXT</span>
+                                    <span class="input-group-addon">XEL</span>
                                 </div>
                             </div>
                         </div>
@@ -55,7 +55,7 @@
                 <div class="advanced_info"><a href="#" data-i18n="advanced">advanced</a></div>
 
                 <button type="button" class="btn btn-default" data-dismiss="modal" data-i18n="cancel">Cancel</button>
-                <button type="button" class="btn btn-primary" data-loading-text="Submitting..." data-i18n="send_nxt;[data-loading-text]submitting">Send NXT</button>
+                <button type="button" class="btn btn-primary" data-loading-text="Submitting..." data-i18n="send_nxt;[data-loading-text]submitting">Send XEL</button>
             </div>
         </div>
     </div>
@@ -66,12 +66,12 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title" data-i18n="nrs_info">NRS Info</h4>
+                <h4 class="modal-title" data-i18n="nrs_info">Elastic Info</h4>
             </div>
             <div class="modal-body">
                 <ul class="nav nav-pills nav-justified" style="margin-bottom:10px">
-                    <li class="active" id="nrs_modal_state_nav" data-tab="state"><a href="#" data-i18n="nrs_state">NRS State</a></li>
-                    <li data-tab="update"><a href="#" data-i18n="nrs_update">NRS Update</a></li>
+                    <li class="active" id="nrs_modal_state_nav" data-tab="state"><a href="#" data-i18n="nrs_state">Elastic State</a></li>
+                    <li data-tab="update"><a href="#" data-i18n="nrs_update">Elastic Update</a></li>
                 </ul>
 
                 <div id="nrs_modal_update" class="nrs_modal_content" style="display:none">
@@ -81,7 +81,7 @@
                         <span id="nrs_update_explanation_testnet" data-i18n="update_testnet">NRS cannot be updated whilst connected to the testnet.</span>
                         <span id="nrs_update_explanation_up_to_date" data-i18n="update_up_to_date">You have the latest release already. There is no need to update.</span>
                         <span id="nrs_update_explanation_new_release">
-                            <span data-i18n="update_available">A new NRS release is available. It is recommended that you update.</span>
+                            <span data-i18n="update_available">A new Elastic release is available. It is recommended that you update.</span>
                             <br /><br />
                             <button type="button" class="btn btn-success ignore" onclick="NRS.downloadClientUpdate('release', 'zip')">
                                 <span data-i18n="download_nrs_zip">Zip file</span>
@@ -595,10 +595,10 @@
             </div>
             <div class="modal-body">
                 <div>
-                    <img height="128px" width="128px" src="img/nxt_logo.png" align="left" hspace="10" vspace="10">
                     <p>
                         Copyright © 2013-2016 The Nxt Core Developers.<br />
                         Copyright © 2016-2017 Jelurida IP B.V.<br />
+                        Copyright © 2017 The XEL Core Developers.<br />
                         Distributed under GPLv2, with ABSOLUTELY NO WARRANTY.<br />
                     </p>
                     <p>
@@ -606,7 +606,7 @@
                         the creators of open source blockchain solutions.<br />
                     </p>
                     <p>
-                        Contact e-mail: <a href="mailto:info@jelurida.com">info@jelurida.com</a>
+                        All functionality regarding the Elastic Network (including the modification of the original NRS) has been achieved by the wonderful XEL Community and the XEL Core Developers.<br />
                     </p>
                 </div>
             </div>
@@ -860,7 +860,7 @@
                 <div class="user_info_modal_content data-never-loading" id="user_info_modal_actions" style="display:none;">
                     <div class="row">
                         <div class="col-xs-6 col-md-6" style="margin-left:auto;margin-right:auto;float:none;">
-                            <button type="button" class="btn btn-default btn-lg btn-block" data-toggle="modal" data-target="#send_money_modal" data-account="" data-i18n="send_nxt">Send NXT</button>
+                            <button type="button" class="btn btn-default btn-lg btn-block" data-toggle="modal" data-target="#send_money_modal" data-account="" data-i18n="send_nxt">Send XEL</button>
                             <button type="button" class="btn btn-default btn-lg btn-block" data-toggle="modal" data-target="#transfer_currency_modal" data-account="" data-i18n="send_currency">Send Currency</button>
                             <button type="button" class="btn btn-default btn-lg btn-block" data-toggle="modal" data-target="#send_message_modal" data-account="" data-i18n="send_a_message">Send a Message</button>
                             <button type="button" id="user_info_modal_add_as_contact" class="btn btn-default btn-lg btn-block" data-toggle="modal" data-target="#add_contact_modal" data-account="" data-i18n="add_as_contact">Add as Contact</button>

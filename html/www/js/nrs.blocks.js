@@ -131,8 +131,11 @@ var NRS = (function(NRS, $) {
 	};
 
 	NRS.updateDashboardLastBlock = function(block) {
-		$("#nrs_current_block_time").empty().append(NRS.formatTimestamp(block.timestamp));
+		$("#nrs_current_block_time").empty().append(NRS.formatTimestampTime(block.timestamp));
 		$(".nrs_current_block").empty().append(NRS.escapeRespStr(block.height));
+		$("#sidebar_block_link_upper").empty().append(NRS.escapeRespStr(NRS.blocks[0].height));
+
+
 	};
 
 	//we always update the dashboard page..

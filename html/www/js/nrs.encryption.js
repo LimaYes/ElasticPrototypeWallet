@@ -634,12 +634,12 @@ var NRS = (function (NRS, $) {
 						options.nonce = message.attachment.encryptedMessage.nonce;
 						options.account = otherUser;
                     }
-                    if (_encryptedNote.transaction.goodsIsText) {
-                        options.isText = message.goodsIsText;
-                    } else {
+                    //if (_encryptedNote.transaction.goodsIsText) {
+                    //    options.isText = message.goodsIsText;
+                    //} else {
                         options.isText = message.attachment.encryptedMessage.isText;
                         options.isCompressed = message.attachment.encryptedMessage.isCompressed;
-                    }
+                    //}
                     var decoded = NRS.decryptNote(message.attachment.encryptedMessage.data, options, password);
 					_decryptedTransactions[message.transaction] = {
 						encryptedMessage: decoded

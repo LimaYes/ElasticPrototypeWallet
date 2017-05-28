@@ -14,7 +14,7 @@
   ~                                                                           ~
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 
-<div class="modal fade" id="create_poll_modal" data-transaction-type="1" data-transaction-subtype="2" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade" id="create_poll_modal" data-transaction-type="1" data-transaction-subtype="1" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -39,8 +39,6 @@
                                 <select name="votingModel" id="create_poll_type" class="form-control" data-default="0" tabindex="3">
                                     <option selected value="0" data-i18n="vote_by_account">Vote by Account</option>
                                     <option value="1" data-i18n="vote_by_balance">Vote by Account Balance</option>
-                                    <option value="2" data-i18n="vote_by_asset">Vote by Asset Balance</option>
-                                    <option value="3" data-i18n="vote_by_currency">Vote by Currency Balance</option>
                                 </select>
                             </div>
                         </div>
@@ -64,14 +62,6 @@
                                 <label class="radio-inline">
                                     <input type="radio" name="minBalanceType" id="create_poll_min_balance_type_1" data-default="1" value="1"/><span> </span>
                                     <span data-i18n="account_balance">Account Balance</span>
-                                </label>
-                                <label class="radio-inline">
-                                    <input type="radio" name="minBalanceType" id="create_poll_min_balance_type_2" data-default="2" value="2"/><span> </span>
-                                    <span data-i18n="asset_balance">Asset Balance</span>
-                                </label>
-                                <label class="radio-inline">
-                                    <input type="radio" name="minBalanceType" id="create_poll_min_balance_type_3" data-default="3" value="3"/><span> </span>
-                                    <span data-i18n="currency_balance">Currency Balance</span>
                                 </label>
                             </div>
                         </div>
@@ -166,7 +156,7 @@
 
 <!-- http://bootsnipp.com/search?q=poll -->
 
-<div class="modal fade" id="cast_vote_modal" data-transaction-type="1" data-transaction-subtype="3" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade" id="cast_vote_modal" data-transaction-type="1" data-transaction-subtype="2" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">

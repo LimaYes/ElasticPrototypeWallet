@@ -63,7 +63,7 @@ var NRS = (function(NRS, $, undefined) {
 	    is_simulate_app: false,
         is_testnet: false,
         remote_node_address: "",
-        remote_node_port: 7876,
+        remote_node_port: 17876,
         is_remote_node_ssl: false,
         validators_count: 3,
         bootstrap_nodes_count: 5
@@ -347,7 +347,7 @@ var NRS = (function(NRS, $, undefined) {
 				// has to be enabled by activating this code on the specific widget
 				$("[data-toggle='tooltip']").tooltip();
 
-				$("#dgs_search_account_center").mask("NXT-****-****-****-*****");
+				$("#dgs_search_account_center").mask("XEL-****-****-****-*****");
 				console.log("done initialization");
 				if (NRS.getUrlParameter("account")) {
 					NRS.login(false, NRS.getUrlParameter("account"));
@@ -1725,7 +1725,7 @@ NRS.addPagination = function () {
 
 		var id = $.trim($("#id_search").find("input[name=q]").val());
 
-		if (/NXT\-/i.test(id)) {
+		if (/XEL\-/i.test(id)) {
 			NRS.sendRequest("getAccount", {
 				"account": id
 			}, function(response, input) {

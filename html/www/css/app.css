@@ -1,6 +1,7 @@
 /******************************************************************************
  * Copyright © 2013-2016 The Nxt Core Developers.                             *
- * Copyright © 2016-2017 Jelurida IP B.V.                                          *
+ * Copyright © 2016-2017 Jelurida IP B.V.                                     *
+ * Copyright © 2017 The XEL Core Developers                                  *
  *                                                                            *
  * See the LICENSE.txt file at the top-level directory of this distribution   *
  * for licensing information.                                                 *
@@ -212,7 +213,7 @@ img {
 .bg-purple,
 .bg-maroon,
 .bg-black {
-  color: #f9f9f9 !important;
+  color: #66686b !important;
 }
 .bg-gray {
   background-color: #eaeaec !important;
@@ -263,14 +264,7 @@ img {
   background-color: #85144b !important;
 }
 .small-box {
-  background: #217ba5; /* Old browsers */
-  background: -moz-linear-gradient(left,  #217ba5 0%, #56b3d8 100%); /* FF3.6+ */
-  background: -webkit-gradient(linear, left top, right top, color-stop(0%,#217ba5), color-stop(100%,#56b3d8)); /* Chrome,Safari4+ */
-  background: -webkit-linear-gradient(left,  #217ba5 0%,#56b3d8 100%); /* Chrome10+,Safari5.1+ */
-  background: -o-linear-gradient(left,  #217ba5 0%,#56b3d8 100%); /* Opera 11.10+ */
-  background: -ms-linear-gradient(left,  #217ba5 0%,#56b3d8 100%); /* IE10+ */
-  background: linear-gradient(to right,  #217ba5 0%,#56b3d8 100%); /* W3C */
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#217ba5', endColorstr='#56b3d8',GradientType=1 ); /* IE6-9 */
+  background: #eef3fa !important;
 }
 
 /* Text colors */
@@ -465,6 +459,9 @@ body > .header .logo {
 body > .header .logo .icon {
   margin-right: 10px;
 }
+body > .header .logo > img {
+  width: 125px;
+}
 .right-side > .page > .content-header {
   position: relative;
   padding: 15px 20px 10px 20px;
@@ -645,7 +642,7 @@ body > .header .logo .icon {
 	padding-right: 0;
 }
 #forging_indicator {
-	font-size: 14px;
+	font-size: 12px;
 }
 .user-panel > .info > p {
   margin-bottom: 9px;
@@ -660,6 +657,50 @@ body > .header .logo .icon {
 .user-panel > .info > a > .fa,
 .user-panel > .info > a > .ion,
 .user-panel > .info > a > .glyphicon {
+  margin-right: 3px;
+}
+
+.user-panel-narrow {
+  padding: 0px;
+}
+.user-panel:before,
+.user-panel:after {
+  display: table;
+  content: " ";
+}
+.user-panel:after {
+  clear: both;
+}
+.user-panel-narrow > .image > img {
+  width: 45px;
+  height: 45px;
+}
+.user-panel-narrow > .info {
+  padding: 5px 5px 5px 15px;
+  font-size: 14px;
+  line-height: 1;
+}
+/* WESLEY */
+.user-panel-narrow > .info {
+  padding-left:  0;
+  padding-right: 0;
+}
+#forging_indicator {
+  font-size: 12px;
+}
+.user-panel-narrow > .info > p {
+  margin-bottom: 9px;
+}
+.user-panel-narrow > .info > a {
+  text-decoration: none;
+  padding-right: 5px;
+  margin-top: 3px;
+  font-size: 11px;
+  font-weight: normal;
+}
+.user-panel-narrow > .info > a > .fa,
+.user-panel-narrow > .info > a > .ion,
+.user-panel-narrow > .info > a > .glyphicon {
   margin-right: 3px;
 }
 
@@ -1227,6 +1268,11 @@ body > .header .logo .icon {
 /*
     Component: Small boxes
 */
+
+.small-box-red {
+background: #f3cfcf !important;
+}
+
 .small-box {
   position: relative;
   display: block;
@@ -1243,15 +1289,15 @@ body > .header .logo .icon {
   text-align: center;
   padding: 3px 0;
   color: #fff;
-  color: rgba(255, 255, 255, 0.8);
+  color: #66686b !important;
   display: block;
   z-index: 10;
   background: rgba(0, 0, 0, 0.1);
   text-decoration: none;
 }
 .small-box > .small-box-footer:hover {
-  color: #fff;
-  background: rgba(0, 0, 0, 0.15);
+  color: #66686b;
+  background: #eef3fa !important;
 }
 .small-box h3 {
   font-size: 38px;
@@ -1259,6 +1305,7 @@ body > .header .logo .icon {
   margin: 0 0 10px 0;
   white-space: nowrap;
   padding: 0;
+  color: #66686b;
 }
 .small-box p {
   font-size: 14px;
@@ -1280,7 +1327,7 @@ body > .header .logo .icon {
   right: 5px;
   z-index: 0;
   font-size: 90px;
-  color: rgba(0, 0, 0, 0.15);
+  color: #66686b !important;
 }
 .small-box .icon-smaller {
 	position: absolute;
@@ -1288,7 +1335,7 @@ body > .header .logo .icon {
 	right: 5px;
 	z-index: 0;
 	font-size: 75px;
-	color: rgba(0, 0, 0, 0.15);
+	color: #66686b !important;
 }
 
 .small-box > .inner-smaller {
@@ -1297,7 +1344,7 @@ body > .header .logo .icon {
 
 .small-box:hover {
   text-decoration: none;
-  color: #f9f9f9;
+  color: #66686b !important;
 }
 .small-box:hover .icon {
   animation-name: tansformAnimation;
@@ -1916,8 +1963,7 @@ body > .header .logo .icon {
 */
 /* ADD THIS CLASS TO THE <HTML> TAG */
 .lockscreen {
-  background-color: #002e43;
-  background: url(../img/client_background.png) repeat center center fixed;
+  background-color: #EEF3FA;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
@@ -1931,7 +1977,7 @@ body > .header .logo .icon {
 }
 /* We will put the dynamically generated digital clock here */
 .lockscreen .headline {
-  color: #fff;
+  color: #000;
   text-shadow: 1px 3px 5px rgba(0, 0, 0, 0.5);
   font-weight: 300;
   -webkit-font-smoothing: antialiased !important;
@@ -2002,16 +2048,16 @@ body > .header .logo .icon {
 }
 /* Extra to give the user an option to navigate the website [optional]*/
 #registration_link {
-  color: #fff;
+  color: #000;
   margin-top: 30px;
   text-align: center;
   text-transform: uppercase;
 }
 #registration_link a, #custom_passphrase_link a {
-  color: rgba(255,255,255,0.5);
+  color: rgba(0,0,0,0.5);
 }
 #registration_link a:hover, #custom_passphrase_link a {
-  color: rgba(255,255,255,1.0);
+  color: rgba(0,0,0,1.0);
   text-decoration: none;
 }
 
@@ -2029,17 +2075,10 @@ body > .header .logo .icon {
 */
 /* skin-blue navbar */
 .navbar {
-  background: #005f82; /* Old browsers */
-  background: -moz-linear-gradient(top, #005f82 0%, #004a66 100%); /* FF3.6+ */
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#005f82), color-stop(100%,#004a66)); /* Chrome,Safari4+ */
-  background: -webkit-linear-gradient(top, #005f82 0%,#004a66 100%); /* Chrome10+,Safari5.1+ */
-  background: -o-linear-gradient(top, #005f82 0%,#004a66 100%); /* Opera 11.10+ */
-  background: -ms-linear-gradient(top, #005f82 0%,#004a66 100%); /* IE10+ */
-  background: linear-gradient(to bottom, #005f82 0%,#004a66 100%); /* W3C */
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#005f82', endColorstr='#004a66',GradientType=0 ); /* IE6-9 */
+  background: #EEF3FA; /* Old browsers */
 }
 .navbar .nav a {
-  color: #fff;
+  color: #000;
 }
 .navbar .nav > li > a:hover,
 .navbar .nav > li > a:active,
@@ -2047,8 +2086,8 @@ body > .header .logo .icon {
 .navbar .nav .open > a,
 .navbar .nav .open > a:hover,
 .navbar .nav .open > a:focus {
-  background: #307095;
-  color: #f6f6f6;
+  background: #EEF3FA;
+  color: #3c8dbc;
 }
 .navbar .navbar-right > .nav {
   margin-right: 10px;
@@ -2058,21 +2097,7 @@ body > .header .logo .icon {
 }
 /* skin-blue logo */
 .logo {
-  color: #f9f9f9;
-  background: #005f82; /* Old browsers */
-  background: -moz-linear-gradient(top, #005f82 0%, #004a66 100%); /* FF3.6+ */
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#005f82), color-stop(100%,#004a66)); /* Chrome,Safari4+ */
-  background: -webkit-linear-gradient(top, #005f82 0%,#004a66 100%); /* Chrome10+,Safari5.1+ */
-  background: -o-linear-gradient(top, #005f82 0%,#004a66 100%); /* Opera 11.10+ */
-  background: -ms-linear-gradient(top, #005f82 0%,#004a66 100%); /* IE10+ */
-  background: linear-gradient(to bottom, #005f82 0%,#004a66 100%); /* W3C */
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#005f82', endColorstr='#004a66',GradientType=0 ); /* IE6-9 */
-}
-.logo > a {
-  color: #f9f9f9;
-}
-.logo:hover {
-  background: #357ca5;
+  background: #EEF3FA; /* Old browsers */
 }
 /* Skin-blue user panel */
 .user-panel > .image > img {
@@ -2991,7 +3016,7 @@ label .popover-content {
 }
 
 #remember_me_container {
-    color: #fff;
+    color: #000;
     width: 260px;
 }
 
@@ -3439,7 +3464,7 @@ body > .header .navbar {
   }
 
   body > .header .logo {
-    width: 155px;
+	
   }
 
   body > .header .navbar {
@@ -3800,6 +3825,7 @@ body > .header .navbar {
 
 #logo-nxt-img {
     margin: 0 auto 40px auto;
+	width: 380px;
     display: block;
 }
 
@@ -3863,7 +3889,7 @@ body > .header .navbar {
     }
 
     #logo-nxt-img {
-        width: 221px;
+        width: 380px;
         margin-bottom: 9px;
     }
 
@@ -3890,3 +3916,27 @@ body > .header .navbar {
 }
 
 /* @media min-height: 400px */
+
+/* Custom styling */
+.nav>li>a {
+  padding: 15px 10px;
+}
+
+.info{
+    background-color: #FFF;
+    text-align: center;
+    width: 100%;
+}
+
+#redeemfieldsign {
+    background: #cdf0f2;
+    padding: 10px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+
+}#redeemfieldsign2 {
+    background: #f2cdd2;
+    padding: 10px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}

@@ -324,29 +324,14 @@ var NRS = (function(NRS, $, undefined) {
 			$('#min_voting_balance_label_unit').html($.t('nxt_capital_letters'));
 			$('#create_poll_min_balance').attr('name', 'minBalanceNXT');
 		}
-		if ((pollType == 0 && mbType == 2) || pollType == 2) {
-			$('#min_voting_balance_label_unit').html($.t('asset'));
-			$('#create_poll_min_balance').attr('name', 'minBalanceQNTf');
-		}
-		if ((pollType == 0 && mbType == 3) || pollType == 3) {
-			$('#min_voting_balance_label_unit').html($.t('currency'));
-			$('#create_poll_min_balance').attr('name', 'minBalanceQNTf');
-		}
 	}
 
 	$("#create_poll_type").change(function() {
 		// poll type changed, lets see if we have to include/remove the asset id
 		var pollType = $("#create_poll_type").val();
-        if (pollType == "2") {
-			$("#create_poll_asset_id_group").css("display", "inline");
-			$("#create_poll_ms_currency_group").css("display", "none");
-		} else if(pollType == "3") {
-			$("#create_poll_asset_id_group").css("display", "none");
-			$("#create_poll_ms_currency_group").css("display", "inline");
-		} else {
-			$("#create_poll_asset_id_group").css("display", "none");
-			$("#create_poll_ms_currency_group").css("display", "none");
-		}
+        $("#create_poll_asset_id_group").css("display", "none");
+		$("#create_poll_ms_currency_group").css("display", "none");
+
 
 		if(pollType == "0") {
 			$("#create_poll_min_balance_type_group").css("display", "block");
@@ -358,16 +343,8 @@ var NRS = (function(NRS, $, undefined) {
 
 	$("input[name=minBalanceType]:radio").change(function () {
 		var value = $(this).val();
-		if(value == "2") {
-			$("#create_poll_asset_id_group").css("display", "block");
-			$("#create_poll_ms_currency_group").css("display", "none");
-		} else if(value == "3") {
-			$("#create_poll_asset_id_group").css("display", "none");
-			$("#create_poll_ms_currency_group").css("display", "block");
-		} else {
-			$("#create_poll_asset_id_group").css("display", "none");
-			$("#create_poll_ms_currency_group").css("display", "none");
-		}
+		$("#create_poll_asset_id_group").css("display", "none");
+		$("#create_poll_ms_currency_group").css("display", "none");
 		_setMinBalanceForm();
 	});
 
@@ -497,7 +474,7 @@ var NRS = (function(NRS, $, undefined) {
                 },
                 "titleSubtitlePadding": 0
             },
-            "footer": {
+            "barter": {
                 "color": "#999999",
                 "fontSize": 10,
                 "font": "open sans",
@@ -703,22 +680,9 @@ var NRS = (function(NRS, $, undefined) {
 			data["votingModel"] = 0;
 			var minBalanceModel = parseInt($('input:radio[name=minBalanceType]:checked').val());
 			data["minBalanceModel"] = minBalanceModel;
-			if(minBalanceModel == 2) {
-                data["holding"] = $("input[name='create_poll_asset_id']").val();
-            } else if(minBalanceModel == 3) {
-                data["holding"] = $("input[name='create_poll_ms_id']").val();
-            }
 		} else if(pollType.val() == "1") {
 			data["votingModel"] = 1;
 			data["minBalanceModel"] = 1;
-		} else if(pollType.val() == "2") {
-			data["votingModel"] = 2;
-			data["holding"] = $("input[name='create_poll_asset_id']").val();
-			data["minBalanceModel"] = 2;
-		} else if(pollType.val() == "3") {
-			data["votingModel"] = 3;
-			data["holding"] = $("input[name='create_poll_ms_id']").val();
-			data["minBalanceModel"] = 3;
 		}
 
 		for (var i = 0; i < options.length; i++) {
@@ -829,7 +793,7 @@ var NRS = (function(NRS, $, undefined) {
 			};
 		}
 
-		if (!/^\d+$/.test(data.id) && !/^NXT\-/i.test(data.id)) {
+		if (!/^\d+$/.test(data.id) && !/^XEL\-/i.test(data.id)) {
 			return {
 				"error": $.t("error_poll_id_invalid")
 			};

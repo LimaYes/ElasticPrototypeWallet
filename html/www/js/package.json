@@ -1,7 +1,7 @@
 {
   "name": "nxt-blockchain",
   "version": "1.0.5",
-  "description": "Client API library for the NXT Blockchain",
+  "description": "Client API library for the XEL Blockchain",
   "main": "nrs.node.bridge.js",
   "directories": {
     "test": "test"

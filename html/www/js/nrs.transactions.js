@@ -379,15 +379,9 @@ var NRS = (function(NRS, $, undefined) {
 							icon = '<i class="fa fa-money"></i>';
 						}
 						if (vm == 2) {
-							icon = '<i class="fa fa-signal"></i>';
-						}
-						if (vm == 3) {
-							icon = '<i class="fa fa-bank"></i>';
-						}
-						if (vm == 4) {
 							icon = '<i class="fa fa-thumbs-up"></i>';
 						}
-						if (vm == 5) {
+						if (vm == 3) {
 							icon = '<i class="fa fa-question"></i>';
 						}
 						var phasingDiv = "";
@@ -422,57 +416,16 @@ var NRS = (function(NRS, $, undefined) {
 						if (vm == 1) {
 							$popoverTypeTR.find("td:first").html($.t('accounts', 'Accounts') + ":");
 							$popoverTypeTR.find("td:last").html(String(attachment.phasingWhitelist ? attachment.phasingWhitelist.length : ""));
-							votesFormatted = NRS.convertToNXT(responsePoll.result) + " / " + NRS.convertToNXT(attachment.phasingQuorum) + " NXT";
+							votesFormatted = NRS.convertToNXT(responsePoll.result) + " / " + NRS.convertToNXT(attachment.phasingQuorum) + " XEL";
 							$popoverVotesTR.find("td:last").html(votesFormatted);
 						}
 						if (mbModel == 1) {
 							if (minBalance > 0) {
-								minBalanceFormatted = NRS.convertToNXT(minBalance) + " NXT";
+								minBalanceFormatted = NRS.convertToNXT(minBalance) + " XEL";
 								$approveBtn.data('minBalanceFormatted', minBalanceFormatted.escapeHTML());
 							}
 						}
-						if (vm == 2 || mbModel == 2) {
-							NRS.sendRequest("getAsset", {
-								"asset": attachment.phasingHolding
-							}, function(phResponse) {
-								if (phResponse && phResponse.asset) {
-									if (vm == 2) {
-										$popoverTypeTR.find("td:first").html($.t('asset', 'Asset') + ":");
-										$popoverTypeTR.find("td:last").html(String(phResponse.name));
-										var votesFormatted = NRS.convertToQNTf(responsePoll.result, phResponse.decimals) + " / ";
-										votesFormatted += NRS.convertToQNTf(attachment.phasingQuorum, phResponse.decimals) + " QNT";
-										$popoverVotesTR.find("td:last").html(votesFormatted);
-									}
-									if (mbModel == 2) {
-										if (minBalance > 0) {
-											minBalanceFormatted = NRS.convertToQNTf(minBalance, phResponse.decimals) + " QNT (" + phResponse.name + ")";
-											$approveBtn.data('minBalanceFormatted', minBalanceFormatted.escapeHTML());
-										}
-									}
-								}
-							}, { isAsync: false });
-						}
-						if (vm == 3 || mbModel == 3) {
-							NRS.sendRequest("getCurrency", {
-								"currency": attachment.phasingHolding
-							}, function(phResponse) {
-								if (phResponse && phResponse.currency) {
-									if (vm == 3) {
-										$popoverTypeTR.find("td:first").html($.t('currency', 'Currency') + ":");
-										$popoverTypeTR.find("td:last").html(String(phResponse.code));
-										var votesFormatted = NRS.convertToQNTf(responsePoll.result, phResponse.decimals) + " / ";
-										votesFormatted += NRS.convertToQNTf(attachment.phasingQuorum, phResponse.decimals) + " Units";
-										$popoverVotesTR.find("td:last").html(votesFormatted);
-									}
-									if (mbModel == 3) {
-										if (minBalance > 0) {
-											minBalanceFormatted = NRS.convertToQNTf(minBalance, phResponse.decimals) + " Units (" + phResponse.code + ")";
-											$approveBtn.data('minBalanceFormatted', minBalanceFormatted.escapeHTML());
-										}
-									}
-								}
-							}, { isAsync: false });
-						}
+
 					});
 				} else {
 					$tdPhasing.html("&nbsp;");
@@ -590,7 +543,7 @@ var NRS = (function(NRS, $, undefined) {
         var change = entry.change;
         var balance = entry.balance;
         var balanceType = "nxt";
-        var balanceEntity = "NXT";
+        var balanceEntity = "XEL";
         var holdingIcon = "";
         if (change < 0) {
             change = String(change).substring(1);
@@ -1005,12 +958,6 @@ var NRS = (function(NRS, $, undefined) {
 			"titleHTML": '<span data-i18n="account_ledger">Account Ledger</span>',
 			"type": 'PAGE',
 			"page": 'ledger'
-		};
-		NRS.appendMenuItemToTSMenuItem(sidebarId, options);
-		options = {
-			"titleHTML": '<span data-i18n="account_properties">Account Properties</span>',
-			"type": 'PAGE',
-			"page": 'account_properties'
 		};
 		NRS.appendMenuItemToTSMenuItem(sidebarId, options);
 		options = {

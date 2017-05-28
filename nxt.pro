@@ -15,18 +15,18 @@
 -verbose
 
 -keepattributes EnclosingMethod,Signature,*Annotation*
--keep,allowshrinking class nxt.util.NxtLogManager,nxt.util.MemoryHandler
--keep,includedescriptorclasses class nxt.peer.PeerWebSocket,nxt.db.FullTextTrigger {
+-keep,allowshrinking class NxtLogManager,MemoryHandler
+-keep,includedescriptorclasses class PeerWebSocket,FullTextTrigger {
     <methods>;
 }
--keep class nxt.env.service.NxtService_ServiceManagement
--keep class * extends nxt.env.DirProvider
--keep class * extends nxt.addons.AddOn
--keep class nxt.addons.AddOn
--keep,includedescriptorclasses class nxtdesktop.JavaScriptBridge, nxtdesktop.DesktopApplication, nxtdesktop.WalletContextMenu {
+-keep class NxtService_ServiceManagement
+-keep class * extends DirProvider
+-keep class * extends AddOn
+-keep class AddOn
+-keep,includedescriptorclasses class JavaScriptBridge, DesktopApplication, WalletContextMenu {
     <methods>;
 }
--keepclassmembers class nxt.env.RuntimeEnvironment {
+-keepclassmembers class RuntimeEnvironment {
     static boolean isHeadless();
 }
 -keepclassmembers class * {

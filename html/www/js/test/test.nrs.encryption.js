@@ -28,7 +28,7 @@ QUnit.test("getPublicKey", function (assert) {
 });
 
 QUnit.test("getAccountIdFromPublicKey", function (assert) {
-    assert.equal(NRS.getAccountIdFromPublicKey("112e0c5748b5ea610a44a09b1ad0d2bddc945a6ef5edc7551b80576249ba585b", true), "NXT-XK4R-7VJU-6EQG-7R335", "account.rs");
+    assert.equal(NRS.getAccountIdFromPublicKey("112e0c5748b5ea610a44a09b1ad0d2bddc945a6ef5edc7551b80576249ba585b", true), "XEL-XK4R-7VJU-6EQG-7R335", "account.rs");
     assert.equal(NRS.getAccountIdFromPublicKey("112e0c5748b5ea610a44a09b1ad0d2bddc945a6ef5edc7551b80576249ba585b", false), "5873880488492319831", "account.rs");
 });
 

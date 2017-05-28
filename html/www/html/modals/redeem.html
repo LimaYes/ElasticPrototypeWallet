@@ -1,0 +1,77 @@
+
+<div class="modal fade" id="redeem_modal" data-transaction-type="0" data-transaction-subtype="1" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" data-i18n="confirm_redeem_start">Redeem from Genesis Block</h4>
+            </div>
+            <div class="modal-body">            
+                <form role="form" autocomplete="off" id="redeem_form" name="redeem_form">
+                    <div class="form-group">
+                        
+                        <div id="redeem_type" class="form-group">
+                            <label for="redeem_type_selector" data-i18n="redeem-type">How do you want to redeem</label>
+                            <select name="redeem_type_selector" id="redeem_type_selector" class="form-control" style="width:550px">
+                            <option value="0">Regular Bitcoin Signature</option>
+                            </select>
+                        </div>
+                        
+                    </div>
+
+                    <div class="form-group">
+                        <div id="redeem_entry" class="form-group">
+                            <label for="redeem_address" data-i18n="unclaimed-genesis">Unclaimed genesis block entry</label>
+                            <select name="redeem_address" id="redeem_address" class="form-control" style="width:550px">
+                            </select>
+                        </div>
+                        
+                    </div>
+                    <div class="form-group" id="redeemfieldsign2" style="width: 550px;" name="hiddeable_group2">
+                        You are redeeming a <b>Multisignature Genesis Entry</b>.<br>You need exactly <b><span id="exactlynr"></span> Signatures</b> from this set of addresses:<br><br>
+                        <span id="exactlyaddr"></span><br><br>
+                        <b>Make sure that you enter all signatures/recovery phrases/whatever in one line, with a "-" in between.<br>
+                        <br><u>Example:</u></b> <i>Hxy7y...-ILhwxy9...-Hh90x1hf...</i>
+                        
+                    </div>
+
+                    <div class="form-group" style="width: 550px;" id="hiddeable_group" name="hiddeable_group">
+                        Please sign the following text <i>(all in one line with no trailing or leading whitespaces)</i>:
+                        <div id="redeemfieldsign" class="form-group" style="word-wrap: break-word">
+                            I confirm to redeem <span id="redeem_amount_field"></span> NQT-XEL from genesis entry <span id="redeem_address_field"></span> to account <span id="redeem_account_field"></span>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <div id="redeem_entry_2" class="form-group">
+                            <label for="secp_signatures" data-i18n="unclaimed-input">Enter your solution here (see above: Bitcoin sig, recovery phrase, ...)</label>
+                            <textarea style="width: 550px;height: 128px;" name="secp_signatures" id="secp_signatures"></textarea>
+                        </div>
+                        
+                    </div>
+
+                    <p class="hide_secret_phrase" style="display:none" data-i18n="redeem_passphrase_nopass">If you you want to start forging, click the button below to confirm.</p>
+                    <div class="callout callout-danger remote_warning" style="display:none">
+                        <strong><span data-i18n="warning">Warning</span>:</strong>
+                        <span data-i18n="passphrase_remote_warning">Your passphrase will be sent to the server!</span>
+                    </div>
+                    <div class="callout callout-danger error_message" style="display:none"></div>
+                    <div class="form-group secret_phrase">
+                        <label for="redeem_password" data-i18n="passphrase">PASSPHRASE</label>
+                        <input type="password" name="secretPhrase" id="redeem_password" class="form-control" placeholder="" tabindex="1">
+                    </div>
+                    <input type="hidden" id="request_type" name="request_type" value="redeem" />
+                    <input type="hidden" id="receiver_id" name="receiver_id" value="" />
+                    <input type="hidden" id="amountNQT" name="amountNQT" value="" />
+                    <input type="hidden" id="feeNQT" name="feeNQT" value="0" />
+                    <input type="hidden" id="deadline" name="deadline" value="60" />
+                </form>
+            </div>
+            <div class="modal-footer" style="margin-top:0;">
+                <button type="button" class="btn btn-default" data-dismiss="modal" data-i18n="cancel">Cancel</button>
+                <button type="button" class="btn btn-primary" id="redeem_button" data-loading-text="Submitting..."  data-i18n="redeem_btn;[data-loading-text]submitting">Redeem your XEL</button>
+            </div>
+        </div>
+    </div>
+</div>

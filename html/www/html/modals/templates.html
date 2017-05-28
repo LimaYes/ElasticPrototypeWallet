@@ -93,7 +93,7 @@
                 <button type="button" class="btn btn-default btn-xs btn-calculate-fee" data-loading-text="Calculating..." data-i18n="[data-loading-text]calculating"><span data-i18n="calculate">CALCULATE</span><span class="warning-label" id="{{name}}_recalc"> *</span></button>
                 <div class="input-group">
                     <input type="number" name="feeNXT" id="{{name}}_fee" class="form-control" step="any" placeholder="Minimum Fee" data-i18n="[placeholder]minimum_fee" tabindex="100">
-                    <span class="input-group-addon">NXT</span>
+                    <span class="input-group-addon">XEL</span>
                 </div>
             </div>
         </div>
@@ -146,14 +146,8 @@
                 <li role="presentation" class="show_popover" data-toggle="popover" data-placement="top" data-content="Transaction has to be approved by a certain number of accounts" data-container="#{{name}}_approve_modal" data-i18n="[data-content]approve_modal_by_account_tab_help">
                     <a href="#{{name}}_approve_tab_accounts" aria-controls="{{name}}_approve_tab_accounts" class="at_accounts" role="tab" data-toggle="tab"><span class="label label-warning"><i class="fa fa-group"></i></span></a>
                 </li>
-                <li role="presentation" class="show_popover" data-toggle="popover" data-placement="top" data-content="Transaction has to be approved by accounts holding a certain amount of NXT" data-container="#{{name}}_approve_modal" data-i18n="[data-content]approve_modal_by_balance_tab_help">
+                <li role="presentation" class="show_popover" data-toggle="popover" data-placement="top" data-content="Transaction has to be approved by accounts holding a certain amount of XEL" data-container="#{{name}}_approve_modal" data-i18n="[data-content]approve_modal_by_balance_tab_help">
                     <a href="#{{name}}_approve_tab_balance" aria-controls="{{name}}_approve_tab_balance" class="at_balance" role="tab" data-toggle="tab"><span class="label label-warning"><i class="fa fa-money"></i></span></a>
-                </li>
-                <li role="presentation" class="show_popover" data-toggle="popover" data-placement="top" data-content="Transaction has to be approved by asset holders with a certain stake" data-container="#{{name}}_approve_modal" data-i18n="[data-content]approve_modal_by_asset_tab_help">
-                    <a href="#{{name}}_approve_tab_asset_holders" aria-controls="{{name}}_approve_tab_asset_holders" class="at_asset_holders" role="tab" data-toggle="tab"><span class="label label-warning"><i class="fa fa-signal"></i></span></a>
-                </li>
-                <li role="presentation" class="show_popover" data-toggle="popover" data-placement="top" data-content="Transaction has to be approved by currency holders with a certain stake" data-container="#{{name}}_approve_modal" data-i18n="[data-content]approve_modal_by_currency_tab_help">
-                    <a href="#{{name}}_approve_tab_currency_holders" aria-controls="{{name}}_approve_tab_currency_holders" class="at_currency_holders" role="tab" data-toggle="tab"><span class="label label-warning"><i class="fa fa-bank"></i></span></a>
                 </li>
                 <li role="presentation" class="show_popover" data-toggle="popover" data-placement="top" data-content="Transaction is approved by the inclusion of the specified transaction hash in the blockchain" data-container="#{{name}}_approve_modal" data-i18n="[data-content]approve_modal_by_transaction_tab_help">
                     <a href="#{{name}}_approve_tab_transaction" aria-controls="{{name}}_approve_tab_transaction" class="at_transaction" role="tab" data-toggle="tab"><span class="label label-warning"><i class="fa fa-thumbs-up"></i></span></a>
@@ -238,59 +232,6 @@
                     <input type="hidden" name="phasingVotingModel" value="1" disabled />
                 </div>
 
-                <div role="tabpanel" class="tab-pane tab_pane_approve" id="{{name}}_approve_tab_asset_holders">
-                    <div class="row">
-                        <div class="col-xs-6">
-                            <div class="form-group approve_transaction_asset_quantity" data-modal-ui-element="simple_input_with_addon_modal_ui_element"></div>
-                        </div>
-                        <div class="col-xs-6">
-                            <div class="form-group phasing_finish_height_group" data-modal-ui-element="block_height_modal_ui_element"></div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <div class="form-group approve_holding_asset" data-modal-ui-element="add_asset_modal_ui_element"></div>
-                        </div>
-                    </div>
-                    <div class="form-group add_approval_whitelist_group" data-modal-ui-element="multi_accounts_modal_ui_element"></div>
-                    <div class="row">
-                        <div class="col-xs-6">
-                            <div class="form-group approve_min_balance_model_group approve_mb_asset" data-modal-ui-element="min_balance_model_modal_ui_element"></div>
-                        </div>
-                        <div class="col-xs-6">
-                            <div class="form-group approve_mb_model_2 approve_min_balance_asset_quantity" data-modal-ui-element="simple_input_with_addon_modal_ui_element"></div>
-                        </div>
-                    </div>
-                    <input type="hidden" name="phased" value="true" disabled />
-                    <input type="hidden" name="phasingVotingModel" value="2" disabled />
-                </div>
-
-                <div role="tabpanel" class="tab-pane tab_pane_approve" id="{{name}}_approve_tab_currency_holders">
-                    <div class="row">
-                        <div class="col-xs-6">
-                            <div class="form-group approve_transaction_currency_units" data-modal-ui-element="simple_input_with_addon_modal_ui_element"></div>
-                        </div>
-                        <div class="col-xs-6">
-                            <div class="form-group phasing_finish_height_group" data-modal-ui-element="block_height_modal_ui_element"></div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <div class="form-group approve_holding_currency" data-modal-ui-element="add_currency_modal_ui_element"></div>
-                        </div>
-                    </div>
-                    <div class="form-group add_approval_whitelist_group" data-modal-ui-element="multi_accounts_modal_ui_element"></div>
-                    <div class="row">
-                        <div class="col-xs-6">
-                            <div class="form-group approve_min_balance_model_group approve_mb_currency" data-modal-ui-element="min_balance_model_modal_ui_element"></div>
-                        </div>
-                        <div class="col-xs-6">
-                            <div class="form-group approve_mb_model_3 approve_min_balance_currency_units" data-modal-ui-element="simple_input_with_addon_modal_ui_element"></div>
-                        </div>
-                    </div>
-                    <input type="hidden" name="phased" value="true" disabled />
-                    <input type="hidden" name="phasingVotingModel" value="3" disabled />
-                </div>
                 <div role="tabpanel" class="tab-pane tab_pane_approve" id="{{name}}_approve_tab_transaction">
                     <div class="row">
                         <div class="col-xs-6">
@@ -302,7 +243,7 @@
                         <input type="text" class="form-control" name="phasingLinkedFullHash" id="approved_by_transaction_hash" placeholder="Approved By Transaction Full Hash" data-i18n="[placeholder]approved_by_transaction_full_hash" spellcheck="false" />
                     </div>
                     <input type="hidden" name="phased" value="true" disabled />
-                    <input type="hidden" name="phasingVotingModel" value="4" disabled />
+                    <input type="hidden" name="phasingVotingModel" value="2" disabled />
                     <input type="hidden" name="phasingQuorum" value="1" disabled />
                     <input type="hidden" name="phasingMinBalanceModel" value="0" disabled />
                 </div>
@@ -322,7 +263,7 @@
                         </div>
                     </div>
                     <input type="hidden" name="phased" value="true" disabled />
-                    <input type="hidden" name="phasingVotingModel" value="5" disabled />
+                    <input type="hidden" name="phasingVotingModel" value="3" disabled />
                     <input type="hidden" name="phasingQuorum" value="1" disabled />
                     <input type="hidden" name="phasingMinBalanceModel" value="0" disabled />
                 </div>

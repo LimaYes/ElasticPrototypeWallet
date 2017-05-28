@@ -466,7 +466,7 @@ Add-on framework improvements:
 
 Add-ons can now register their own http API request handlers, allowing custom
 request types to be supported. Overriding existing client APIs is not allowed.
-See the example add-on nxt.addons.PopOffCounter. Such APIs must be tagged with
+See the example add-on PopOffCounter. Such APIs must be tagged with
 APITag.ADDONS and will appear under "Add-ons" on the API test page.
 
 The add-on framework supporting custom APIs, in combination with the client-side
@@ -611,7 +611,7 @@ directories, excluding html/ui/plugins.
 Server-side add-ons:
 
 It is now possible to trigger script execution, or really add any custom Java
-code to the server, by writing a class which implements the nxt.addons.AddOn
+code to the server, by writing a class which implements the AddOn
 interface, making sure it is on the classpath, and enabling it by adding its
 name to the nxt.addOns property. See the example add-ons in the nxt.addons
 package. The AfterStart and BeforeShutdown add-ons can be used to trigger
@@ -5115,7 +5115,7 @@ This jar contains all compiled Nxt classes.
 
 nxt/run.sh
 This script is the simplest way to start Nxt, under Linux:
-java -Xmx1024M -cp nxt.jar:lib/*:conf nxt.Nxt
+java -Xmx1024M -cp nxt.jar:lib/*:conf Nxt
 As you can see, the classpath needs to include nxt.jar, all the jars under
 lib, and the conf directory.
 
@@ -5543,11 +5543,11 @@ The code has been significantly refactored and is no longer a single java file.
 All classes previously nested in Nxt have been moved out to their own files.
 
 Everything is under a top level nxt package, and as a result the servlet-class
-parameter in web.xml has to be changed to nxt.Nxt. Sorry that I forgot to
+parameter in web.xml has to be changed to Nxt. Sorry that I forgot to
 mention that when releasing 0.6.0:
 
 <servlet-name>Nxt</servlet-name>
-<servlet-class>nxt.Nxt</servlet-class>
+<servlet-class>Nxt</servlet-class>
 
 There are three subpackages, nxt.user, nxt.peer, and nxt.http, with request
 handlers in separate classes for all the UI, peer to peer, and http API

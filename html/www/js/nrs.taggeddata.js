@@ -176,7 +176,7 @@ var NRS = (function(NRS, $) {
 			"page": "main",
 			"searchStr": ""
 		};
-		$(".tagged_data_search input[name=q]").val("").trigger("unmask").mask("NXT-****-****-****-*****");
+		$(".tagged_data_search input[name=q]").val("").trigger("unmask").mask("XEL-****-****-****-*****");
 		$(".tagged_data_fulltext_search input[name=fs_q]").val("");
 		$(".tagged_data_search_pageheader_addon").hide();
 		$("#tagged_data_search_contents").empty();
@@ -242,7 +242,7 @@ var NRS = (function(NRS, $) {
 
 		if (account == "") {
 			NRS.pages.tagged_data_search();
-		} else if (/^(NXT\-)/i.test(account)) {
+		} else if (/^(XEL\-)/i.test(account)) {
 			var address = new NxtAddress();
 			if (!address.set(account)) {
 				$.growl($.t("error_invalid_account"), {
@@ -299,7 +299,7 @@ var NRS = (function(NRS, $) {
         }, function (response) {
             var fee = NRS.convertToNXT(NRS.escapeRespStr(response.feeNQT));
             $('#extend_data_fee').val(fee);
-            $('#extend_data_fee_label').html(String(fee) + " NXT");
+            $('#extend_data_fee_label').html(String(fee) + " XEL");
         })
     });
 

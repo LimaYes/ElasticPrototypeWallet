@@ -1,5 +1,5 @@
 const options = {
-    url: "http://localhost:6876", // URL of NXT remote node
+    url: "http://localhost:16876", // URL of NXT remote node
     secretPhrase: "", // Secret phrase of the current account
     isTestNet: false // Select testnet or mainnet
 };

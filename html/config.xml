@@ -16,9 +16,9 @@
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 
 <widget id="org.nxt.mobile.wallet" version="1.10.3" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>NXT Mobile Wallet</name>
+    <name>Elastic Mobile Wallet</name>
     <description>
-        Reference implementation mobile wallet for NXT.
+        Reference implementation mobile wallet for Elastic.
     </description>
     <author email="support@nxt.org" href="http://nxt.org/">
         Riker

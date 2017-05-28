@@ -1,5 +1,5 @@
 #!/bin/sh
-java -cp classes nxt.tools.ManifestGenerator
+java -cp classes ManifestGenerator
 /bin/rm -f nxt.jar
 jar cfm nxt.jar resource/nxt.manifest.mf -C classes . || exit 1
 /bin/rm -f nxtservice.jar

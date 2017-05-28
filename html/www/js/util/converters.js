@@ -297,7 +297,7 @@ var converters = function() {
             return CryptoJS.lib.WordArray.create(words, len);
         },
         convertNumericToRSAccountFormat: function (account) {
-            if (/^NXT\-/i.test(account)) {
+            if (/^XEL\-/i.test(account)) {
                 return String(account).escapeHTML();
             } else {
                 var address = new NxtAddress();

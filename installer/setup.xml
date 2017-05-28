@@ -112,7 +112,7 @@
             <description>Common Server Files</description>
             <file src="nxt.jar" targetdir="${INSTALL_PATH}" override="true"/>
             <file src="README.txt" targetdir="${INSTALL_PATH}" override="true"/>
-            <file src="NXT_Wallet.url" targetdir="${INSTALL_PATH}" override="true"/>
+            <file src="Elastic_Wallet.url" targetdir="${INSTALL_PATH}" override="true"/>
             <file src="3RD-PARTY-LICENSES.txt" targetdir="${INSTALL_PATH}" override="true"/>
             <file src="AUTHORS.txt" targetdir="${INSTALL_PATH}" override="true"/>
             <file src="COPYING.txt" targetdir="${INSTALL_PATH}" override="true"/>

@@ -1,6 +1,7 @@
 <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   ~ Copyright © 2013-2016 The Nxt Core Developers.                            ~
   ~ Copyright © 2016-2017 Jelurida IP B.V.                                    ~
+  ~ Copyright © 2017 The XEL Core Developers                                  ~
   ~                                                                           ~
   ~ See the LICENSE.txt file at the top-level directory of this distribution  ~
   ~ for licensing information.                                                ~
@@ -30,7 +31,7 @@
         <div id="header_right" class="navbar-right">
             <ul class="nav navbar-nav sends">
                 <li id="header_send_money" class="dropdown">
-                    <a href="#" data-toggle="modal" data-target="#send_money_modal" data-i18n="send_nxt">Send NXT</a>
+                    <a href="#" data-toggle="modal" data-target="#send_money_modal" data-i18n="send_nxt">Send XEL</a>
                 </li>
                 <li id="header_send_message" class="dropdown">
                     <a href="#" data-toggle="modal" data-target="#send_message_modal" data-i18n="send_message">Send Message</a>
@@ -40,6 +41,46 @@
                 </li>
             </ul>
             <ul class="nav navbar-nav">
+
+                <li><a href="#" id="connected_indicator_item"  data-page="peers"  class="goto-page" data-toggle="tooltip" data-placement="top" title="CONNECTION" data-i18n="[title]server_connection_status">
+                    <span class="badge nm_outer2" style="background-color: #fff;padding:3px;"> 
+                        <span class="badge nm_inner_subtype" id="connected_indicator" style="background-color: #fff; color: #000">
+                            <i class="fa fa-circle" style="font-size:12px;"></i> <span data-18n="connected">Connected</span>
+                        </span>
+                    </span>
+                    </a>
+                </li>
+
+
+                <li><a href="#" id="forging_indicator_item" data-toggle="tooltip" title="" data-placement="bottom">
+                    <span class="badge nm_outer2" style="background-color: #fff;padding:3px; color: #000">
+                        <span class="badge nm_inner_subtype" id="forging_indicator" style="background-color: #fff; color: #000">
+                            <i class="fa fa-circle" style="font-size:12px;"></i> <span data-18n="forging">Forging</span>
+                        </span>
+                    </span>
+                    </a>
+                </li>
+
+                <li><a href="#" id="balance_header_item" data-target="#account_details_modal" data-toggle="modal">
+                    <span class="badge nm_outer2" style="background-color: #fff;padding:3px;">
+                        <span class="badge nm_inner_subtype" style="background-color: #fff;">
+                            <span style="color:#337ab7;">Balance: </span>
+                            <span style="color:#666;" id="account_balance_sidebar">N/A</span>
+                            <span style="color:#337ab7;"> XEL</span>
+                        </span>
+                    </span>
+                    </a>
+                </li>
+                <li><a href="#" id="block_height_header_item" class="goto-page" data-page="blocks">
+                    <span class="badge nm_outer2" style="background-color: #fff;padding:3px;">
+                        <span class="badge nm_inner_subtype" style="background-color: #fff;">
+                            <span style="color:#337ab7;">Height: </span>
+                            <span style="color:#666;" id="sidebar_block_link_upper">N/A</span>
+                        </span>
+                    </span>
+                    </a>
+                </li>
+
                 <li>
                     <a class="client_options" href="#" data-toggle="modal" data-target="#client_status_modal">
                         <span class="badge nm_outer2" style="background-color: #fff;padding:2px;">
@@ -88,11 +129,7 @@
                         <i class="fa fa-user"></i>
                     </a>
                 </li>
-                <li id="exchange_menu_li" role="presentation" class="active show_popover" data-toggle="popover" data-delay="250" data-placement="bottom" data-content="EXCHANGE" data-container="#header_right" data-i18n="[data-content]exchange">
-                    <a href="#" class="goto-page" data-page="exchange">
-                        <i class="fa fa-exchange"></i>
-                    </a>
-                </li>
+
                 <li class="dropdown show_popover" role="presentation" data-toggle="popover" data-delay="250" data-placement="bottom" data-content="SETTINGS" data-container="#header_right" data-i18n="[data-content]settings">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <i class="fa fa-cog"></i>
@@ -101,7 +138,6 @@
                         <li><a role="menuitem" tabindex="-1" href="#" class="goto-page" data-page="blocks"><i class="fa fa-bars"></i><span data-i18n="blocks">Blocks</span></a></li>
                         <li><a role="menuitem" tabindex="-1" href="#" class="goto-page" data-page="peers"><i class="fa fa-cloud"></i><span data-i18n="peers">Peers</span></a></li>
                         <li><a role="menuitem" tabindex="-1" href="#" class="goto-page" data-page="generators"><i class="fa fa-code-fork"></i><span data-i18n="generators">Generators</span></a></li>
-                        <li id="funding_monitor_menu_item"><a role="menuitem" tabindex="-1" href="#" class="goto-page" data-page="funding_monitors"><i class="fa fa-shekel"></i><span data-i18n="monitors">Monitors</span></a></li>
                         <li role="presentation" class="divider"></li>
                         <li><a href="#" class="goto-page" data-page="plugins_overview"><i class="fa fa-plug"></i><span data-i18n="plugins">Plugins</span></a></li>
                         <li role="presentation" class="divider"></li>
@@ -123,18 +159,13 @@
                         <i class="fa fa-question-circle"></i>
                     </a>
                     <ul class="dropdown-menu" role="menu">
-						<li><a href="#" data-toggle="modal" data-target="#about_modal"><i class="fa fa-info-circle "></i><span data-i18n="about_nxt">About Nxt</span></a></li>
+						<li><a href="#" data-toggle="modal" data-target="#about_modal"><i class="fa fa-info-circle "></i><span data-i18n="about_nxt">About Elastic</span></a></li>
                         <li><a role="menuitem" tabindex="-1" href="#" class="goto-page" data-page="news"><i class="fa fa-book"></i><span data-i18n="news">News</span></a></li>
                         <li role="presentation" class="divider"></li>
-                        <li><a class="external-link" role="menuitem" tabindex="-1" href="https://nxt.org/" target="_blank"><i class="fa fa-at"></i>Nxt.org</a></li>
-                        <li><a class="external-link" role="menuitem" tabindex="-1" href="https://nxtforum.org/" target="_blank" ><i class="fa fa-at"></i><span data-i18n="link_nxt_forum">Nxt Forum</span></a></li>
-                        <li><a class="external-link" role="menuitem" tabindex="-1" href="https://nxtwiki.org/" target="_blank"><i class="fa fa-at"></i><span data-i18n="link_nxt_wiki">Nxt Wiki</span></a></li>
-                        <li><a class="external-link" role="menuitem" tabindex="-1" href="https://nxtwiki.org/wiki/Nxt_client_interface" target="_blank"><i class="fa fa-at"></i><span data-i18n="link_interface_tutorial">Interface Tutorial</span></a></li>
-                        <li><a class="external-link" role="menuitem" tabindex="-1" href="https://nxtwiki.org/wiki/Asset_Exchange" target="_blank"><i class="fa fa-at"></i><span data-i18n="link_asset_exchange_tutorial">Asset Exchange Tutorial</span></a></li>
-                        <li><a class="external-link" role="menuitem" tabindex="-1" href="https://nxtwiki.org/wiki/Monetary_System" target="_blank"><i class="fa fa-at"></i><span data-i18n="link_monetary_system_tutorial">Monetary System Tutorial</span></a></li>
-                        <li><a class="external-link" role="menuitem" tabindex="-1" href="https://nxtwiki.org/wiki/Voting_System" target="_blank"><i class="fa fa-at"></i><span data-i18n="link_voting_system_tutorial">Voting System Tutorial</span></a></li>
-                        <li><a class="external-link" role="menuitem" tabindex="-1" href="https://nxtwiki.org/wiki/Phasing" target="_blank"><i class="fa fa-at"></i><span data-i18n="link_phasing_tutorial">Phasing Tutorial</span></a></li>
-                        <li><a class="external-link" role="menuitem" tabindex="-1" href="https://nxtwiki.org/wiki/Plugins" target="_blank"><i class="fa fa-at"></i><span data-i18n="link_plugins_tutorial">Plugins Tutorial</span></a></li>
+                        <li><a class="external-link" role="menuitem" tabindex="-1" href="http://elastic.pw/" target="_blank"><i class="fa fa-at"></i>More info at www.elastic.pw</a></li>
+                        <li><a class="external-link" role="menuitem" tabindex="-1" href="http://elasticexplorer.org/" target="_blank" ><i class="fa fa-at"></i><span>Elastic Explorer</span></a></li>
+                        <li><a class="external-link" role="menuitem" tabindex="-1" href="http://talk.elasticexplorer.org/" target="_blank" ><i class="fa fa-at"></i><span>Elastic Forum</span></a></li>
+
                     </ul>
                 </li>
                 <li class="dropdown show_popover" id="web_wallet_li" role="presentation" data-toggle="popover" data-delay="250" data-placement="bottom" data-content="WEB WALLET" data-container="#header_right" data-i18n="[data-content]web_wallet">

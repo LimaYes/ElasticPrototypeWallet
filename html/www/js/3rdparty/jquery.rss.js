@@ -3,6 +3,18 @@
  */
 
 /* https://github.com/sdepold/jquery-rss MIT */
+function substrWithTags(str, len) {
+    var result = str.substr(0, len),
+        lastOpening = result.lastIndexOf('<'),
+        lastClosing = result.lastIndexOf('>');
+
+    if (lastOpening !== -1 && (lastClosing === -1 || lastClosing < lastOpening)) {
+        result += str.substring(len, str.indexOf('>', len) + 1);
+    }
+
+    return result;
+}
+
 
 (function($) {
 	"use strict";
@@ -35,8 +47,8 @@
 
 	RSS.prototype.load = function(callback) {
 		var apiProtocol = "http" + (this.options.ssl ? "s" : ""),
-			apiHost = apiProtocol + "://ajax.googleapis.com/ajax/services/feed/load",
-			apiUrl = apiHost + "?v=1.0&output=" + this.options.outputMode + "&callback=?&q=" + encodeURIComponent(this.url)
+			apiHost = apiProtocol + "://query.yahooapis.com/v1/public/yql",
+			apiUrl = apiHost + "?v=1.0&format=" + this.options.outputMode + "&callback=?&q=" +  encodeURIComponent("SELECT * FROM rss WHERE url = \"" +this.url + "\"");
 
 			if (this.options.limit != null) apiUrl += "&num=" + this.options.limit;
 		if (this.options.key != null) apiUrl += "&key=" + this.options.key;
@@ -49,8 +61,8 @@
 
 		this.load(function(data) {
 			try {
-				self.feed = data.responseData.feed
-				self.entries = data.responseData.feed.entries
+				self.feed = data.query.results
+				self.entries = data.query.results.item
 			} catch (e) {
 				self.entries = []
 				self.feed = null
@@ -209,14 +221,14 @@
 		return $.extend({
 			feed: this.feedTokens,
 			url: String(entry.link).escapeHTML(),
-			author: entry.author,
-			date: entry.publishedDate,
+			author: entry.creator,
+			date: entry.pubDate,
 			title: entry.title,
-			body: entry.content,
-			shortBody: entry.contentSnippet,
+			body: entry.description,
+			shortBody: substrWithTags(entry.description, 500),
 
 			bodyPlain: (function(entry) {
-				var result = entry.content
+				var result = entry.description
 					.replace(/<script[\\r\\\s\S]*<\/script>/mgi, '')
 					.replace(/<\/?[^>]+>/gi, '')
 
@@ -227,13 +239,13 @@
 				return result
 			})(entry),
 
-			shortBodyPlain: entry.contentSnippet.replace(/<\/?[^>]+>/gi, ''),
+			shortBodyPlain: substrWithTags(entry.description, 500).replace(/<\/?[^>]+>/gi, ''),
 			index: $.inArray(entry, this.entries),
 			totalEntries: this.entries.length,
 
 			teaserImage: (function(entry) {
 				try {
-					return entry.content.match(/(<img.*?>)/gi)[0]
+					return entry.description.match(/(<img.*?>)/gi)[0]
 				} catch (e) {
 					return ""
 				}
@@ -241,7 +253,7 @@
 
 			teaserImageUrl: (function(entry) {
 				try {
-					return entry.content.match(/(<img.*?>)/gi)[0].match(/src="(.*?)"/)[1]
+					return entry.description.match(/(<img.*?>)/gi)[0].match(/src="(.*?)"/)[1]
 				} catch (e) {
 					return ""
 				}

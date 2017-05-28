@@ -523,6 +523,51 @@ var NRS = (function (NRS, $, undefined) {
 		}
 	};
 
+	NRS.formatTimestampTime = function (timestamp) {
+            var locale = NRS.getLocale();
+            var date = new Date(NRS.fromEpochTime(timestamp))
+
+    		if (!isNaN(date) && typeof(date.getFullYear) == 'function') {
+    			var d = date.getDate();
+    			var dd = d < 10 ? '0' + d : d;
+    			var M = date.getMonth() + 1;
+    			var MM = M < 10 ? '0' + M : M;
+    			var yyyy = date.getFullYear();
+                var yy = String(yyyy).substring(2);
+
+                var res = "";
+
+
+                    var hours = date.getHours();
+                    var originalHours = hours;
+                    var minutes = date.getMinutes();
+                    var seconds = date.getSeconds();
+
+                    if (!NRS.settings || NRS.settings["24_hour_format"] == "0") {
+                        if (originalHours == 0) {
+                            hours += 12;
+                        } else if (originalHours >= 13 && originalHours <= 23) {
+                            hours -= 12;
+                        }
+                    }
+                    if (minutes < 10) {
+                        minutes = "0" + minutes;
+                    }
+                    if (seconds < 10) {
+                        seconds = "0" + seconds;
+                    }
+                    res += hours + ":" + minutes + ":" + seconds;
+
+                    if (!NRS.settings || NRS.settings["24_hour_format"] == "0") {
+                        res += " " + (originalHours >= 12 ? "PM" : "AM");
+    				}
+
+    			return res;
+    		} else {
+    			return date.toLocaleString();
+    		}
+    	};
+
     NRS.getBlockHeightMoment = function(height) {
         if (!height || !NRS.lastBlockHeight || !NRS.averageBlockGenerationTime) {
             return "-";
@@ -845,7 +890,7 @@ var NRS = (function (NRS, $, undefined) {
                     value = NRS.formatQuantity(value, 0);
                 }
             } else if (key == "price" || key == "total" || key == "amount" || key == "fee" || key == "refund" || key == "discount") {
-                value = NRS.formatAmount(new BigInteger(String(value))) + " NXT";
+                value = NRS.formatAmount(new BigInteger(String(value))) + " XEL";
             } else if (key == "sender" || key == "recipient" || key == "account" || key == "seller" || key == "buyer" || key == "lessee") {
                 value = "<a href='#' data-user='" + NRS.escapeRespStr(value) + "' class='show_account_modal_action'>" + NRS.getAccountTitle(value) + "</a>";
             } else if (key == "request_processing_time") { /* Skip from displaying request processing time */

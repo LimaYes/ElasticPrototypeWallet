@@ -5,17 +5,17 @@ then
 	echo VERSION not defined
 	exit 1
 fi
-PACKAGE=nxt-client-${VERSION}
+PACKAGE=elastic-client-${VERSION}
 echo PACKAGE="${PACKAGE}"
-CHANGELOG=nxt-client-${VERSION}.changelog.txt
+CHANGELOG=elastic-client-${VERSION}.changelog.txt
 OBFUSCATE=$2
 
 FILES="changelogs conf html lib resource contrib"
-FILES="${FILES} nxt.exe nxtservice.exe"
+FILES="${FILES} elastic.exe elasticservice.exe"
 FILES="${FILES} 3RD-PARTY-LICENSES.txt AUTHORS.txt LICENSE.txt"
 FILES="${FILES} DEVELOPERS-GUIDE.md OPERATORS-GUIDE.md README.md README.txt USERS-GUIDE.md"
 FILES="${FILES} mint.bat mint.sh run.bat run.sh run-tor.sh run-desktop.sh start.sh stop.sh compact.sh compact.bat sign.sh"
-FILES="${FILES} nxt.policy nxtdesktop.policy NXT_Wallet.url Dockerfile"
+FILES="${FILES} nxt.policy nxtdesktop.policy Elastic_Wallet.url Dockerfile"
 
 unix2dos *.bat
 echo compile
@@ -45,8 +45,8 @@ echo javadoc
 ./javadoc.sh
 fi
 echo copy resources
-cp installer/lib/JavaExe.exe nxt.exe
-cp installer/lib/JavaExe.exe nxtservice.exe
+cp installer/lib/JavaExe.exe elastic.exe
+cp installer/lib/JavaExe.exe elasticservice.exe
 cp -a ${FILES} nxt
 cp -a logs/placeholder.txt nxt/logs
 echo gzip
@@ -112,7 +112,7 @@ echo "https://bitbucket.org/JeanLucPicard/nxt/downloads/${PACKAGE}.exe" >> ${CHA
 echo >> ${CHANGELOG}
 #echo "sha256:" >> ${CHANGELOG}
 #sha256sum ${PACKAGE}.exe >> ${CHANGELOG}
-echo "https://bitbucket.org/JeanLucPicard/nxt/downloads/nxt-installer-${VERSION}.dmg" >> ${CHANGELOG}
+echo "https://bitbucket.org/JeanLucPicard/nxt/downloads/elastic-installer-${VERSION}.dmg" >> ${CHANGELOG}
 echo >> ${CHANGELOG}
 
 echo "The exe, dmg, and sh packages must have a digital signature by \"Stichting NXT\"." >> ${CHANGELOG}
@@ -131,16 +131,16 @@ echo >> ${CHANGELOG}
 cat changelogs/${CHANGELOG} >> ${CHANGELOG}
 echo >> ${CHANGELOG}
 
-gpg --detach-sign --armour --sign-with 0x811D6940E1E4240C ${PACKAGE}.zip
-gpg --detach-sign --armour --sign-with 0x811D6940E1E4240C ${PACKAGE}.sh
+gpg2 --detach-sign --armour --sign-with 424AC45B ${PACKAGE}.zip
+gpg2 --detach-sign --armour --sign-with 424AC45B ${PACKAGE}.sh
 #gpg --detach-sign --armour --sign-with 0x811D6940E1E4240C ${PACKAGE}.exe
 
-gpg --clearsign --sign-with 0x811D6940E1E4240C ${CHANGELOG}
+gpg2 --clearsign --sign-with 424AC45B ${CHANGELOG}
 rm -f ${CHANGELOG}
-gpgv ${PACKAGE}.zip.asc ${PACKAGE}.zip
-gpgv ${PACKAGE}.sh.asc ${PACKAGE}.sh
+gpgv2 ${PACKAGE}.zip.asc ${PACKAGE}.zip
+gpgv2 ${PACKAGE}.sh.asc ${PACKAGE}.sh
 #gpgv ${PACKAGE}.exe.asc ${PACKAGE}.exe
-gpgv ${CHANGELOG}.asc
+gpgv2 ${CHANGELOG}.asc
 sha256sum -c ${CHANGELOG}.asc
 #jarsigner -verify ${PACKAGE}.zip
 jarsigner -verify ${PACKAGE}.sh
