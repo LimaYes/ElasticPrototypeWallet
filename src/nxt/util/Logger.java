@@ -70,7 +70,7 @@ public final class Logger {
      */
     static {
         String oldManager = System.getProperty("java.util.logging.manager");
-        System.setProperty("java.util.logging.manager", "NxtLogManager");
+        System.setProperty("java.util.logging.manager", "nxt.util.NxtLogManager");
         if (!(LogManager.getLogManager() instanceof NxtLogManager)) {
             System.setProperty("java.util.logging.manager",
                     (oldManager != null ? oldManager : "java.util.logging.LogManager"));

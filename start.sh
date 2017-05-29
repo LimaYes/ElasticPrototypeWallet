@@ -16,6 +16,8 @@ if [ -x jre/bin/java ]; then
 else
     JAVA=java
 fi
+echo "About to start elastic in the background, call stop.sh to stop it again"
 nohup ${JAVA} -cp classes:lib/*:conf:addons/classes:addons/lib/* -Dnxt.runtime.mode=desktop nxt.Nxt > /dev/null 2>&1 &
+
 echo $! > ~/.elastic/elastic.pid
 cd - > /dev/null

@@ -1,8 +1,8 @@
 #!/bin/sh
-java -cp classes ManifestGenerator
-/bin/rm -f nxt.jar
-jar cfm nxt.jar resource/nxt.manifest.mf -C classes . || exit 1
-/bin/rm -f nxtservice.jar
-jar cfm nxtservice.jar resource/nxtservice.manifest.mf -C classes . || exit 1
+java -cp classes nxt.tools.ManifestGenerator
+/bin/rm -f elastic.jar
+jar cfm elastic.jar resource/elastic.manifest.mf -C classes . || exit 1
+/bin/rm -f elasticservice.jar
+jar cfm elasticservice.jar resource/elasticservice.manifest.mf -C classes . || exit 1
 
 echo "jar files generated successfully"
