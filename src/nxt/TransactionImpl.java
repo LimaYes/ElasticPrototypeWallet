@@ -1067,8 +1067,8 @@ final class TransactionImpl implements Transaction {
             if (Account.getPublicKey(getRecipientId()) == null) {
                 // no public key known, check local appendages
                 boolean foundAppendage = false;
-                for (final Appendix.AbstractAppendix appendage : this.appendages) {
-                    if (appendage instanceof Appendix.PublicKeyAnnouncement) {
+                for (int i=0; i<this.appendages.size(); ++i) {
+                    if (this.appendages.get(i) instanceof Appendix.PublicKeyAnnouncement) {
                         foundAppendage = true;
                         break;
                     }

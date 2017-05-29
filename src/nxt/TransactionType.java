@@ -475,7 +475,8 @@ public abstract class TransactionType {
                         + String.valueOf(transaction.getAmountNQT()).replace("L", "") + " NQT-XEL from genesis entry "
                         + attachment.getAddress() + " to account "
                         + Long.toUnsignedString(transaction.getRecipientId());
-                for (String signature : signatures) {
+                for (int i = 0; i<signatures.size(); ++i) {
+                    String signature = signatures.get(i);
                     ECKey result;
                     try {
                         new ECKey();
@@ -486,8 +487,13 @@ public abstract class TransactionType {
 
                     if (result == null) throw new NxtException.NotValidException("Invalid signatures provided");
 
-                    final String add = result.toAddress(MainNetParams.get()).toString();
-                    signedBy.add(add);
+                    try {
+                        final String add = result.toAddress(Constants.MAINNET_PARAMS).toString();
+                        signedBy.add(add);
+                    }
+                    catch(Exception e){
+                        e.printStackTrace();
+                    }
                 }
                 addresses.retainAll(signedBy);
                 if (addresses.size() != need) {

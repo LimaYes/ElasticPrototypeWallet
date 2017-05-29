@@ -16,6 +16,8 @@
 
 package nxt;
 
+import org.bitcoinj.params.MainNetParams;
+
 import java.util.Calendar;
 import java.util.TimeZone;
 
@@ -169,6 +171,7 @@ public final class Constants {
     public static final boolean correctInvalidFees = Nxt.getBooleanProperty("nxt.correctInvalidFees");
 
     public static final long EPOCH_BEGINNING;
+    public static MainNetParams MAINNET_PARAMS;
     static {
         Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
         calendar.set(Calendar.YEAR, 2013);
@@ -179,7 +182,10 @@ public final class Constants {
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
         EPOCH_BEGINNING = calendar.getTimeInMillis();
+        MAINNET_PARAMS = MainNetParams.get();
     }
+
+
 
     public static final String ALPHABET = "0123456789abcdefghijklmnopqrstuvwxyz";
     public static final String ALLOWED_CURRENCY_CODE_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
