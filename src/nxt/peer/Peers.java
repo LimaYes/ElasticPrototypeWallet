@@ -531,6 +531,7 @@ public final class Peers {
                             }
                             connectSet.forEach(peer -> futures.add(peersService.submit(() -> {
                                 peer.connect();
+                                Logger.logInfoMessage("Trying to establish connection to: " + peer.getHost());
                                 if (peer.getState() == Peer.State.CONNECTED &&
                                             enableHallmarkProtection && peer.getWeight() == 0 &&
                                             hasTooManyOutboundConnections()) {
