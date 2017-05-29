@@ -14,8 +14,8 @@ FILES="changelogs conf html lib resource contrib"
 FILES="${FILES} elastic.exe elasticservice.exe"
 FILES="${FILES} 3RD-PARTY-LICENSES.txt AUTHORS.txt LICENSE.txt"
 FILES="${FILES} DEVELOPERS-GUIDE.md OPERATORS-GUIDE.md README.md README.txt USERS-GUIDE.md"
-FILES="${FILES} mint.bat mint.sh run.bat run.sh run-tor.sh run-desktop.sh start.sh stop.sh compact.sh compact.bat sign.sh"
-FILES="${FILES} nxt.policy nxtdesktop.policy Elastic_Wallet.url Dockerfile"
+FILES="${FILES} run.bat run.sh run-tor.sh run-desktop.sh start.sh stop.sh compact.sh compact.bat sign.sh"
+FILES="${FILES} elastic.policy elasticdesktop.policy Elastic_Wallet.url Dockerfile"
 
 unix2dos *.bat
 echo compile

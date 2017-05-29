@@ -2,7 +2,6 @@ package nxt;
 
 import nxt.crypto.Crypto;
 import nxt.util.Convert;
-import org.junit.Assert;
 
 import java.security.MessageDigest;
 import java.util.ArrayList;
@@ -72,7 +71,7 @@ public class GenesisMiner {
         BlockImpl genesisBlock = new BlockImpl(-1, 0, 0, Constants.MAX_BALANCE_NQT, 0, transactions.size() * 128, digest.digest(),
                 genesisAccount, new byte[64],  null, transactions, genesisSecretKey);
 
-        Assert.assertTrue(genesisBlock.verifyBlockSignatureDebug());
+        //Assert.assertTrue(genesisBlock.verifyBlockSignatureDebug());
         return genesisBlock;
 
     }
