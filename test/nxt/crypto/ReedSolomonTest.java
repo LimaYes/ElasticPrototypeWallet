@@ -35,6 +35,7 @@ public class ReedSolomonTest {
             {2992669254877342352L, "6UNJ-UMFM-Z525-4S24M"},
             {43918951749449909L, "XY7P-3R8Y-26FC-2A293"},
             {9129355674909631300L, "YSU6-MRRL-NSC4-9WHEX"},
+            {-1255995780042666937L, "PM49-HSFL-HD8G-GGG6X"},
             {0L, "2222-2222-2222-22222"},
             {1L, "2223-2222-KB8Y-22222"},
             {10L, "222C-2222-VJTL-22222"},
@@ -61,12 +62,13 @@ public class ReedSolomonTest {
     public void testSamples() {
 
         for (Object[] testAccount : testAccounts) {
-            assertEquals(testAccount[1], ReedSolomon.encode((Long) testAccount[0]));
             try {
                 assertEquals(testAccount[0], ReedSolomon.decode((String) testAccount[1]));
             } catch (DecodeException e) {
                 fail(e.toString());
             }
+            assertEquals(testAccount[1], ReedSolomon.encode((Long) testAccount[0]));
+
         }
     }
 

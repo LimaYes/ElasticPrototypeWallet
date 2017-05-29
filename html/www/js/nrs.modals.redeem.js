@@ -61,6 +61,8 @@ var NRS = (function(NRS, $, undefined) {
 
 	$("#redeem_modal").on("show.bs.modal", function() {
         document.getElementById("redeem_address").options.length = 0;
+        document.getElementById("recipientPublicKey").value = NRS.escapeRespStr(NRS.publicKey);
+
         NRS.sendRequest("getUnclaimedRedeems", {"nil": "nil"}, function(response) {
                             var x = document.getElementById("redeem_address");
                             if(response.redeems){
