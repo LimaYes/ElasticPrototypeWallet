@@ -73,6 +73,7 @@ var NRS = (function (NRS, $) {
         'LAST_KNOWN_TESTNET_BLOCK': { id: "7861135490416963987", height: "0" }
     };
 
+
     NRS.loadAlgorithmList = function (algorithmSelect, isPhasingHash) {
         var hashAlgorithms;
         if (isPhasingHash) {
