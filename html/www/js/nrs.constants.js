@@ -69,8 +69,8 @@ var NRS = (function (NRS, $) {
         'FORGING': 'forging',
         'NOT_FORGING': 'not_forging',
         'UNKNOWN': 'unknown',
-        'LAST_KNOWN_BLOCK': { id: "7500146095105545128", height: "0" },
-        'LAST_KNOWN_TESTNET_BLOCK': { id: "7500146095105545128", height: "0" }
+        'LAST_KNOWN_BLOCK': { id: "7861135490416963987", height: "0" },
+        'LAST_KNOWN_TESTNET_BLOCK': { id: "7861135490416963987", height: "0" }
     };
 
     NRS.loadAlgorithmList = function (algorithmSelect, isPhasingHash) {
