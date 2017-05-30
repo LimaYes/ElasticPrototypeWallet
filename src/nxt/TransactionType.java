@@ -585,7 +585,7 @@ public abstract class TransactionType {
 
         public final static TransactionType POLL_CREATION = new Messaging() {
 
-            private final Fee POLL_OPTIONS_FEE = new Fee.SizeBasedFee(10 * Constants.ONE_NXT, Constants.ONE_NXT, 1) {
+            private final Fee POLL_OPTIONS_FEE = new Fee.SizeBasedFee(10 * Constants.TENTH_NXT, Constants.TENTH_NXT, 1) {
                 @Override
                 public int getSize(TransactionImpl transaction, Appendix appendage) {
                     int numOptions = ((Attachment.MessagingPollCreation)appendage).getPollOptions().length;
@@ -593,7 +593,7 @@ public abstract class TransactionType {
                 }
             };
 
-            private final Fee POLL_SIZE_FEE = new Fee.SizeBasedFee(0, 2 * Constants.ONE_NXT, 32) {
+            private final Fee POLL_SIZE_FEE = new Fee.SizeBasedFee(0, 2 * Constants.TENTH_NXT, 32) {
                 @Override
                 public int getSize(TransactionImpl transaction, Appendix appendage) {
                     Attachment.MessagingPollCreation attachment = (Attachment.MessagingPollCreation)appendage;
@@ -824,7 +824,7 @@ public abstract class TransactionType {
 
             private final Fee PHASING_VOTE_FEE = (transaction, appendage) -> {
                 Attachment.MessagingPhasingVoteCasting attachment = (Attachment.MessagingPhasingVoteCasting) transaction.getAttachment();
-                return attachment.getTransactionFullHashes().size() * Constants.ONE_NXT;
+                return attachment.getTransactionFullHashes().size() * Constants.TENTH_NXT;
             };
 
             @Override
@@ -1010,7 +1010,7 @@ public abstract class TransactionType {
 
         public static final Messaging ACCOUNT_INFO = new Messaging() {
 
-            private final Fee ACCOUNT_INFO_FEE = new Fee.SizeBasedFee(Constants.ONE_NXT, 2 * Constants.ONE_NXT, 32) {
+            private final Fee ACCOUNT_INFO_FEE = new Fee.SizeBasedFee(Constants.TENTH_NXT, 2 * Constants.TENTH_NXT, 32) {
                 @Override
                 public int getSize(TransactionImpl transaction, Appendix appendage) {
                     Attachment.MessagingAccountInfo attachment = (Attachment.MessagingAccountInfo) transaction.getAttachment();
@@ -1205,7 +1205,7 @@ public abstract class TransactionType {
                     throw new NxtException.NotValidException("Invalid voting model " + votingModel + " for account control");
                 }
                 long maxFees = attachment.getMaxFees();
-                long maxFeesLimit = (attachment.getPhasingParams().getVoteWeighting().isBalanceIndependent() ? 3 : 22) * Constants.ONE_NXT;
+                long maxFeesLimit = (attachment.getPhasingParams().getVoteWeighting().isBalanceIndependent() ? 3 : 22) * Constants.TENTH_NXT;
                 if (maxFees < 0 || (maxFees > 0 && maxFees < maxFeesLimit) || maxFees > Constants.MAX_BALANCE_NQT) {
                     throw new NxtException.NotValidException(String.format("Invalid max fees %f XEL", ((double)maxFees)/Constants.ONE_NXT));
                 }
@@ -1255,7 +1255,7 @@ public abstract class TransactionType {
 
     public static abstract class Data extends TransactionType {
 
-        private static final Fee TAGGED_DATA_FEE = new Fee.SizeBasedFee(Constants.ONE_NXT, Constants.ONE_NXT/10) {
+        private static final Fee TAGGED_DATA_FEE = new Fee.SizeBasedFee(Constants.TENTH_NXT, Constants.TENTH_NXT/10) {
             @Override
             public int getSize(TransactionImpl transaction, Appendix appendix) {
                 return appendix.getFullSize();

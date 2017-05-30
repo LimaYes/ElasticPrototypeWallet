@@ -194,7 +194,7 @@ public interface Appendix {
             return new Message(attachmentData);
         }
 
-        private static final Fee MESSAGE_FEE = new Fee.SizeBasedFee(0, Constants.ONE_NXT, 32) {
+        private static final Fee MESSAGE_FEE = new Fee.SizeBasedFee(0, Constants.TENTH_NXT, 32) {
             @Override
             public int getSize(TransactionImpl transaction, Appendix appendage) {
                 return ((Message)appendage).getMessage().length;
@@ -301,7 +301,7 @@ public interface Appendix {
 
         private static final String appendixName = "PrunablePlainMessage";
 
-        private static final Fee PRUNABLE_MESSAGE_FEE = new Fee.SizeBasedFee(Constants.ONE_NXT/10) {
+        private static final Fee PRUNABLE_MESSAGE_FEE = new Fee.SizeBasedFee(Constants.TENTH_NXT/10) {
             @Override
             public int getSize(TransactionImpl transaction, Appendix appendix) {
                 return appendix.getFullSize();
@@ -472,7 +472,7 @@ public interface Appendix {
 
     abstract class AbstractEncryptedMessage extends AbstractAppendix {
 
-        private static final Fee ENCRYPTED_MESSAGE_FEE = new Fee.SizeBasedFee(Constants.ONE_NXT, Constants.ONE_NXT, 32) {
+        private static final Fee ENCRYPTED_MESSAGE_FEE = new Fee.SizeBasedFee(Constants.TENTH_NXT, Constants.TENTH_NXT, 32) {
             @Override
             public int getSize(TransactionImpl transaction, Appendix appendage) {
                 return ((AbstractEncryptedMessage)appendage).getEncryptedDataLength() - 16;
@@ -591,7 +591,7 @@ public interface Appendix {
 
         private static final String appendixName = "PrunableEncryptedMessage";
 
-        private static final Fee PRUNABLE_ENCRYPTED_DATA_FEE = new Fee.SizeBasedFee(Constants.ONE_NXT/10) {
+        private static final Fee PRUNABLE_ENCRYPTED_DATA_FEE = new Fee.SizeBasedFee(Constants.TENTH_NXT/10) {
             @Override
             public int getSize(TransactionImpl transaction, Appendix appendix) {
                 return appendix.getFullSize();
@@ -1200,14 +1200,14 @@ public interface Appendix {
             long fee = 0;
             Phasing phasing = (Phasing)appendage;
             if (!phasing.params.getVoteWeighting().isBalanceIndependent()) {
-                fee += 20 * Constants.ONE_NXT;
+                fee += 20 * Constants.TENTH_NXT;
             } else {
-                fee += Constants.ONE_NXT;
+                fee += Constants.TENTH_NXT;
             }
             if (phasing.hashedSecret.length > 0) {
-                fee += (1 + (phasing.hashedSecret.length - 1) / 32) * Constants.ONE_NXT;
+                fee += (1 + (phasing.hashedSecret.length - 1) / 32) * Constants.TENTH_NXT;
             }
-            fee += Constants.ONE_NXT * phasing.linkedFullHashes.length;
+            fee += Constants.TENTH_NXT * phasing.linkedFullHashes.length;
             return fee;
         };
 
