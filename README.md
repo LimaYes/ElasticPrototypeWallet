@@ -1,22 +1,12 @@
 ----
-# Welcome to Nxt! #
+# Welcome to XEL! #
 
 ----
-## What is Nxt? ##
-Nxt is a modern economic system based on cryptography and blockchain technology.
-
-With Nxt, you can manage and interact with
-
- - your **assets**
- - your **businesses**
- - your **customers**
-
-in such a way that no trusted third parties are required anymore.
+## What is XEL? ##
+XEL is a decentralized supercomputer based on cryptography and blockchain technology.
 
 ----
 ## Get it! ##
-
-  - *pre-packaged* - `https://bitbucket.org/JeanLucPicard/nxt/downloads/nxt-client-{version}.zip`
 
   - *dependencies*:
     - *general* - Java 8
@@ -24,18 +14,18 @@ in such a way that no trusted third parties are required anymore.
     - *Debian* - `http://www.webupd8.org/2014/03/how-to-install-oracle-java-8-in-debian.html`
     - *FreeBSD* - `pkg install openjdk8`
 
-  - *repository* - `git clone https://bitbucket.org/JeanLucPicard/nxt.git`
+  - *repository* - `git clone git@github.com:OrdinaryDude/elastic-light.git`
   
 ----
 ## Run it! ##
 
-  - click on the Nxt icon, or start from the command line:
+  - click on the XEL icon, or start from the command line:
   - Unix: `./start.sh`
   - Mac: `./run.command`
   - Window: `run.bat`
 
   - wait for the JavaFX wallet window to open
-  - on platforms without JavaFX, open http://localhost:7876/ in a browser
+  - on platforms without JavaFX, open http://localhost:17876/ in a browser
 
 ----
 ## Compile it! ##
@@ -54,14 +44,14 @@ in such a way that no trusted third parties are required anymore.
   - cf. coding guidelines in DEVELOPERS-GUIDE.md
 
 ----
-## Troubleshooting the NRS (Nxt Reference Software) ##
+## Troubleshooting the NRS (XEL Reference Software) ##
 
   - How to Stop the NRS Server?
     - click on Nxt Stop icon, or run `./stop.sh`
     - or if started from command line, ctrl+c or close the console window
 
   - UI Errors or Stacktraces?
-    - report on BitBucket
+    - report on github
 
   - Permissions Denied?
     - no spaces and only latin characters in the path to the NRS installation directory
@@ -75,11 +65,8 @@ in such a way that no trusted third parties are required anymore.
     - DEVELOPERS-GUIDE.md
     - OPERATORS-GUIDE.md
 
-  - in the wiki:
-    - nxtwiki.org
-
   - on the forums:
-    - nxtforum.org
+    - talk.elasticexplorer.org
     
 ----
 
