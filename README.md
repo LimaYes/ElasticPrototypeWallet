@@ -3,7 +3,7 @@
 
 ----
 ## What is XEL? ##
-Nxt is a decentralized supercomputer based on cryptography and blockchain technology.
+XEL is a decentralized supercomputer based on cryptography and blockchain technology.
 
 ----
 ## Get it! ##
