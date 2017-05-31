@@ -1317,8 +1317,7 @@ NRS.addPagination = function () {
                         $("#dashboard_message").addClass("alert-success").removeClass("alert-danger").html($.t("status_new_account", {
                                 "account_id": NRS.escapeRespStr(NRS.accountRS),
                                 "public_key": NRS.escapeRespStr(NRS.publicKey)
-                            }) + "<br/><br/>" + NRS.blockchainDownloadingMessage() +
-                            "<br/><br/>" + NRS.getFundAccountLink()).show();
+                            }) + "<br/><br/>" + NRS.blockchainDownloadingMessage()).show();
                     } else {
                         $("#dashboard_message").addClass("alert-success").removeClass("alert-danger").html(NRS.blockchainDownloadingMessage()).show();
                     }
@@ -1341,7 +1340,7 @@ NRS.addPagination = function () {
                         if (NRS.downloadingBlockchain) {
                             message += "<br/><br/>" + NRS.blockchainDownloadingMessage();
                         }
-                        message += "<br/><br/>" + NRS.getFundAccountLink();
+                        
                     }
                     $("#dashboard_message").addClass("alert-success").removeClass("alert-danger").html(message).show();
                 }
