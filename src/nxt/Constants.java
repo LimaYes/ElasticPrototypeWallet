@@ -27,7 +27,7 @@ public final class Constants {
     public static final boolean isOffline = Nxt.getBooleanProperty("nxt.isOffline");
     public static final boolean isLightClient = Nxt.getBooleanProperty("nxt.isLightClient");
 
-    public static final long[] FOUNDATION_MEMBER_IDS = {3977330746712865438L, -1255995780042666937L, -7945280390087411431L};
+    public static final long[] FOUNDATION_MEMBER_IDS = {3977330746712865438L, -1255995780042666937L, -7945280390087411431L, 8639008863476284945L};
 
     public static final int MAX_NUMBER_OF_TRANSACTIONS = 255;
     public static final int MIN_TRANSACTION_SIZE = 176;
