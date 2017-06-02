@@ -1,4 +1,5 @@
 #!/bin/sh
+cd "$(dirname "$0")"
 if [ -x jre/bin/java ]; then
     JAVA=./jre/bin/java
 else
