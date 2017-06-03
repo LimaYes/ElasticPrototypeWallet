@@ -3939,3 +3939,11 @@ body > .header .navbar {
     padding-top: 20px;
     padding-bottom: 20px;
 }
+
+.dec-animation {
+	
+	position: absolute;
+	top: 0;
+	left: 0;
+	
+}
