@@ -315,6 +315,10 @@ public final class Nxt {
         Init.init();
     }
 
+    public static boolean isInitialized(){
+        return Init.initialized;
+    }
+
     public static void shutdown() {
         Logger.logShutdownMessage("Shutting down...");
         AddOns.shutdown();
