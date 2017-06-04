@@ -282,22 +282,22 @@ function Ball (startX, startY, startVelX, startVelY) {
   };
   this.draw = function(ctx, can) {
     ctx.beginPath();
-    ctx.globalAlpha = .4;
-    ctx.fillStyle = '#448fda';
+    ctx.globalAlpha = .1;
+    ctx.fillStyle = '#54B371';
     ctx.arc((0.5 + this.x) | 0, (0.5 + this.y) | 0, 3, 0, TAU, false);
     ctx.fill();
   }
 }
 
 var balls = [];
-for (var i = 0; i < canvas.width * canvas.height / (65*65); i++) {
+for (var i = 0; i < canvas.width * canvas.height / (65*300); i++) {
   balls.push(new Ball(Math.random() * canvas.width, Math.random() * canvas.height));
 }
 
 var lastTime = Date.now();
 function update() {
   var diff = Date.now() - lastTime;
-  for (var frame = 0; frame * 16.6667 < diff; frame++) {
+  for (var frame = 0; frame * 30.6667 < diff; frame++) {
     for (var index = 0; index < balls.length; index++) {
       balls[index].update(canvas);
     }
@@ -316,7 +316,7 @@ function distMouse(ball) {
 
 function draw() {
   ctx.globalAlpha=1;
-  ctx.fillStyle = '#fff';
+  ctx.fillStyle = '#EEF3FA';
   ctx.fillRect(0,0,canvas.width, canvas.height);
   for (var index = 0; index < balls.length; index++) {
     var ball = balls[index];
@@ -326,7 +326,7 @@ function draw() {
       var ball2 = balls[index2];
       var dist = Math.hypot(ball.x - ball2.x, ball.y - ball2.y);
         if (dist < 100) {
-          ctx.strokeStyle = "#448fda";
+          ctx.strokeStyle = "#95B59E";
           ctx.globalAlpha = 1 - (dist > 100 ? .8 : dist / 150);
           ctx.lineWidth = "6px";
           ctx.moveTo((0.5 + ball.x) | 0, (0.5 + ball.y) | 0);
