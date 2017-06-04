@@ -26,10 +26,7 @@ import nxt.http.API;
 import nxt.http.APIProxy;
 import nxt.peer.Peers;
 import nxt.user.Users;
-import nxt.util.Convert;
-import nxt.util.Logger;
-import nxt.util.ThreadPool;
-import nxt.util.Time;
+import nxt.util.*;
 import org.json.simple.JSONObject;
 
 import java.io.File;
@@ -57,6 +54,7 @@ public final class Nxt {
     private static volatile Time time = new Time.EpochTime();
 
     public static final String NXT_DEFAULT_PROPERTIES = "nxt-default.properties";
+    public static final String NXT_DEFAULT_JUNIT_PROPERTIES = "nxt-junit-default.properties";
     public static final String NXT_PROPERTIES = "nxt.properties";
     public static final String CONFIG_DIR = "conf";
 
@@ -73,7 +71,12 @@ public final class Nxt {
         System.out.printf("Runtime mode %s\n", runtimeMode.getClass().getName());
         dirProvider = RuntimeEnvironment.getDirProvider();
         System.out.println("User home folder " + dirProvider.getUserHomeDir());
-        loadProperties(defaultProperties, NXT_DEFAULT_PROPERTIES, true);
+        if (JUnitEnvironment.isJUnitTest()) {
+            loadProperties(defaultProperties, NXT_DEFAULT_JUNIT_PROPERTIES, true);
+        }else{
+            loadProperties(defaultProperties, NXT_DEFAULT_PROPERTIES, true);
+        }
+
         if (!VERSION.equals(Nxt.defaultProperties.getProperty("nxt.version"))) {
             throw new RuntimeException("Using an nxt-default.properties file from a version other than " + VERSION + " (you provided " + Nxt.defaultProperties.getProperty("nxt.version") + ") is not supported!!!");
         }

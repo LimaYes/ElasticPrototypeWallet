@@ -426,7 +426,7 @@ public abstract class TransactionType {
                 // Check if this "address" is a valid entry in the "genesis
                 // block" claim list
                 if (!Redeem.hasAddress(attachment.getAddress()))
-                    throw new NxtException.NotValidException("You have no right to claim from genesis");
+                    throw new NxtException.NotValidException("You have no right to claim from genesis: " + attachment.getAddress());
 
                 if(Redeem.isAlreadyRedeemed(attachment.getAddress()))
                     throw new NxtException.NotValidException("Come on, just leave!");
@@ -471,10 +471,8 @@ public abstract class TransactionType {
                     throw new NxtException.NotValidException("You have to provide exactly " + String.valueOf(need)
                             + " signatures, you provided " + gotsigs);
 
-                final String message = "I confirm to redeem "
-                        + String.valueOf(transaction.getAmountNQT()).replace("L", "") + " NQT-XEL from genesis entry "
-                        + attachment.getAddress() + " to account "
-                        + Long.toUnsignedString(transaction.getRecipientId());
+                final String message = Redeem.getSignMessage(transaction.getAmountNQT(), attachment.getAddress(), transaction.getRecipientId());
+
                 for (int i = 0; i<signatures.size(); ++i) {
                     String signature = signatures.get(i);
                     ECKey result;

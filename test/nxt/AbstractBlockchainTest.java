@@ -32,8 +32,6 @@ public abstract class AbstractBlockchainTest {
 
     protected static Properties newTestProperties() {
         Properties testProperties = new Properties();
-        testProperties.setProperty("nxt.shareMyAddress", "false");
-        testProperties.setProperty("nxt.savePeers", "false");
         //testProperties.setProperty("nxt.enableAPIServer", "false");
         //testProperties.setProperty("nxt.enableUIServer", "false");
         testProperties.setProperty("nxt.disableGenerateBlocksThread", "true");
@@ -98,6 +96,22 @@ public abstract class AbstractBlockchainTest {
         }
         Assert.assertEquals(endHeight, blockchain.getHeight());
         blockchainProcessor.removeListener(stopListener, BlockchainProcessor.Event.BLOCK_PUSHED);
+    }
+
+    protected static void forgeNumberOfBlocks(int howMany, String secretPhrase){
+        int startHeight = blockchain.getHeight();
+        forgeTo(startHeight + howMany, secretPhrase);
+        Assert.assertEquals(Nxt.getBlockchain().getHeight(), startHeight + howMany);
+    }
+
+    protected static long getGuaranteedBalanceBySecretPhrase(String secretPhrase){
+        Account acc = Account.getAccount(Crypto.getPublicKey(secretPhrase));
+        return acc.getGuaranteedBalanceNQT();
+    }
+
+    protected static long getBalanceBySecretPhrase(String secretPhrase){
+        Account acc = Account.getAccount(Crypto.getPublicKey(secretPhrase));
+        return acc.getBalanceNQT();
     }
 
     protected static void forgeTo(final int endHeight, final String secretPhrase) {

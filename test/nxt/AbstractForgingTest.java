@@ -16,26 +16,30 @@
 
 package nxt;
 
+import nxt.crypto.Crypto;
 import org.junit.Assert;
 
 import java.util.Properties;
 
 public abstract class AbstractForgingTest extends AbstractBlockchainTest {
 
-    protected static final int minStartHeight = 150000;
+    protected static final int minStartHeight = 0;
     protected static int startHeight;
     protected final static String testForgingSecretPhrase = "aSykrgKGZNlSVOMDxkZZgbTvQqJPGtsBggb";
 
     protected static Properties newTestProperties() {
         Properties properties = AbstractBlockchainTest.newTestProperties();
-        properties.setProperty("nxt.isTestnet", "true");
-        properties.setProperty("nxt.isOffline", "true");
         return properties;
     }
 
     protected static void init(Properties properties) {
+        properties.setProperty("nxt.fakeForgingAccount", Long.toUnsignedString(Account.getId(Crypto.getPublicKey(testForgingSecretPhrase))));
         AbstractBlockchainTest.init(properties);
         startHeight = blockchain.getHeight();
+
+        // Reinitialize Redeem Class
+        Redeem.init();
+
         Assert.assertTrue(startHeight >= minStartHeight);
     }
 
