@@ -16,13 +16,28 @@
 
 package nxt;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class TokenTest extends BlockchainTest {
+public class TokenTest extends AbstractBlockchainTest{
+
+    @BeforeClass
+    public static void init() {
+        AbstractBlockchainTest.init(AbstractBlockchainTest.newTestProperties());
+    }
+
+    @AfterClass
+    public static void shutdown() {
+        AbstractBlockchainTest.shutdown();
+    }
+
     @Test
     public void testParseValidToken() throws Exception {
         String token = "6s7hchl9q0e5jgrrtgscoip2lcb2o3oi7ndso1bnjr475suv001ug93uu8aq2f00o7q6pvs2ivrpra1svouvb4k5nreco0tt94qest9mq5jg2qihcvj5n5ljqht5fl6n39nslr7kidqh8kh8u8v6e4rn92f47l3i";

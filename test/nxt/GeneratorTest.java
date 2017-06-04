@@ -16,6 +16,7 @@
 
 package nxt;
 
+import nxt.helpers.RedeemFunctions;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -30,11 +31,24 @@ public class GeneratorTest extends BlockchainTest {
     @Ignore
     @Test
     public void forge() {
+
+        Nxt.getBlockchainProcessor().popOffTo(0);
+
+
         byte[] publicKey = ALICE.getPublicKey();
         BlockImpl lastBlock = blockchain.getLastBlock();
         BigInteger hit = Generator.getHit(publicKey, lastBlock);
+
+
+
+        // We need to redeem to account first!
+
+        String address = "1XELjH6JgPS48ZL7ew1Zz2xxczyzqit3h";
+        String[] privkeys = new String[]{"5JDSuYmvAAF85XFQxPTkHGFrNfAk3mhtZKmXvsLJiFZ7tDrSBmp"};
+        Assert.assertTrue("Failed to create redeem transaction.", RedeemFunctions.redeem(address, BlockchainTest.secretPhrase1, privkeys));
         Account account = Account.getAccount(publicKey);
         BigInteger effectiveBalance = BigInteger.valueOf(account == null || account.getEffectiveBalanceNXT() <= 0 ? 0 : account.getEffectiveBalanceNXT());
+
         long hitTime = Generator.getHitTime(effectiveBalance, hit, lastBlock);
         long deadline = hitTime - lastBlock.getTimestamp();
         Generator generator = Generator.startForging(ALICE.getSecretPhrase());

@@ -3,8 +3,7 @@ CP=conf/:classes/:lib/*:testlib/*
 SP=src/:test/
 
 if [ $# -eq 0 ]; then
-TESTS="nxt.crypto.Curve25519Test nxt.crypto.ReedSolomonTest nxt.peer.HallmarkTest nxt.TokenTest nxt.FakeForgingTest
-nxt.FastForgingTest nxt.ManualForgingTest"
+TESTS="nxt.crypto.Curve25519Test nxt.crypto.ReedSolomonTest nxt.peer.HallmarkTest nxt.TokenTest nxt.RedeemTest nxt.ManualForgingTest nxt.BigDecimalTest nxt.BlockchainProcessorTest nxt.GenesisAmountsTest"
 else
 TESTS=$@
 fi

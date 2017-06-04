@@ -225,23 +225,6 @@ public final class Redeem {
         this.amount = tx.getAmountNQT();
     }
 
-    //
-
-    public static long getRedeemed(int height) {
-        try (Connection con = Db.db.getConnection();
-             PreparedStatement pstmt = con
-                     .prepareStatement("SELECT SUM(AMOUNT) as amount FROM redeems WHERE height <= ? AND latest = true")) {
-            pstmt.setInt(1, height);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    final long redeemed = rs.getLong("amount");
-                    return redeemed;
-                } else return 0L;
-            }
-        } catch (final SQLException e) {
-            throw new RuntimeException(e.toString(), e);
-        }
-    }
 
     public static String getSignMessage(long nqt, String address, long receipient) {
        return "I confirm to redeem "
