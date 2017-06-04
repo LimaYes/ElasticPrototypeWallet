@@ -43,16 +43,20 @@ Here is the pay 2-of-3 address: 38pNL6YDpLmTHJ7A4WVLpMoLRQaTE9t3oC
 */
 public class RedeemTest extends AbstractForgingTest {
 
+    protected static boolean isNxtInitted = false;
+
+
     @Before
     public void init() {
-
-        Properties properties = AbstractForgingTest.newTestProperties();
-        properties.setProperty("nxt.disableGenerateBlocksThread", "false");
-        properties.setProperty("nxt.enableFakeForging", "true");
-        properties.setProperty("nxt.timeMultiplier", "1000");
-        AbstractForgingTest.init(properties);
-        Assert.assertTrue("nxt.fakeForgingAccount must be defined in nxt.properties", Nxt.getStringProperty("nxt.fakeForgingAccount") != null);
-
+        if(!isNxtInitted) {
+            Properties properties = AbstractForgingTest.newTestProperties();
+            properties.setProperty("nxt.disableGenerateBlocksThread", "false");
+            properties.setProperty("nxt.enableFakeForging", "true");
+            properties.setProperty("nxt.timeMultiplier", "1000");
+            AbstractForgingTest.init(properties);
+            Assert.assertTrue("nxt.fakeForgingAccount must be defined in nxt.properties", Nxt.getStringProperty("nxt.fakeForgingAccount") != null);
+            isNxtInitted = true;
+        }
     }
 
     @After
