@@ -54,6 +54,7 @@ var NRS = (function(NRS, $, undefined) {
             $(".mobile-only").show();
         }
         $("#login_panel").show();
+        $('#login_account_container_other').hide();
 	};
 
 	NRS.showWelcomeScreen = function() {

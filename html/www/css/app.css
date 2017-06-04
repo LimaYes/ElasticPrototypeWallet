@@ -3017,7 +3017,6 @@ label .popover-content {
 
 #remember_me_container {
     color: #000;
-    width: 260px;
 }
 
 #remember_me_container label {
@@ -3939,4 +3938,12 @@ body > .header .navbar {
     padding: 10px;
     padding-top: 20px;
     padding-bottom: 20px;
+}
+
+.dec-animation {
+	
+	position: absolute;
+	top: 0;
+	left: 0;
+	
 }

@@ -16,7 +16,6 @@
 
 <div id="lockscreen">
     <div id="old_browser_warning" style="display:none;margin-left:auto;margin-right:auto;margin-top:200px;background:white;color:black;padding:20px;width:300px;" data-i18n="old_browser_warning">You are using an old browser which this application does not support.</div>
-
     <table id="center" style="display:none;width:100%;height:100%;">
         <tr><td style="text-align:center;vertical-align:middle">
             <img src="img/nxt_logo.png" alt="Nxt" id="logo-nxt-img" />
@@ -30,10 +29,10 @@
 				<table style="width:100%;height:100%;">
 				<tr><td style="text-align:center;vertical-align:middle">
                 <div class="lockscreen-widget btn-group" data-toggle="buttons" id="loginButtons">
-                    <label class="lockscreen-widget btn btn-primary btn-lg active" data-login-type="account" data-reader="account_data_reader">
+                    <label class="lockscreen-widget btn btn-primary btn-lg" data-login-type="account" data-reader="account_data_reader">
                         <input type="radio" name="loginButtons"><i class="fa fa-male"></i>
                     </label>
-                    <label class="lockscreen-widget btn btn-primary btn-lg" data-login-type="password" data-reader="account_data_reader">
+                    <label class="lockscreen-widget btn btn-primary btn-lg active" data-login-type="password" data-reader="account_data_reader">
                         <input type="radio" name="loginButtons"><i class="fa fa-key"></i>
                     </label>
                     <label class="lockscreen-widget btn btn-primary btn-lg scan-qr-code" data-login-type="scan" data-reader="account_data_reader">
@@ -58,13 +57,13 @@
                             </div>
                         </div>
                         <input type="hidden" name="check_password_length" id="login_check_password_length" value="1" />
-                        <div class="input-group" id="login_account_container_other">
+                        <div class="input-group" id="login_account_container_other" style="display: none;">
                             <input type="text" class="form-control" id="login_account_other" name="login_account_other" placeholder="Your XEL Account" data-i18n="[placeholder]your_account" autofocus />
                             <div class="input-group-btn" style="border:1px solid #fff;">
                                 <button class="btn btn-flat" onclick="NRS.login(0,$('#login_account_other').val())"><i class="fa fa-arrow-right text-muted"></i></button>
                             </div>
                         </div>
-                        <div class="input-group" style="display:none">
+                        <div class="input-group" style="display:table">
                             <input type="password" class="form-control" id="login_password" name="login_password" placeholder="Your Passphrase" data-i18n="[placeholder]your_passphrase" autofocus />
                             <div class="input-group-btn" style="border:1px solid #fff;">
                                 <button class="btn btn-flat" onclick="NRS.login(1,$('#login_password').val())"><i class="fa fa-arrow-right text-muted"></i></button>
@@ -242,8 +241,102 @@
         </td>
         </tr>
     </table>
+    <canvas class"dec-animation" style="position:absolute; top: 0; left: 0; z-index: -1;"></canvas>
     <!-- this dummy checkbox corrects rendering problem of checkboxes when using desktop application on Linux -->
     <div id="dummyCheckbox">
         <input type="checkbox" disabled>
     </div>
 </div>
+<script>
+var canvas = document.querySelector("canvas");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+var ctx = canvas.getContext("2d");
+
+var TAU = 2 * Math.PI;
+
+times = [];
+function loop() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  update();
+  draw();
+  requestAnimationFrame(loop);
+}
+
+function Ball (startX, startY, startVelX, startVelY) {
+  this.x = startX || Math.random() * canvas.width;
+  this.y = startY || Math.random() * canvas.height;
+  this.vel = {
+    x: startVelX || Math.random() * 2 - 1,
+    y: startVelY || Math.random() * 2 - 1
+  };
+  this.update = function(canvas) {
+    if (this.x > canvas.width + 50 || this.x < -50) {
+      this.vel.x = -this.vel.x;
+    }
+    if (this.y > canvas.height + 50 || this.y < -50) {
+      this.vel.y = -this.vel.y;
+    }
+    this.x += this.vel.x;
+    this.y += this.vel.y;
+  };
+  this.draw = function(ctx, can) {
+    ctx.beginPath();
+    ctx.globalAlpha = .1;
+    ctx.fillStyle = '#54B371';
+    ctx.arc((0.5 + this.x) | 0, (0.5 + this.y) | 0, 3, 0, TAU, false);
+    ctx.fill();
+  }
+}
+
+var balls = [];
+for (var i = 0; i < canvas.width * canvas.height / (65*300); i++) {
+  balls.push(new Ball(Math.random() * canvas.width, Math.random() * canvas.height));
+}
+
+var lastTime = Date.now();
+function update() {
+  var diff = Date.now() - lastTime;
+  for (var frame = 0; frame * 30.6667 < diff; frame++) {
+    for (var index = 0; index < balls.length; index++) {
+      balls[index].update(canvas);
+    }
+  }
+  lastTime = Date.now();
+}
+var mouseX = -1e9, mouseY = -1e9;
+document.addEventListener('mousemove', function(event) {
+  mouseX = event.clientX;
+  mouseY = event.clientY;
+});
+
+function distMouse(ball) {
+  return Math.hypot(ball.x - mouseX, ball.y - mouseY);
+}
+
+function draw() {
+  ctx.globalAlpha=1;
+  ctx.fillStyle = '#EEF3FA';
+  ctx.fillRect(0,0,canvas.width, canvas.height);
+  for (var index = 0; index < balls.length; index++) {
+    var ball = balls[index];
+    ball.draw(ctx, canvas);
+    ctx.beginPath();
+    for (var index2 = balls.length - 1; index2 > index; index2 += -1) {
+      var ball2 = balls[index2];
+      var dist = Math.hypot(ball.x - ball2.x, ball.y - ball2.y);
+        if (dist < 100) {
+          ctx.strokeStyle = "#95B59E";
+          ctx.globalAlpha = 1 - (dist > 100 ? .8 : dist / 150);
+          ctx.lineWidth = "6px";
+          ctx.moveTo((0.5 + ball.x) | 0, (0.5 + ball.y) | 0);
+          ctx.lineTo((0.5 + ball2.x) | 0, (0.5 + ball2.y) | 0);
+        }
+    }
+    ctx.stroke();
+  }
+}
+
+// Start
+loop();
+</script>
