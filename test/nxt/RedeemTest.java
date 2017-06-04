@@ -88,6 +88,41 @@ public class RedeemTest extends AbstractForgingTest {
     }
 
     @Test
+    public void redeemPubkeyhashDisallowTwice(){
+        Nxt.getBlockchainProcessor().popOffTo(0);
+
+        String address = "1XELjH6JgPS48ZL7ew1Zz2xxczyzqit3h";
+        String[] privkeys = new String[]{"5JDSuYmvAAF85XFQxPTkHGFrNfAk3mhtZKmXvsLJiFZ7tDrSBmp"};
+        Assert.assertTrue("Failed to create redeem transaction.",RedeemFunctions.redeem(address, AbstractForgingTest.testForgingSecretPhrase, privkeys));
+        Assert.assertEquals(blockchain.getHeight(), 1);
+
+        // Redeeming same entry again should fail
+        String evilSecretPhrase = "EvilDude";
+        privkeys = new String[]{"5JDSuYmvAAF85XFQxPTkHGFrNfAk3mhtZKmXvsLJiFZ7tDrSBmp"};
+        Assert.assertFalse("Duplicate redeem transaction should fail hard.",RedeemFunctions.redeem(address, evilSecretPhrase, privkeys));
+        //Assert.assertEquals(blockchain.getHeight(), 1);
+
+        Assert.assertEquals((long)AbstractBlockchainTest.getBalanceBySecretPhrase(AbstractForgingTest.testForgingSecretPhrase), (long)Redeem.getClaimableAmount(address));
+        Assert.assertEquals((long)AbstractBlockchainTest.getBalanceBySecretPhrase(evilSecretPhrase), 0);
+    }
+
+    @Test
+    public void redeemPubkeyhashDisallowTwiceInSameBlock(){
+        Nxt.getBlockchainProcessor().popOffTo(0);
+
+        String address = "1XELjH6JgPS48ZL7ew1Zz2xxczyzqit3h";
+        String[] privkeys = new String[]{"5JDSuYmvAAF85XFQxPTkHGFrNfAk3mhtZKmXvsLJiFZ7tDrSBmp"};
+        Assert.assertTrue("Failed to create redeem transaction.",RedeemFunctions.redeem(address, AbstractForgingTest.testForgingSecretPhrase, privkeys, false));
+        Assert.assertEquals(blockchain.getHeight(), 0);
+
+        // Redeeming same entry again should fail
+        String evilSecretPhrase = "EvilDude";
+        privkeys = new String[]{"5JDSuYmvAAF85XFQxPTkHGFrNfAk3mhtZKmXvsLJiFZ7tDrSBmp"};
+        Assert.assertFalse("Duplicate redeem transaction should fail hard.",RedeemFunctions.redeem(address, evilSecretPhrase, privkeys));
+    }
+
+
+    @Test
     public void redeemMultisig(){
 
         Nxt.getBlockchainProcessor().popOffTo(0);

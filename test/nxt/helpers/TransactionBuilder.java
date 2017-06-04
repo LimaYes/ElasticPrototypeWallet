@@ -21,7 +21,7 @@ import nxt.util.Convert;
 import java.util.Objects;
 
 public class TransactionBuilder {
-    public static Transaction make(Attachment attachment, String secretPhrase, long recipientId, long amountNQT, boolean broadcast) throws Exception{
+    public static Transaction make(Attachment attachment, String secretPhrase, long recipientId, long amountNQT, boolean broadcast, boolean graceblock) throws Exception{
 
         final int ecBlockHeight = 0;
         long ecBlockId = 0;
@@ -57,7 +57,7 @@ public class TransactionBuilder {
 
             // Now, if transaction was my redeem transaction, and we are below the #ALLOW_FAKE_FORGING_ON_REDEEM_UNTIL_BLOCK block threshold ... mine block immediately
             // This will help bootstrapping if no forgers are online yet
-            if (transaction.getType() == TransactionType.Payment.REDEEM && Nxt.getBlockchain().getHeight() < Constants.ALLOW_FAKE_FORGING_ON_REDEEM_UNTIL_BLOCK) {
+            if (graceblock && (transaction.getType() == TransactionType.Payment.REDEEM && Nxt.getBlockchain().getHeight() < Constants.ALLOW_FAKE_FORGING_ON_REDEEM_UNTIL_BLOCK)) {
                 try {
                     Nxt.getBlockchainProcessor().generateBlock(secretPhrase,
                             Nxt.getEpochTime());

@@ -105,13 +105,21 @@ public abstract class AbstractBlockchainTest {
     }
 
     protected static long getGuaranteedBalanceBySecretPhrase(String secretPhrase){
-        Account acc = Account.getAccount(Crypto.getPublicKey(secretPhrase));
-        return acc.getGuaranteedBalanceNQT();
+        try {
+            Account acc = Account.getAccount(Crypto.getPublicKey(secretPhrase));
+            return acc.getGuaranteedBalanceNQT();
+        }catch(Exception e){
+            return 0;
+        }
     }
 
     protected static long getBalanceBySecretPhrase(String secretPhrase){
-        Account acc = Account.getAccount(Crypto.getPublicKey(secretPhrase));
-        return acc.getBalanceNQT();
+        try {
+            Account acc = Account.getAccount(Crypto.getPublicKey(secretPhrase));
+            return acc.getBalanceNQT();
+        }catch(Exception e){
+            return 0;
+        }
     }
 
     protected static void forgeTo(final int endHeight, final String secretPhrase) {

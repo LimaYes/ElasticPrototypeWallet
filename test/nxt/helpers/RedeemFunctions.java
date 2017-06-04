@@ -27,7 +27,12 @@ import org.bitcoinj.params.MainNetParams;
 import static nxt.helpers.TransactionBuilder.make;
 
 public class RedeemFunctions {
-    public static boolean redeem(String address_entry, String secretPhrase, String[] bitcoin_privkeys)
+
+    public static boolean redeem(String address_entry, String secretPhrase, String[] bitcoin_privkeys){
+        return redeem(address_entry, secretPhrase, bitcoin_privkeys, true);
+    }
+
+    public static boolean redeem(String address_entry, String secretPhrase, String[] bitcoin_privkeys, boolean graceblock)
     {
         String secp_signatures = "";
         NetworkParameters params = MainNetParams.get();
@@ -48,7 +53,7 @@ public class RedeemFunctions {
         final Attachment attachment = new Attachment.RedeemAttachment(address_entry, secp_signatures);
         boolean success = false;
         try {
-            make(attachment, secretPhrase, Account.getId(Crypto.getPublicKey(secretPhrase)), Redeem.getClaimableAmount(address_entry), true);
+            make(attachment, secretPhrase, Account.getId(Crypto.getPublicKey(secretPhrase)), Redeem.getClaimableAmount(address_entry), true, graceblock);
             success = true;
         } catch (Exception e) {
             Logger.logErrorMessage(e.getMessage());
