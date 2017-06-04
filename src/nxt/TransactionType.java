@@ -361,13 +361,17 @@ public abstract class TransactionType {
                 return TransactionType.SUBTYPE_PAYMENT_REDEEM;
             }
 
+
             @Override
-            boolean isDuplicate(final Transaction transaction,
-                                final Map<TransactionType, Map<String, Integer>> duplicates) {
+            boolean isBlockDuplicate(Transaction transaction, Map<TransactionType, Map<String, Integer>> duplicates) {
                 final Attachment.RedeemAttachment attachment = (Attachment.RedeemAttachment) transaction
                         .getAttachment();
-                return TransactionType.isDuplicate(Payment.REDEEM, String.valueOf(attachment.getAddress()), duplicates,
-                        true);
+                boolean duplicate = TransactionType.isDuplicate(Payment.REDEEM, String.valueOf(attachment.getAddress()),
+                        duplicates, true);
+                if (!duplicate) {
+                    duplicate = Redeem.isAlreadyRedeemed(attachment.getAddress());
+                }
+                return duplicate;
             }
 
             @Override
