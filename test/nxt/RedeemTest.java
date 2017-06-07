@@ -1,6 +1,7 @@
 package nxt;
 
 import nxt.helpers.RedeemFunctions;
+import org.h2.schema.Constant;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -657,7 +658,18 @@ public class RedeemTest extends AbstractForgingTest {
             if(amounts.containsKey(addr) == false){
                 System.out.println("Failed to locate address: " + addr);
                 failedAtLeastOne = true;
+            }else {
+                // Now check amount
+                Double dbl = amounts.get(addr);
+                dbl = dbl * Constants.ONE_NXT;
+                Long doit = dbl.longValue();
 
+                // check for error greater than 1 XEL (weird, unvoids script produces inaccurate results so we can only check them to <1XEL precision. Should be fine as a test though)
+
+                if (Math.abs(doit - Redeem.amountsMainNet[i]) > Constants.ONE_NXT) {
+                    System.out.println("Wrong amount: " + addr + " should be " + doit + " but was " + Redeem.amountsMainNet[i] + " [error " + (Math.abs(doit - Redeem.amountsMainNet[i])) + "]");
+                    failedAtLeastOne = true;
+                }
             }
         }
 
