@@ -232,7 +232,7 @@ public class RedeemTest extends AbstractForgingTest {
         addUnvoidsCheck("14MKronX9pQJui5vVENveDqwKFE6bxWVk4",1546077.3518);
         addUnvoidsCheck("1Ahauxg3uxhcnxnSdmqKVhomz3MF61ynxA",1487727.1022);
         addUnvoidsCheck("1NUtkYVqjF6rmUkSrZEdmmRjcq3fgWAag3",1461472.7726);
-        addUnvoidsCheck("1BexuDc3UUpMRuxE9YV6TqVWTv9dhEvucF",1423054.1101);
+        addUnvoidsCheck("15Z5BggJhi1cgv4CV9TFGZ5WNbH7aF7hGf",1423054.1101);
         addUnvoidsCheck("1Kv6jbP9JWHagfrQjjfVzMcnKEGynZ7pf3",1329550.453);
         addUnvoidsCheck("1B7jF7NDfFSdToSiPvYWnHAxEUmNaMfYe",1312926.4877);
         addUnvoidsCheck("1EranfPkcFFAwbXDjzTix1m3AxkXjr7ZDD",1292602.4006);
@@ -665,6 +665,11 @@ public class RedeemTest extends AbstractForgingTest {
         addUnvoidsCheckExceptionWithMessage("1Cy2FFLrqDTFzeScfieawPafAXj2i8ybK3", "1ADgeJbeVaML6PyCTEXigJq2rLLhoTtxu1", "notsofast: Someone sometime promised to rescue this screwed coinbase owned address (wasn't me, but looks legit)");
         addUnvoidsCheckExceptionWithMessage("1HW2VtmAuomDjBPAqVVWPWfRuDx8S3qzMK","1Co9JKogApt7EfCr9n6GVxnEAL7nXT65Q2","Manual change request: 1Co9JKogApt7EfCr9n6GVxnEAL7nXT65Q2, signed \"Cryptodv\": HL5G1AGgEIMoSNChv5wgmOaSlBYULbNJQaVHAVPxc0Y1ZJcprYOn9QIj2kGrPpohwcgPy1KSuSNfdxV");
         addUnvoidsCheckExceptionWithMessage("1P4LiqFF5kP96cAuM2WoEVfyoiYYxnLhyU","","Refunded https://blockchain.info/de/tx/5312f91d3839125ac2fedcb205b9ae1939edc457f36b6509a909cc9d8cfd8f08, sent donation too late and changed his mind");
+        addUnvoidsCheckExceptionWithMessage("15Z5BggJhi1cgv4CV9TFGZ5WNbH7aF7hGf","1BexuDc3UUpMRuxE9YV6TqVWTv9dhEvucF"," I, the owner of address 15Z5BggJhi1cgv4CV9TFGZ5WNbH7aF7hGf with pubkey 0217e6fb61c54b5e8c9e81d99230bae79edb0430cbaa05f5d73382347f727d84b4, hereby agree to transfer my entire XEL holdings (7321,966975309) to pubkey 036755eb2c89cbfb4bf66e118f3ed166c17357c4163cf7c9c04d07cf3d81dddba6 which belongs to 1BexuDc3UUpMRuxE9YV6TqVWTv9dhEvucF. This transaction is irreversible.\n" +
+                "        Signature:   HzsStG9Jh9XIPp0YlPK7ajYgjwnN00rg9S7DxhE8VTIGaoay94juawjjATRWe+D8OHuXilMiRvOhUvm6mom3pVM=");
+
+
+
         boolean failedAtLeastOne = false;
 
 
