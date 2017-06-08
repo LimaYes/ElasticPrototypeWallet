@@ -7,9 +7,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 /*
 
@@ -208,6 +206,17 @@ public class RedeemTest extends AbstractForgingTest {
 
     public static void addUnvoidsCheck(String addr, double val){
         amounts.put(addr, val);
+    }
+
+    public static void addUnvoidsCheckExceptionWithMessage(String addr_old, String addr_new, String reason){
+        Assert.assertTrue(amounts.containsKey(addr_old));
+        Assert.assertFalse(amounts.containsKey(addr_new));
+        double amount = amounts.get(addr_old);
+        amounts.remove(addr_old);
+        if(addr_new.length()!=0) {
+            amounts.put(addr_new, amount);
+            Assert.assertTrue(amounts.containsKey(addr_new));
+        }
     }
 
     @Test
@@ -648,7 +657,33 @@ public class RedeemTest extends AbstractForgingTest {
         addUnvoidsCheck("1BDt2KN7GcBAvzKgTLUDTogg1zZiWKmhaW",1409.7787);
         addUnvoidsCheck("1HNPGJmb1bSUk6tsbJgsFjVc8iDJ2uNdgN",1262.6227);
 
+        // Add all exceptions here
+        // Old address, new address, reason for change - if new address is empty, entry gets removed
+
+        addUnvoidsCheckExceptionWithMessage("1Cy2FFLrqDTFzeScfieawPafAXj2i8ybK3", "1ADgeJbeVaML6PyCTEXigJq2rLLhoTtxu1", "notsofast: Someone sometime promised to rescue this screwed coinbase owned address (wasn't me, but looks legit)");
+        addUnvoidsCheckExceptionWithMessage("1HW2VtmAuomDjBPAqVVWPWfRuDx8S3qzMK","1Co9JKogApt7EfCr9n6GVxnEAL7nXT65Q2","Manual change request: 1Co9JKogApt7EfCr9n6GVxnEAL7nXT65Q2, signed \"Cryptodv\": HL5G1AGgEIMoSNChv5wgmOaSlBYULbNJQaVHAVPxc0Y1ZJcprYOn9QIj2kGrPpohwcgPy1KSuSNfdxV");
+        addUnvoidsCheckExceptionWithMessage("1P4LiqFF5kP96cAuM2WoEVfyoiYYxnLhyU","","Refunded https://blockchain.info/de/tx/5312f91d3839125ac2fedcb205b9ae1939edc457f36b6509a909cc9d8cfd8f08, sent donation too late and changed his mind");
         boolean failedAtLeastOne = false;
+
+
+        // check if unvoids elements are in Redeem class
+        Set<String> keySet = amounts.keySet();
+        Iterator<String> it = keySet.iterator();
+        while(it.hasNext()){
+            String addr = it.next();
+            boolean found = false;
+            for(int i=0;i<Redeem.listOfAddressesMainNet.length;++i)
+                if(Redeem.listOfAddressesMainNet[i].contains(addr))
+                    found=true;
+
+                if(found == false){
+                    System.out.println("Failed to forward-locate address: " + addr + ", it is not in Redeem class");
+                    failedAtLeastOne = true;
+                }
+        }
+
+
+        // Check if Redeem class elements are in unvoids list
         for(int i=0;i<Redeem.listOfAddressesMainNet.length; ++i){
             String addr = Redeem.listOfAddressesMainNet[i];
             if(addr.contains(";")){
@@ -656,7 +691,7 @@ public class RedeemTest extends AbstractForgingTest {
             }
 
             if(amounts.containsKey(addr) == false){
-                System.out.println("Failed to locate address: " + addr);
+                System.out.println("Failed to locate address: " + addr + ", it is not in unvoid's list");
                 failedAtLeastOne = true;
             }else {
                 // Now check amount
@@ -665,7 +700,6 @@ public class RedeemTest extends AbstractForgingTest {
                 Long doit = dbl.longValue();
 
                 // check for error greater than 1 XEL (weird, unvoids script produces inaccurate results so we can only check them to <1XEL precision. Should be fine as a test though)
-
                 if (Math.abs(doit - Redeem.amountsMainNet[i]) > Constants.ONE_NXT) {
                     System.out.println("Wrong amount: " + addr + " should be " + doit + " but was " + Redeem.amountsMainNet[i] + " [error " + (Math.abs(doit - Redeem.amountsMainNet[i])) + "]");
                     failedAtLeastOne = true;
@@ -673,6 +707,10 @@ public class RedeemTest extends AbstractForgingTest {
             }
         }
 
+        // Unvoids list and Redeem class list should have same lengths
+        Assert.assertEquals(Redeem.amountsMainNet.length, amounts.size());
+
+        // And make sure nothing went wrong before
         Assert.assertFalse(failedAtLeastOne);
     }
 
