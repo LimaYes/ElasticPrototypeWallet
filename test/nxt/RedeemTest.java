@@ -576,6 +576,7 @@ public class RedeemTest extends AbstractForgingTest {
         addUnvoidsCheck("1JFAUpkrjwU6cn8Af2npwaQ3c8b4eMsbSw",10162.8765);
         addUnvoidsCheck("1FTqLnbjCUiF84cbQMxaguQ8sU9rikKhwW",10152.8043);
         addUnvoidsCheck("17MLkiXDu4iFoaUoMPhaUrvjVSSMuBkJhH",10128.9075);
+        addUnvoidsCheck("3De41NGxSHuDgEcGXq8757HUK6m5tJfvdP", 10126.6165); // added manually
         addUnvoidsCheck("1Gc1Zz8VTrnTrq5DLa4wZ8CmD2AaSaUJ4t",9744.5829);
         addUnvoidsCheck("1B5WmWZi8twk83iaN3YbjmZEYgvQRU5D2P",9713.5762);
         addUnvoidsCheck("1815FyZMLvjTKiTSmxVhnw81imJZeScdtm",9600.9013);
@@ -636,6 +637,7 @@ public class RedeemTest extends AbstractForgingTest {
         addUnvoidsCheck("1G82zewBq8NzpC1gFHVsPRC6K67mFNon6a",2229.735);
         addUnvoidsCheck("1McnyFoBSC1eeBaXPA876MTP7PEQGrNAWc",2196.766);
         addUnvoidsCheck("1G1tyHcpFQzQyxMFxna8mB99kPfaQjdLPW",2109.0531);
+        addUnvoidsCheck("17kGd5dKGSssNn477Rjd8kmJdsrUSM626Q", 2082.1611); // added manually
         addUnvoidsCheck("1AokP9W85pRrH1TdvvfyAVuMvPUpi3Jyie",2057.1294);
         addUnvoidsCheck("1JuTYh6yGiSgdD5HebFYAgDrhzXN2vioR1",2047.6244);
         addUnvoidsCheck("1KFVdnGMVPQ2gGJJZNKWQq5pJP1yVjUcLb",2047.6244);
