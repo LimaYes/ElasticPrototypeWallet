@@ -2,9 +2,11 @@ package nxt;
 
 import nxt.crypto.Crypto;
 import nxt.util.Convert;
+import nxt.util.Logger;
 
 import java.security.MessageDigest;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -46,6 +48,8 @@ public class GenesisMiner {
                 .ecBlockHeight(0)
                 .ecBlockId(0)
                 .build(genesisSecretKey);
+
+
         transactions.add(transaction);
         transactions.sort(Comparator.comparingLong(Transaction::getId));
 
@@ -71,6 +75,7 @@ public class GenesisMiner {
         BlockImpl genesisBlock = new BlockImpl(-1, 0, 0, Constants.MAX_BALANCE_NQT, 0, transactions.size() * 128, digest.digest(),
                 genesisAccount, new byte[64],  null, transactions, genesisSecretKey);
 
+
         if(!genesisBlock.verifyBlockSignatureDebug()){
             throw new Exception("FAILED GENERATING!");
         }
@@ -85,6 +90,7 @@ public class GenesisMiner {
             String redeemAccountSecretKey = "";
 
             BlockImpl genesisBlock = getGenesis(genesisSecretKey, Account.getId(Crypto.getPublicKey(redeemAccountSecretKey)));
+            System.out.println("/*\n" + genesisBlock.getJSONObject().toJSONString() + "\n*/\n");
             System.out.println("public static final long GENESIS_BLOCK_ID = " + Long.toString(genesisBlock.getId()) + "L;");
             System.out.print("public static final byte[] GENESIS_BLOCK_SIGNATURE = { ");
             for(byte c :  genesisBlock.getBlockSignature()) System.out.format("(byte)0x%02x, ", c);
@@ -94,10 +100,32 @@ public class GenesisMiner {
             System.out.println("public static final long REDEEM_ID = " + Long.toString(Account.getId(Crypto.getPublicKey(redeemAccountSecretKey))) + "L;");
             System.out.println("public static final long[] GENESIS_RECIPIENTS = new long[]{Genesis.REDEEM_ID};");
             System.out.println("public static final int[] GENESIS_AMOUNTS = new int[]{" + Constants.MAX_BALANCE_NXT + "};");
-            /*byte[] checksum = genesisBlock.getChecksum(0,0);
-            System.out.print("CHECKSUM: { ");
-            for(byte c :  checksum) System.out.format("(byte)0x%02x, ", c);
-            System.out.println("};");*/
+
+
+            // Validate everything
+            List<TransactionImpl> transactions = new ArrayList<>();
+                TransactionImpl transaction = new TransactionImpl.BuilderImpl((byte) 0, Crypto.getPublicKey(genesisSecretKey),
+                        Constants.MAX_BALANCE_NXT * Constants.ONE_NXT, 0, (short) 0,
+                        Attachment.ORDINARY_PAYMENT)
+                        .timestamp(0)
+                        .recipientId(Account.getId(Crypto.getPublicKey(redeemAccountSecretKey)))
+                        .height(0)
+                        .ecBlockHeight(0)
+                        .ecBlockId(0)
+                        .build(genesisSecretKey);
+
+                transactions.add(transaction);
+
+            Collections.sort(transactions, Comparator.comparingLong(Transaction::getId));
+            MessageDigest digest = Crypto.sha256();
+            for (TransactionImpl transactiond : transactions) {
+                digest.update(transactiond.bytes());
+            }
+            BlockImpl genesisBlock2 = new BlockImpl(-1, 0, 0, Constants.MAX_BALANCE_NQT, 0, transactions.size() * 128, digest.digest(),
+                    Crypto.getPublicKey(genesisSecretKey), new byte[64],  genesisBlock.getBlockSignature(), null, transactions);
+
+            Logger.logInfoMessage("DOUBLE CHECK: Genesisblock should have ID = " + genesisBlock2.getStringId() + " [signed representation = " + genesisBlock.getId() + "]");
+
         } catch (NxtException.ValidationException e) {
             throw new RuntimeException(e.toString(), e);
         }
