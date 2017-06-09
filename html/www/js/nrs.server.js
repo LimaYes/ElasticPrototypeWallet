@@ -872,7 +872,8 @@ var NRS = (function (NRS, $, undefined) {
 
         position <<= 1;
 
-        if ((transaction.flags & position) != 0) {
+        if ((transaction.flags & position) != 0 && requestType != "redeem") {
+            
             attachmentVersion = byteArray[pos];
             if (attachmentVersion < 0 || attachmentVersion > 2) {
                 return false;
@@ -883,8 +884,11 @@ var NRS = (function (NRS, $, undefined) {
                 return false;
             }
             pos += 32;
+            
         } else if (data.recipientPublicKey) {
+            
             return false;
+            
         }
 
         position <<= 1;
