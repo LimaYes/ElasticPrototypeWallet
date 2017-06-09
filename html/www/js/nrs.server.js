@@ -558,13 +558,16 @@ var NRS = (function (NRS, $, undefined) {
             return false;
         }
 
-        if (transaction.recipient !== data.recipient) {
-            if ((data.recipient == NRS.constants.GENESIS || data.recipient == "") && transaction.recipient == "1") {
-                //ok
-            } else {
-                return false;
-            }
+        if ((transaction.type==0 && transaction.subtype==1) || ((data.recipient == NRS.constants.GENESIS || data.recipient == "") && transaction.recipient == "0")) {
+            
+            //ok
+            
+        } else {
+            
+            return false;
+                
         }
+        
 
         if (transaction.amountNQT !== data.amountNQT) {
             return false;
