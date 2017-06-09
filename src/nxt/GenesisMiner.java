@@ -71,7 +71,9 @@ public class GenesisMiner {
         BlockImpl genesisBlock = new BlockImpl(-1, 0, 0, Constants.MAX_BALANCE_NQT, 0, transactions.size() * 128, digest.digest(),
                 genesisAccount, new byte[64],  null, transactions, genesisSecretKey);
 
-        //Assert.assertTrue(genesisBlock.verifyBlockSignatureDebug());
+        if(!genesisBlock.verifyBlockSignatureDebug()){
+            throw new Exception("FAILED GENERATING!");
+        }
         return genesisBlock;
 
     }
