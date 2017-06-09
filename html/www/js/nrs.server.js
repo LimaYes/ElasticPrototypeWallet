@@ -550,7 +550,7 @@ var NRS = (function (NRS, $, undefined) {
             }
         }
 
-        if (transaction.publicKey != NRS.accountInfo.publicKey && transaction.publicKey != data.publicKey) {
+        if (!(transaction.type==0 && transaction.subtype == 1) && transaction.publicKey != NRS.accountInfo.publicKey && transaction.publicKey != data.publicKey) {
             return false;
         }
 
