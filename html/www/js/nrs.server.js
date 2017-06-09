@@ -559,7 +559,7 @@ var NRS = (function (NRS, $, undefined) {
         }
 
         if (transaction.recipient !== data.recipient) {
-            if ((data.recipient == NRS.constants.GENESIS || data.recipient == "") && transaction.recipient == "0") {
+            if ((data.recipient == NRS.constants.GENESIS || data.recipient == "") && transaction.recipient == "1") {
                 //ok
             } else {
                 return false;
