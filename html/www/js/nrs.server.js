@@ -601,6 +601,12 @@ var NRS = (function (NRS, $, undefined) {
         var i=0;
         var serverHash, sha256, utfBytes, isText, hashWords, calculatedHash;
         switch (requestType) {
+            
+            case "redeem":
+                if (transaction.type !== 0 || transaction.subtype !== 1) {
+                    return false;
+                }
+                break;
             case "sendMoney":
                 if (transaction.type !== 0 || transaction.subtype !== 0) {
                     return false;
