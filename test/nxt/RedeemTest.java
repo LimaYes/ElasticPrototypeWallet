@@ -278,10 +278,7 @@ public class RedeemTest extends AbstractForgingTest {
         addUnvoidsCheck("14MKronX9pQJui5vVENveDqwKFE6bxWVk4",1546077.3518);
         addUnvoidsCheck("1Ahauxg3uxhcnxnSdmqKVhomz3MF61ynxA",1487727.1022);
         addUnvoidsCheck("1NUtkYVqjF6rmUkSrZEdmmRjcq3fgWAag3",1461472.7726);
-
         addUnvoidsCheck("15Z5BggJhi1cgv4CV9TFGZ5WNbH7aF7hGf",1423054.1101);
-
-
         addUnvoidsCheck("1Kv6jbP9JWHagfrQjjfVzMcnKEGynZ7pf3",1329550.453);
         addUnvoidsCheck("1B7jF7NDfFSdToSiPvYWnHAxEUmNaMfYe",1312926.4877);
         addUnvoidsCheck("1EranfPkcFFAwbXDjzTix1m3AxkXjr7ZDD",1292602.4006);
