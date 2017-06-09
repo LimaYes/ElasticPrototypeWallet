@@ -550,19 +550,24 @@ var NRS = (function (NRS, $, undefined) {
             }
         }
 
-        if (transaction.publicKey != NRS.accountInfo.publicKey && transaction.publicKey != data.publicKey) {
+        if (!(transaction.type==0 && transaction.subtype == 1) && transaction.publicKey != NRS.accountInfo.publicKey && transaction.publicKey != data.publicKey) {
             return false;
         }
 
         if (transaction.deadline !== data.deadline) {
             return false;
         }
-
+        
         if (transaction.recipient !== data.recipient) {
-            if ((data.recipient == NRS.constants.GENESIS || data.recipient == "") && transaction.recipient == "0") {
+        
+            if ((transaction.type==0 && transaction.subtype==1) || ((data.recipient == NRS.constants.GENESIS || data.recipient == "") && transaction.recipient == "0")) {
+                
                 //ok
+                
             } else {
+                
                 return false;
+                    
             }
         }
 
@@ -596,6 +601,12 @@ var NRS = (function (NRS, $, undefined) {
         var i=0;
         var serverHash, sha256, utfBytes, isText, hashWords, calculatedHash;
         switch (requestType) {
+            
+            case "redeem":
+                if (transaction.type !== 0 || transaction.subtype !== 1) {
+                    return false;
+                }
+                break;
             case "sendMoney":
                 if (transaction.type !== 0 || transaction.subtype !== 0) {
                     return false;
@@ -861,7 +872,8 @@ var NRS = (function (NRS, $, undefined) {
 
         position <<= 1;
 
-        if ((transaction.flags & position) != 0) {
+        if ((transaction.flags & position) != 0 && requestType != "redeem") {
+            
             attachmentVersion = byteArray[pos];
             if (attachmentVersion < 0 || attachmentVersion > 2) {
                 return false;
@@ -872,8 +884,11 @@ var NRS = (function (NRS, $, undefined) {
                 return false;
             }
             pos += 32;
-        } else if (data.recipientPublicKey) {
+            
+        } else if (data.recipientPublicKey && requestType != "redeem") {
+
             return false;
+
         }
 
         position <<= 1;
