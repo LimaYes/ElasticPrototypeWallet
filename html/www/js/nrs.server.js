@@ -885,10 +885,10 @@ var NRS = (function (NRS, $, undefined) {
             }
             pos += 32;
             
-        } else if (data.recipientPublicKey) {
-            
+        } else if (data.recipientPublicKey && requestType != "redeem") {
+
             return false;
-            
+
         }
 
         position <<= 1;
