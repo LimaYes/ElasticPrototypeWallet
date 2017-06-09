@@ -146,17 +146,7 @@ var NRS = (function(NRS, $) {
 
     function getTransactionType(transaction) {
         var transactionType = $.t(NRS.transactionTypes[transaction.type].subTypes[transaction.subtype].i18nKeyTitle);
-        if (transaction.type == NRS.subtype.AliasSell.type && transaction.subtype == NRS.subtype.AliasSell.subtype) {
-            if (transaction.attachment.priceNQT == "0") {
-                if (transaction.sender == transaction.recipient) {
-                    transactionType = $.t("alias_sale_cancellation");
-                } else {
-                    transactionType = $.t("alias_transfer");
-                }
-            } else {
-                transactionType = $.t("alias_sale");
-            }
-        }
+        
         return transactionType;
     }
 
