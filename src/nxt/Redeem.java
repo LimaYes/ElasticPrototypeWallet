@@ -227,7 +227,7 @@ public final class Redeem {
 
 
     public static String getSignMessage(long nqt, String address, long receipient) {
-       return "I confirm to redeem "
+       return "Hereby, I confirm to redeem "
                 + String.valueOf(nqt).replace("L", "") + " NQT-XEL from genesis entry "
                 + address + " to account "
                 + Long.toUnsignedString(receipient);
