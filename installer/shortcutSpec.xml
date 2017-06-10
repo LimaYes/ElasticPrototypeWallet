@@ -1,13 +1,13 @@
 <shortcuts>
 	<skipIfNotSupported/>
 	<defaultCurrentUser/>
-	<programGroup defaultName="NXT" location="startMenu"/>
+	<programGroup defaultName="Elastic Wallet" location="startMenu"/>
 	<shortcut
-		name="Nxt Server"
-		target="$INSTALL_PATH\nxt.exe"
+		name="Elastic Server"
+		target="$INSTALL_PATH\elastic.exe"
 		commandLine=""
 		workingDirectory="$INSTALL_PATH"
-        description="Start NXT server"
+        description="Start XEL server"
 		iconFile="$INSTALL_PATH\html\www\favicon.ico"
         iconIndex="0"
         initialState="normal"
@@ -18,11 +18,11 @@
 		startup="no">
 	</shortcut>	
 	<shortcut
-		name="Nxt Wallet"
-		target="http://localhost:7876/index.html"
+		name="Elastic Wallet"
+		target="http://localhost:17876/index.html"
 		commandLine=""
 		workingDirectory="$INSTALL_PATH"
-        description="Launch NXT wallet in browser"
+        description="Launch XEL wallet in browser"
 		iconFile="$INSTALL_PATH\html\www\favicon.ico"
         iconIndex="0"
         initialState="normal"

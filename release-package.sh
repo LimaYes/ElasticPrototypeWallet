@@ -91,30 +91,30 @@ echo creating sh package
 echo "#!/bin/sh\nexec java -jar \"\${0}\"\n\n" > ${PACKAGE}.sh
 cat ${PACKAGE}.jar >> ${PACKAGE}.sh
 chmod a+rx ${PACKAGE}.sh
-#rm -f ${PACKAGE}.jar
+rm -f ${PACKAGE}.jar
 
 echo creating change log ${CHANGELOG}
 echo "Release $1" > ${CHANGELOG}
 echo >> ${CHANGELOG}
-echo "https://github.com/OrdinaryDude/Elastic-XEL-Litewallet/raw/master/releases/${PACKAGE}.zip" >> ${CHANGELOG}
+echo "https://github.com/unvo1d/Elastic-XEL-Litewallet/raw/master/releases/${PACKAGE}.zip" >> ${CHANGELOG}
 echo >> ${CHANGELOG}
 echo "sha256:" >> ${CHANGELOG}
 echo >> ${CHANGELOG}
 sha256sum ${PACKAGE}.zip >> ${CHANGELOG}
 
 echo >> ${CHANGELOG}
-echo "https://github.com/OrdinaryDude/Elastic-XEL-Litewallet/raw/master/releases/${PACKAGE}.sh" >> ${CHANGELOG}
+echo "https://github.com/unvo1d/Elastic-XEL-Litewallet/raw/master/releases/${PACKAGE}.sh" >> ${CHANGELOG}
 echo >> ${CHANGELOG}
 echo "sha256:" >> ${CHANGELOG}
 echo >> ${CHANGELOG}
 sha256sum ${PACKAGE}.sh >> ${CHANGELOG}
 
 echo >> ${CHANGELOG}
-echo "https://github.com/OrdinaryDude/Elastic-XEL-Litewallet/raw/master/releases/${PACKAGE}.exe" >> ${CHANGELOG}
+echo "https://github.com/unvo1d/Elastic-XEL-Litewallet/raw/master/releases/${PACKAGE}.exe" >> ${CHANGELOG}
 echo >> ${CHANGELOG}
 #echo "sha256:" >> ${CHANGELOG}
 #sha256sum ${PACKAGE}.exe >> ${CHANGELOG}
-echo "https://github.com/OrdinaryDude/Elastic-XEL-Litewallet/raw/master/releases/elastic-installer-${VERSION}.dmg" >> ${CHANGELOG}
+echo "https://github.com/unvo1d/Elastic-XEL-Litewallet/raw/master/releases/elastic-installer-${VERSION}.dmg" >> ${CHANGELOG}
 echo >> ${CHANGELOG}
 
 echo "The exe, dmg, and sh packages must have a digital signature by \"Stichting XEL\"." >> ${CHANGELOG}
@@ -141,7 +141,6 @@ gpg --detach-sign --armour --sign-with F34DF1950B5765D081318AD83C15F830ECB66399 
 gpg --clearsign --sign-with F34DF1950B5765D081318AD83C15F830ECB66399 ${CHANGELOG}
 rm -f ${CHANGELOG}
 gpg -v ${PACKAGE}.zip.asc
-gpg -v ${PACKAGE}.jar.asc
 gpg -v ${PACKAGE}.sh.asc
 #gpgv ${PACKAGE}.exe.asc ${PACKAGE}.exe
 
@@ -149,7 +148,6 @@ gpg -v ${CHANGELOG}.asc  ${CHANGELOG}
 sha256sum -c ${CHANGELOG}.asc
 jarsigner -verify ${PACKAGE}.zip
 jarsigner -verify ${PACKAGE}.sh
-jarsigner -verify ${PACKAGE}.jar
 
 
 mv ${PACKAGE}* releases/

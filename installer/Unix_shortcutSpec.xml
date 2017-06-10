@@ -5,15 +5,15 @@
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   xsi:schemaLocation="http://izpack.org/schema/shortcuts http://izpack.org/schema/5.0/izpack-shortcuts-5.0.xsd">
 
-    <programGroup defaultName="NXT" location="applications"/>
+    <programGroup defaultName="Elastic" location="applications"/>
 
     <shortcut
-            name="Nxt Start"
+            name="Elastic Start Daemon"
             programGroup="yes"
             desktop="yes"
             target="$INSTALL_PATH/start.sh"
             workingDirectory="$INSTALL_PATH"
-            description="Start Nxt"
+            description="Start XEL"
             iconFile="$INSTALL_PATH/html/www/img/nxt-icon-32x32.png"
             type="Application"
             encoding="UTF-8"
@@ -22,12 +22,12 @@
     </shortcut>
 
     <shortcut
-            name="Nxt Stop"
+            name="Elastic Stop Daemon"
             programGroup="yes"
             desktop="yes"
             target="$INSTALL_PATH/stop.sh"
             workingDirectory="$INSTALL_PATH"
-            description="Shutdown Nxt"
+            description="Shutdown XEL"
             iconFile="$INSTALL_PATH/html/www/img/nxt-icon-32x32.png"
             type="Application"
             encoding="UTF-8"
@@ -35,23 +35,24 @@
             createForAll="true">
     </shortcut>
 
-    <!--
+    
     <shortcut
-            name="Nxt Browser"
+            name="Elastic Desktop Wallet"
             programGroup="yes"
-            desktop="no"
+            desktop="yes"
+            target="$INSTALL_PATH/run-desktop.sh"
             workingDirectory="$INSTALL_PATH"
+            description="Start XEL"
             iconFile="$INSTALL_PATH/html/www/img/nxt-icon-32x32.png"
-            url="http://localhost:7876/index.html"
-            type="link"
+            type="Application"
             encoding="UTF-8"
             categories="Application;Network;"
-            description="Open Nxt wallet in browser">
+            createForAll="true">
     </shortcut>
-    -->
+    
 
     <shortcut
-            name="Nxt Uninstaller"
+            name="Elastic Uninstaller"
             programGroup="yes"
             desktop="no"
             target="java"
@@ -62,7 +63,7 @@
             encoding="UTF-8"
             categories="Application;Network;"
             createForAll="true"
-            description="Uninstall Nxt">
+            description="Uninstall XEL">
     </shortcut>
 
 
