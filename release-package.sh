@@ -14,7 +14,7 @@ FILES="changelogs conf html lib resource contrib"
 FILES="${FILES} elastic.exe elasticservice.exe"
 FILES="${FILES} 3RD-PARTY-LICENSES.txt AUTHORS.txt LICENSE.txt"
 FILES="${FILES} DEVELOPERS-GUIDE.md OPERATORS-GUIDE.md README.md README.txt USERS-GUIDE.md"
-FILES="${FILES} run.bat run.sh run-tor.sh run-desktop.sh start.sh stop.sh compact.sh compact.bat sign.sh"
+FILES="${FILES} run.bat run.sh  run-desktop.sh start.sh stop.sh compact.sh compact.bat sign.sh"
 FILES="${FILES} elastic.policy elasticdesktop.policy Elastic_Wallet.url Dockerfile"
 
 unix2dos *.bat
@@ -63,6 +63,8 @@ echo generate jar files
 ../jar.sh
 echo package installer Jar
 ../installer/build-installer.sh ../${PACKAGE}
+
+
 #echo create installer exe
 #../installer/build-exe.bat ${PACKAGE}
 echo create installer zip
@@ -83,39 +85,39 @@ unix2dos changelog-full.txt
 #../jarsigner.sh ${PACKAGE}.zip
 
 echo signing jar package
-../jarsigner.sh ${PACKAGE}.jar
+jarsigner ${PACKAGE}.jar mykey
 
 echo creating sh package
 echo "#!/bin/sh\nexec java -jar \"\${0}\"\n\n" > ${PACKAGE}.sh
 cat ${PACKAGE}.jar >> ${PACKAGE}.sh
 chmod a+rx ${PACKAGE}.sh
-rm -f ${PACKAGE}.jar
+#rm -f ${PACKAGE}.jar
 
 echo creating change log ${CHANGELOG}
 echo "Release $1" > ${CHANGELOG}
 echo >> ${CHANGELOG}
-echo "https://bitbucket.org/JeanLucPicard/nxt/downloads/${PACKAGE}.zip" >> ${CHANGELOG}
+echo "https://github.com/OrdinaryDude/Elastic-XEL-Litewallet/raw/master/releases/${PACKAGE}.zip" >> ${CHANGELOG}
 echo >> ${CHANGELOG}
 echo "sha256:" >> ${CHANGELOG}
 echo >> ${CHANGELOG}
 sha256sum ${PACKAGE}.zip >> ${CHANGELOG}
 
 echo >> ${CHANGELOG}
-echo "https://bitbucket.org/JeanLucPicard/nxt/downloads/${PACKAGE}.sh" >> ${CHANGELOG}
+echo "https://github.com/OrdinaryDude/Elastic-XEL-Litewallet/raw/master/releases/${PACKAGE}.sh" >> ${CHANGELOG}
 echo >> ${CHANGELOG}
 echo "sha256:" >> ${CHANGELOG}
 echo >> ${CHANGELOG}
 sha256sum ${PACKAGE}.sh >> ${CHANGELOG}
 
 echo >> ${CHANGELOG}
-echo "https://bitbucket.org/JeanLucPicard/nxt/downloads/${PACKAGE}.exe" >> ${CHANGELOG}
+echo "https://github.com/OrdinaryDude/Elastic-XEL-Litewallet/raw/master/releases/${PACKAGE}.exe" >> ${CHANGELOG}
 echo >> ${CHANGELOG}
 #echo "sha256:" >> ${CHANGELOG}
 #sha256sum ${PACKAGE}.exe >> ${CHANGELOG}
-echo "https://bitbucket.org/JeanLucPicard/nxt/downloads/elastic-installer-${VERSION}.dmg" >> ${CHANGELOG}
+echo "https://github.com/OrdinaryDude/Elastic-XEL-Litewallet/raw/master/releases/elastic-installer-${VERSION}.dmg" >> ${CHANGELOG}
 echo >> ${CHANGELOG}
 
-echo "The exe, dmg, and sh packages must have a digital signature by \"Stichting NXT\"." >> ${CHANGELOG}
+echo "The exe, dmg, and sh packages must have a digital signature by \"Stichting XEL\"." >> ${CHANGELOG}
 
 if [ "${OBFUSCATE}" = "obfuscate" ];
 then
@@ -131,18 +133,24 @@ echo >> ${CHANGELOG}
 cat changelogs/${CHANGELOG} >> ${CHANGELOG}
 echo >> ${CHANGELOG}
 
-gpg2 --detach-sign --armour --sign-with 424AC45B ${PACKAGE}.zip
-gpg2 --detach-sign --armour --sign-with 424AC45B ${PACKAGE}.sh
+gpg --detach-sign --armour --sign-with F34DF1950B5765D081318AD83C15F830ECB66399 ${PACKAGE}.zip
+gpg --detach-sign --armour --sign-with F34DF1950B5765D081318AD83C15F830ECB66399 ${PACKAGE}.jar
+gpg --detach-sign --armour --sign-with F34DF1950B5765D081318AD83C15F830ECB66399 ${PACKAGE}.sh
 #gpg --detach-sign --armour --sign-with 0x811D6940E1E4240C ${PACKAGE}.exe
 
-gpg2 --clearsign --sign-with 424AC45B ${CHANGELOG}
+gpg --clearsign --sign-with F34DF1950B5765D081318AD83C15F830ECB66399 ${CHANGELOG}
 rm -f ${CHANGELOG}
-gpgv2 ${PACKAGE}.zip.asc ${PACKAGE}.zip
-gpgv2 ${PACKAGE}.sh.asc ${PACKAGE}.sh
+gpg -v ${PACKAGE}.zip.asc
+gpg -v ${PACKAGE}.jar.asc
+gpg -v ${PACKAGE}.sh.asc
 #gpgv ${PACKAGE}.exe.asc ${PACKAGE}.exe
-gpgv2 ${CHANGELOG}.asc
+
+gpg -v ${CHANGELOG}.asc  ${CHANGELOG}
 sha256sum -c ${CHANGELOG}.asc
-#jarsigner -verify ${PACKAGE}.zip
+jarsigner -verify ${PACKAGE}.zip
 jarsigner -verify ${PACKAGE}.sh
+jarsigner -verify ${PACKAGE}.jar
 
 
+mv ${PACKAGE}* releases/
+git add releases/${PACKAGE}*

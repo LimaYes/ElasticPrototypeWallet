@@ -6,7 +6,7 @@
     <info>
         <appname>Elastic</appname>
         <appversion>@{runtime.nxt.version}</appversion>
-        <url>https://elastic.pw</url>
+        <url>https://elasticexplorer.org</url>
         <run-privileged condition="izpack.windowsinstall"/>
     </info>
 
@@ -83,7 +83,7 @@
     </locale>
 
     <resources>
-        <res id="InfoPanel.info" src="changelogs/nxt-client-@{runtime.nxt.version}.changelog.txt" parse="yes"/>
+        <res id="InfoPanel.info" src="changelogs/elastic-client-@{runtime.nxt.version}.changelog.txt" parse="yes"/>
         <res id="LicencePanel.licence" src="LICENSE.txt"/>
         <res id="Installer.image" src="html/www/img/installer_left_pane.png"/>
         <res id="shortcutSpec.xml" src="../installer/shortcutSpec.xml"/>
@@ -94,7 +94,7 @@
     <variables>
         <variable name="$InstallerFrame.logfilePath" value="default"/>
         <variable name="DesktopShortcutCheckboxEnabled" value="true"/>
-        <variable name="TargetPanel.dir.mac" value="/Applications/nxt.app"/>
+        <variable name="TargetPanel.dir.mac" value="/Applications/elastic.app"/>
     </variables>
 
     <panels>
