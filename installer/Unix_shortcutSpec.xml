@@ -35,22 +35,6 @@
             createForAll="true">
     </shortcut>
 
-    
-    <shortcut
-            name="Elastic Desktop Wallet"
-            programGroup="yes"
-            desktop="yes"
-            target="$INSTALL_PATH/run-desktop.sh"
-            workingDirectory="$INSTALL_PATH"
-            description="Start XEL"
-            iconFile="$INSTALL_PATH/html/www/img/nxt-icon-32x32.png"
-            type="Application"
-            encoding="UTF-8"
-            categories="Application;Network;"
-            createForAll="true">
-    </shortcut>
-    
-
     <shortcut
             name="Elastic Uninstaller"
             programGroup="yes"
