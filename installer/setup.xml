@@ -6,7 +6,7 @@
     <info>
         <appname>Elastic</appname>
         <appversion>@{runtime.nxt.version}</appversion>
-        <url>https://elastic.pw</url>
+        <url>https://elasticexplorer.org</url>
         <run-privileged condition="izpack.windowsinstall"/>
     </info>
 
@@ -55,35 +55,10 @@
 
     <locale>
         <langpack iso3="eng"/>
-        <langpack iso3="fra"/>
-        <langpack iso3="deu"/>
-        <langpack iso3="ita"/>
-        <langpack iso3="jpn"/>
-        <langpack iso3="spa"/>
-        <langpack iso3="dan"/>
-        <langpack iso3="ell"/>
-        <langpack iso3="cat"/>
-        <langpack iso3="nld"/>
-        <langpack iso3="fin"/>
-        <langpack iso3="swe"/>
-        <langpack iso3="prt"/>
-        <langpack iso3="pol"/>
-        <langpack iso3="rus"/>
-        <langpack iso3="ukr"/>
-        <langpack iso3="hun"/>
-        <langpack iso3="slk"/>
-        <langpack iso3="ron"/>
-        <langpack iso3="msa"/>
-        <langpack iso3="nor"/>
-        <langpack iso3="chn"/>
-        <langpack iso3="srp"/>
-        <langpack iso3="ces"/>
-        <langpack iso3="kor"/>
-        <langpack iso3="glg"/>
     </locale>
 
     <resources>
-        <res id="InfoPanel.info" src="changelogs/nxt-client-@{runtime.nxt.version}.changelog.txt" parse="yes"/>
+        <res id="InfoPanel.info" src="changelogs/elastic-client-@{runtime.nxt.version}.changelog.txt" parse="yes"/>
         <res id="LicencePanel.licence" src="LICENSE.txt"/>
         <res id="Installer.image" src="html/www/img/installer_left_pane.png"/>
         <res id="shortcutSpec.xml" src="../installer/shortcutSpec.xml"/>
@@ -94,7 +69,7 @@
     <variables>
         <variable name="$InstallerFrame.logfilePath" value="default"/>
         <variable name="DesktopShortcutCheckboxEnabled" value="true"/>
-        <variable name="TargetPanel.dir.mac" value="/Applications/nxt.app"/>
+        <variable name="TargetPanel.dir.mac" value="/Applications/elastic.app"/>
     </variables>
 
     <panels>
@@ -189,13 +164,13 @@
         <pack name="server.mac" os="mac_osx" required="yes" uninstall="false">
             <description>Mac Specific Resources</description>
             <fileset dir="resource/mac/Contents" targetdir="${INSTALL_PATH}/Contents" override="true"/>		
-			<parsable targetfile="${INSTALL_PATH}/Contents/MacOS/nxt"/>
-			<executable targetfile="${INSTALL_PATH}/Contents/MacOS/nxt"/>		
+			<parsable targetfile="${INSTALL_PATH}/Contents/MacOS/xel"/>
+			<executable targetfile="${INSTALL_PATH}/Contents/MacOS/xel"/>		
 		</pack>
 
         <pack name="jre.mac" os="mac_osx" required="yes" uninstall="false">
             <description>Java 64 bit for Mac</description>
-            <fileset dir="../jre" targetdir="${INSTALL_PATH}/jre" override="true"/>
+            <fileset dir="../jre-macosx" targetdir="${INSTALL_PATH}/jre" override="true"/>
             <executable targetfile="${INSTALL_PATH}/jre/bin/java" failure="warn" keep="true"/>
         </pack>
 
