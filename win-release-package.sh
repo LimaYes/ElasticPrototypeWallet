@@ -62,7 +62,7 @@ echo generate jar files
 echo package installer Jar
 ../installer/build-installer.sh ../${PACKAGE}
 echo create installer exe
-../installer/build-exe.bat ${PACKAGE}
+../installer/build-exe.sh ${PACKAGE}
 echo create installer zip
 cd -
 zip -q -X -r ${PACKAGE}.zip nxt -x \*/.idea/\* \*/.gitignore \*/.git/\* \*.iml nxt/conf/nxt.properties nxt/conf/logging.properties nxt/conf/localstorage/\*
@@ -70,11 +70,11 @@ rm -rf nxt
 
 echo creating change log ${CHANGELOG}
 echo -e "Release $1\n" > ${CHANGELOG}
-echo -e "https://github.com/OrdinaryDude/Elastic-XEL-Litewallet/raw/master/releases/${PACKAGE}.exe\n" >> ${CHANGELOG}
+echo -e "https://github.com/unvo1d/Elastic-XEL-Litewallet/raw/master/releases/${PACKAGE}.exe\n" >> ${CHANGELOG}
 echo -e "sha256:\n" >> ${CHANGELOG}
 sha256sum ${PACKAGE}.exe >> ${CHANGELOG}
 
-echo -e "https://github.com/OrdinaryDude/Elastic-XEL-Litewallet/raw/master/releases/${PACKAGE}.jar\n" >> ${CHANGELOG}
+echo -e "https://github.com/unvo1d/Elastic-XEL-Litewallet/raw/master/releases/${PACKAGE}.jar\n" >> ${CHANGELOG}
 echo -e "sha256:\n" >> ${CHANGELOG}
 sha256sum ${PACKAGE}.jar >> ${CHANGELOG}
 

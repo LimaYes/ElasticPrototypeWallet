@@ -1,6 +1,6 @@
 #!/bin/sh
 CP="lib/*;classes"
-SP=src/java/
+SP=src/
 
 /bin/rm -rf html/doc/*
 
