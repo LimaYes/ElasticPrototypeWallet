@@ -4,7 +4,7 @@
 	<programGroup defaultName="Elastic Wallet" location="startMenu"/>
 	<shortcut
 		name="Elastic Server Desktop Wallet"
-		target="$INSTALL_PATH\run.bat"
+		target="$INSTALL_PATH\elastic.exe"
 		commandLine=""
 		workingDirectory="$INSTALL_PATH"
         description="Start XEL Desktop Wallet"
