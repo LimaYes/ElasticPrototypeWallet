@@ -31,6 +31,6 @@ grant codeBase "file:lib/-" {
   permission java.lang.reflect.ReflectPermission "suppressAccessChecks";
 };
 
-grant codeBase "file:nxt.jar" {
+grant codeBase "file:elastic.jar" {
   permission java.lang.reflect.ReflectPermission "suppressAccessChecks";
 };

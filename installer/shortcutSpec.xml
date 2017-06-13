@@ -3,11 +3,11 @@
 	<defaultCurrentUser/>
 	<programGroup defaultName="Elastic Wallet" location="startMenu"/>
 	<shortcut
-		name="Elastic Server"
-		target="$INSTALL_PATH\elastic.exe"
+		name="Elastic Server Desktop Wallet"
+		target="$INSTALL_PATH\run.bat"
 		commandLine=""
 		workingDirectory="$INSTALL_PATH"
-        description="Start XEL server"
+        description="Start XEL Desktop Wallet"
 		iconFile="$INSTALL_PATH\html\www\favicon.ico"
         iconIndex="0"
         initialState="normal"
@@ -17,19 +17,5 @@
         startMenu="no"
 		startup="no">
 	</shortcut>	
-	<shortcut
-		name="Elastic Web Wallet"
-		target="http://localhost:17876/index.html"
-		commandLine=""
-		workingDirectory="$INSTALL_PATH"
-        description="Launch XEL wallet in browser"
-		iconFile="$INSTALL_PATH\html\www\favicon.ico"
-        iconIndex="0"
-        initialState="normal"
-        programGroup="yes"
-		desktop="yes"
-        applications="no"
-        startMenu="no"
-		startup="no">
-	</shortcut>	
+	
 </shortcuts>
