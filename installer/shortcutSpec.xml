@@ -3,7 +3,7 @@
 	<defaultCurrentUser/>
 	<programGroup defaultName="Elastic Wallet" location="startMenu"/>
 	<shortcut
-		name="Elastic Server Desktop Wallet"
+		name="Elastic Desktop Wallet"
 		target="$INSTALL_PATH\elastic.exe"
 		commandLine=""
 		workingDirectory="$INSTALL_PATH"
