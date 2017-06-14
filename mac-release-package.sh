@@ -16,8 +16,6 @@ MACVERSION=${VERSION}
 fi
 echo MACVERSION="${MACVERSION}"
 
-cp installer/lib/JavaExe.exe elastic.exe
-cp installer/lib/JavaExe.exe elasticservice.exe
 
 FILES="changelogs conf html lib resource contrib"
 FILES="${FILES} 3RD-PARTY-LICENSES.txt AUTHORS.txt LICENSE.txt"
@@ -42,6 +40,8 @@ echo javadoc
 ./javadoc.sh
 
 echo copy resources
+cp installer/lib/JavaExe.exe elastic.exe
+cp installer/lib/JavaExe.exe elasticservice.exe
 cp -a ${FILES} nxt
 cp -a logs/placeholder.txt nxt/logs
 echo gzip
