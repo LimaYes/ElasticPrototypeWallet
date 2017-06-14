@@ -21,7 +21,7 @@ FILES="changelogs conf html lib resource contrib"
 FILES="${FILES} 3RD-PARTY-LICENSES.txt AUTHORS.txt LICENSE.txt"
 FILES="${FILES} DEVELOPERS-GUIDE.md OPERATORS-GUIDE.md README.md README.txt USERS-GUIDE.md"
 FILES="${FILES} run.sh run-desktop.sh start.sh stop.sh compact.sh sign.sh"
-FILES="${FILES} Elastic_Wallet.url Dockerfile elastic.policy elasticdesktop.policy elastic.exe elasticdesktop.exe"
+FILES="${FILES} Elastic_Wallet.url Dockerfile elastic.policy elasticdesktop.policy elastic.exe elasticservice.exe"
 
 echo compile
 ./compile.sh
