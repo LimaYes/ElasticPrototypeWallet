@@ -1,0 +1,21 @@
+FIRST PREPARATION (ONLY DONE ONCE)
+==================================
+
+1. Install Windows
+2. Install JAva JDK 1.8 from Sun and make sure that JDK bin/ directory is in PATH (usually it is not)
+3. Install Git for Windows
+4. Install TortoiseGIT
+5. Install Cygwin with at least "zip", "unzip" and the "python2" and "python-pip2" packages. All selectable in the cygwin setup, if you cant find them make sure to set the View from "Pending" to "Not Installed"!
+6. Get a cup of coffee and enjoy your 5 minute break
+7. Checkout the Litewallet
+8. Create a folder called "jre" in the Elastic-XEL-Lightwallet/ root folder. Also create a "jre-macosx" folder which will remain empty.
+9. Download 32bit JRE 1.8 from Sun in .tar.gz format (for Windows: jre-8u131-windows-i586.tar.gz) and unzip the content of jre1.8.0_131\ into the jre/ folder you just created. In a way that you
+
+DO NOT HAVE:
+jre\jre1.8.0_131\bin or jre\jre1.8.0_131\lib
+BUT INSTEAD YOU HAVE
+jre\bin\ or jre\lib\
+
+REPEATED STEP FOR EVERY NEW VERSION
+===================================
+1. In Cygwin, run "./win-release-package.sh 3.1.0" when 3.1.0 is the current version number
