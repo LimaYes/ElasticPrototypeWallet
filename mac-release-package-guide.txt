@@ -1,0 +1,5 @@
+Deployment for mac is simple.
+
+1. One time preparation:
+Install original nxt client, open /Applications/nxt.app in finder (right click -> show package content), and copy jre/ folder over to the elastic root dir
+2. Execute ./mac-release-package.sh
