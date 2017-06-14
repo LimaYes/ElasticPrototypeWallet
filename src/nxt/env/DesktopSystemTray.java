@@ -109,7 +109,7 @@ public class DesktopSystemTray {
 
         showDesktopApplication.addActionListener(e -> {
             try {
-                Class.forName("DesktopApplication").getMethod("launch").invoke(null);
+                Class.forName("nxtdesktop.DesktopApplication").getMethod("launch").invoke(null);
             } catch (ReflectiveOperationException exception) {
                 Logger.logInfoMessage("DesktopApplication failed to launch", exception);
             }
@@ -117,7 +117,7 @@ public class DesktopSystemTray {
 
         refreshDesktopApplication.addActionListener(e -> {
             try {
-                Class.forName("DesktopApplication").getMethod("refresh").invoke(null);
+                Class.forName("nxtdesktop.DesktopApplication").getMethod("refresh").invoke(null);
             } catch (ReflectiveOperationException exception) {
                 Logger.logInfoMessage("DesktopApplication failed to refresh", exception);
             }
