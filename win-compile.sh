@@ -1,15 +1,15 @@
 #!/bin/sh
 CP="lib/*;classes"
-SP=src/java/
+SP=src/
 
-/bin/rm -f nxt.jar
-/bin/rm -f nxtservice.jar
+/bin/rm -f elastic.jar
+/bin/rm -f elasticservice.jar
 /bin/rm -rf classes
 /bin/mkdir -p classes/
 /bin/rm -rf addons/classes
 /bin/mkdir -p addons/classes/
 
-javac -encoding utf8 -sourcepath "${SP}" -classpath "${CP}" -d classes/ src/java/nxt/*.java src/java/nxt/*/*.java src/java/nxt/*/*/*.java src/java/nxtdesktop/*.java || exit 1
+javac -encoding utf8 -sourcepath "${SP}" -classpath "${CP}" -d classes/ src/nxt/*.java src/nxt/*/*.java src/nxt/*/*/*.java src/nxtdesktop/*.java || exit 1
 
 echo "nxt class files compiled successfully"
 

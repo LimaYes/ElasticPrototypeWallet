@@ -9,11 +9,11 @@ PACKAGE=nxt-client-${VERSION}.zip
 echo PACKAGE="${PACKAGE}"
 
 FILES="changelogs classes conf html lib src resource addons"
-FILES="${FILES} nxt.jar nxtservice.jar"
+FILES="${FILES} elastic.jar elasticservice.jar"
 FILES="${FILES} 3RD-PARTY-LICENSES.txt AUTHORS.txt COPYING.txt LICENSE.txt"
 FILES="${FILES} DEVELOPERS-GUIDE.md OPERATORS-GUIDE.md README.md README.txt USERS-GUIDE.md"
-FILES="${FILES} mint.bat mint.sh run.bat run.sh run-tor.sh run-desktop.sh start.sh stop.sh compact.sh compact.bat sign.sh"
-FILES="${FILES} nxt.policy nxtdesktop.policy Elastic_Wallet.url"
+FILES="${FILES} run.bat run.sh run-tor.sh run-desktop.sh start.sh stop.sh compact.sh compact.bat sign.sh"
+FILES="${FILES} elastic.policy elasticdesktop.policy Elastic_Wallet.url"
 FILES="${FILES} compile.sh javadoc.sh jar.sh package.sh"
 FILES="${FILES} win-compile.sh win-javadoc.sh win-package.sh"
 

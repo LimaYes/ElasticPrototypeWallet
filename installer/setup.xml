@@ -128,8 +128,8 @@
             <file src="run.bat" targetdir="${INSTALL_PATH}" override="true"/>
             <file src="compact.bat" targetdir="${INSTALL_PATH}" override="true"/>
             <parsable targetfile="${INSTALL_PATH}/run.bat"/>
-            <singlefile src="resource/nxt.properties" target="${INSTALL_PATH}/resource/nxt.properties" override="true"/>
-            <singlefile src="resource/nxtservice.properties" target="${INSTALL_PATH}/resource/nxtservice.properties" override="true"/>
+            <singlefile src="resource/elastic.properties" target="${INSTALL_PATH}/resource/elastic.properties" override="true"/>
+            <singlefile src="resource/elasticservice.properties" target="${INSTALL_PATH}/resource/elasticservice.properties" override="true"/>
         </pack>
 
         <pack name="server.unix" os="unix" required="yes">
@@ -170,7 +170,7 @@
 
         <pack name="jre.mac" os="mac_osx" required="yes" uninstall="false">
             <description>Java 64 bit for Mac</description>
-            <fileset dir="../jre-macosx" targetdir="${INSTALL_PATH}/jre" override="true"/>
+            <fileset dir="../jre" targetdir="${INSTALL_PATH}/jre" override="true"/>
             <executable targetfile="${INSTALL_PATH}/jre/bin/java" failure="warn" keep="true"/>
         </pack>
 
