@@ -11,9 +11,9 @@
 	<key>CFBundleExecutable</key>
 	<string>xel</string>
 	<key>CFBundleIconFile</key>
-	<string>nxt</string>
+	<string>xel</string>
 	<key>CFBundleIdentifier</key>
-	<string>org.nxt.runtime</string>
+	<string>org.xel.runtime</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>

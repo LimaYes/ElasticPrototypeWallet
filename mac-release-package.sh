@@ -16,12 +16,12 @@ MACVERSION=${VERSION}
 fi
 echo MACVERSION="${MACVERSION}"
 
+
 FILES="changelogs conf html lib resource contrib"
-FILES="${FILES} elastic.exe elasticservice.exe"
 FILES="${FILES} 3RD-PARTY-LICENSES.txt AUTHORS.txt LICENSE.txt"
 FILES="${FILES} DEVELOPERS-GUIDE.md OPERATORS-GUIDE.md README.md README.txt USERS-GUIDE.md"
 FILES="${FILES} run.bat run.sh run-desktop.sh start.sh stop.sh compact.sh compact.bat sign.sh"
-FILES="${FILES} elastic.policy elasticdesktop.policy Elastic_Wallet.url Dockerfile"
+FILES="${FILES} Elastic_Wallet.url Dockerfile elastic.policy elasticdesktop.policy elastic.exe elasticservice.exe"
 
 echo compile
 ./compile.sh
@@ -34,18 +34,11 @@ mkdir -p nxt/
 mkdir -p nxt/logs
 mkdir -p nxt/addons/src
 
-if [ "${OBFUSCATE}" = "obfuscate" ]; 
-then
-echo obfuscate
-~/proguard/proguard5.2.1/bin/proguard.sh @nxt.pro
-mv ../nxt.map ../nxt.map.${VERSION}
-else
 FILES="${FILES} classes src COPYING.txt"
 FILES="${FILES} compile.sh javadoc.sh jar.sh package.sh"
-FILES="${FILES} win-compile.sh win-javadoc.sh win-package.sh"
 echo javadoc
 ./javadoc.sh
-fi
+
 echo copy resources
 cp installer/lib/JavaExe.exe elastic.exe
 cp installer/lib/JavaExe.exe elasticservice.exe
@@ -69,4 +62,4 @@ cd -
 rm -rf nxt
 
 echo bundle a dmg file	
-javapackager -deploy -outdir . -outfile elastic-client -name elastic-installer -width 34 -height 43 -native dmg -srcfiles ${PACKAGE}.jar -appclass com.izforge.izpack.installer.bootstrap.Installer -v -Bmac.category=Business -Bmac.CFBundleIdentifier=org.nxt.client.installer -Bmac.CFBundleName=Elastic-Installer -Bmac.CFBundleVersion=${MACVERSION} -BappVersion=${MACVERSION} -Bicon=installer/AppIcon.icns > installer/javapackager.log 2>&1
+javapackager -deploy -outdir . -outfile elastic-client -name "Elastic-Installer" -width 34 -height 43 -native dmg -srcfiles ${PACKAGE}.jar -appclass com.izforge.izpack.installer.bootstrap.Installer -v -Bmac.category=Business -Bmac.CFBundleIdentifier=org.xel.client.installer -Bmac.CFBundleName=Elastic-Installer -Bmac.CFBundleVersion=${MACVERSION} -BappVersion=${MACVERSION} -Bicon=installer/AppIcon.icns > installer/javapackager.log 2>&1

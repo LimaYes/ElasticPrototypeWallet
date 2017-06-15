@@ -57,6 +57,7 @@ var NRS = (function(NRS, $, undefined) {
       };
 
       $("#nxtforum_news").rss("https://talk.elasticexplorer.org/latest.rss", settings, NRS.newsLoaded);
+      $("#bctforum_news").rss("https://bitcointalk.org/index.php?topic=1957064.320;topicseen;type=rss;action=.xml", settings, NRS.newsLoaded);
 
 		NRS.pageLoaded();
 	};
