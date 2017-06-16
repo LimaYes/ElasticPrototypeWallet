@@ -52,14 +52,10 @@ var NRS = (function(NRS, $) {
             $("#ledger_info_modal_entry").html(entry.ledgerId);
             var entryDetails = $.extend({}, entry);
             entryDetails.eventType = $.t(entryDetails.eventType.toLowerCase());
-            entryDetails.holdingType = $.t(entryDetails.holdingType.toLowerCase());
             if (entryDetails.timestamp) {
                 entryDetails.entryTime = NRS.formatTimestamp(entryDetails.timestamp);
             }
-            if (entryDetails.holding) {
-                entryDetails.holding_formatted_html = NRS.getTransactionLink(entry.holding);
-                delete entryDetails.holding;
-            }
+            
             entryDetails.height_formatted_html = NRS.getBlockLink(entry.height);
             delete entryDetails.block;
             delete entryDetails.height;
