@@ -278,7 +278,7 @@
   "discount":"Promotion",
   "distribution":"Répartition",
   "dividend_payment":"Paiement de dividende",
-  "dividend_payment_height_help":"Le bloc de calcul de dividende doit être dans les derniers 1440 blocs.",
+  "dividend_payment_height_help":"Le bloc de calcul de dividende doit être dans les derniers 750 blocs.",
   "dividend_payment_info_preview_error":"Impossible d'afficher la prévisualisation du paiement des dividendes en raison d'une erreur inattendue. Code : __errorCode__.",
   "dividend_payment_info_preview_success":"Un total de __amountNXT__ XEL sera réparti entre les __recipientCount__ comptes qui détiennent un total de __totalQuantity__ actions.",
   "dividends_payment":"Paiement des dividendes",
