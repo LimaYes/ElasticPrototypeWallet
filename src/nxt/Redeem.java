@@ -245,7 +245,7 @@ public final class Redeem {
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     final long redeemed = rs.getLong("amount");
-                    Logger.logInfoMessage("Guaranteed redeemed balance: ~" + redeemed/Constants.ONE_NXT + " XEL");
+                    //Logger.logInfoMessage("Guaranteed redeemed balance: ~" + redeemed/Constants.ONE_NXT + " XEL");
                     return redeemed;
                 } else return 0L;
             }
