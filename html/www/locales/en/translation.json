@@ -360,7 +360,7 @@
   "error_find_account_id": "Could not find your account address __accountRS__",
   "error_forging_blockchain_downloading": "The blockchain is busy downloading, you cannot forge during this time. Please try again when the blockchain is fully synced.",
   "error_forging_blockchain_rescanning": "The blockchain is currently being rescanned, you cannot forge during this time. Please try again in a minute.",
-  "error_forging_effective_balance": "Your effective balance is zero, you cannot forge. (Effective balance is your balance after 1440 block confirmations).",
+  "error_forging_effective_balance": "Your effective balance is zero, you cannot forge. (Effective balance is your balance after 750 block confirmations).",
   "error_forging_lease": "Your effective balance is leased out, you cannot forge at the moment.",
   "error_forging_no_public_key": "You cannot forge because your account has no public key. Please make an outgoing transaction first.",
   "error_form_blockchain_rescanning": "The blockchain is currently being rescanned. Please wait a minute and then try submitting again.",
