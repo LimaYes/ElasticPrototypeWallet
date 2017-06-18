@@ -291,6 +291,7 @@ var NRS = (function(NRS, $, undefined) {
 				var loginError = $("#login_error");
 				loginError.find(".callout").html($.t("error_passphrase_login_length"));
 				loginError.show();
+				$("#phrase_warning_initial").hide();
                 NRS.spinner.stop();
 				return;
 			}
@@ -577,6 +578,7 @@ var NRS = (function(NRS, $, undefined) {
 		$("#lockscreen").hide();
 		$("body, html").removeClass("lockscreen");
 		$("#login_error").html("").hide();
+		$("#phrase_warning_initial").show();
 		$(document.documentElement).scrollTop = 0;
         NRS.spinner.stop();
     };

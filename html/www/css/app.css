@@ -3174,6 +3174,13 @@ hr {
     max-width: 400px;
 }
 
+#phrase_warning_initial {
+    text-align: center;
+    margin: auto auto 0px auto;
+    width: 100%;
+    max-width: 580px;
+}
+
 #testnet_warning {
     display: none;
     position: fixed;

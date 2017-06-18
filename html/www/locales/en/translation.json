@@ -774,7 +774,7 @@
   "passphrase_required_for_decryption": "Your passphrase is required to decrypt these messages.",
   "passphrase_required_to_decrypt_data": "Your passphrase is required to decrypt this data.",
   "attention": "Attention",
-  "passphrase_warning_unique": "The passphrase is everything that stands between your account and the rest of the world. Do not use any meaningful sentence, especially any that appears in song or literature.",
+  "passphrase_warning_unique": "The passphrase is everything that stands between your account and the rest of the world. Do not use any meaningful sentence, especially any that appears in song or literature. Please understand, that your account functions like a brain wallet: if two people use the same passphrase, they have access to the same XEL.",
   "passphrase_warning_disclose": "Don't ever disclose your passphrase. If you lose it you lose access to your account!",
   "passphrase_write_below": "Your passphrase is very important! In order to be sure that you have saved it, please write your passphrase below:",
   "pay_dividends": "Pay Dividends",
