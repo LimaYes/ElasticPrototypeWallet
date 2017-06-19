@@ -30,7 +30,7 @@ var NRS = (function(NRS, $, undefined) {
 
         console.log("LOADED REDEEM MODAL, entry = " + redeemEntry + ".");
         // 247,2-1F8kmFiJkFqtbAhkUEDdwipitGNZULGEec-1L6N25HHcUupvb2d89xcrAnsWeuFbBS3k7-14xVGvBQWgDDE8Lr4HBAepA7VHZWsXzJWh;3QA7QDkb5zgRLbkeiZzGp22hD14Qf2Myc8,394673283022
-        $("#redeem_address_field").html(res[1].split(";")[0]);
+        $("#redeem_address_field").html(res[1]);
         $("#redeem_amount_field").html(parseInt(res[2]));
         $("#redeem_account_field").html(NRS.account);
 
