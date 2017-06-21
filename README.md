@@ -14,7 +14,7 @@ XEL is a decentralized supercomputer based on cryptography and blockchain techno
     - *Debian* - `http://www.webupd8.org/2014/03/how-to-install-oracle-java-8-in-debian.html`
     - *FreeBSD* - `pkg install openjdk8`
 
-  - *repository* - `git clone git@github.com:OrdinaryDude/elastic-light.git`
+  - *repository* - `git clone https://github.com/unvo1d/Elastic-XEL-Litewallet.git`
   
 ----
 ## Run it! ##
