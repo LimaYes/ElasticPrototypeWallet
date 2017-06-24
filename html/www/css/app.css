@@ -3947,10 +3947,11 @@ body > .header .navbar {
     padding-bottom: 20px;
 }
 
-.dec-animation {
+.particles-animation {
 	
-	position: absolute;
-	top: 0;
-	left: 0;
+	position:absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
 	
 }
