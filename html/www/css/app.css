@@ -2999,9 +2999,9 @@ label .popover-content {
 }
 
 #remem-wrap {
-    width: 210px;
+    width: 350px;
     margin: 0 auto;
-    text-align: left;
+    text-align: center;
 }
 
 #remember_me_container {

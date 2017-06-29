@@ -69,7 +69,8 @@
                             </div>
                         </div>
                         <div class="input-group" style="display:table">
-                            <input type="password" class="form-control" id="login_password" name="login_password" placeholder="Your Passphrase" data-i18n="[placeholder]your_passphrase" autofocus />
+                            <input type="control_username" class="form-control" id="login_username" name="login_username" placeholder="Your XEL Account" data-i18n="[placeholder]your_account" autofocus/>
+                            <input type="password" class="form-control" id="login_password" name="login_password" placeholder="Your Passphrase" data-i18n="[placeholder]your_passphrase" />
                             <div class="input-group-btn" style="border:1px solid #fff;">
                                 <button class="btn btn-flat" onclick="NRS.login(1,$('#login_password').val())"><i class="fa fa-arrow-right text-muted"></i></button>
                             </div>
@@ -90,6 +91,8 @@
                     <div id="remember_me_container">
                         <input type="checkbox" name="remember_me" id="remember_me" value="1" /> <span></span>
                         <label for="remember_me" data-i18n="remember_me">Remember Me</label>
+                        <input type="checkbox" name="ignore_check" id="ignore_check" value="1" style="margin-left: 15px;"/> <span></span>
+                        <label for="ignore_check" data-i18n="ignore_account_check">Skip passphrase validation</label>
                     </div>
                 </div>
 

@@ -1,4 +1,6 @@
 {
+  "error_passphrase_login_mismatch": "The passphrase does not match the account you provided. Please double check your login data, otherwise your XEL might get lost forever because the passphrase does not unlock the account you think belongs to this passphrase.",
+  "ignore_account_check" : "Skip passphrase validation",
   "Account": "Account",
   "Asset Distribution": "Asset Distribution",
   "Connected": "Connected",

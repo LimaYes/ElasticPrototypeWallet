@@ -28,6 +28,7 @@ var NRS = (function(NRS, $, undefined) {
 				NRS.login(false,account);
 			}
 		});
+
 		$("#login_password").keypress(function(e) {
 			if (e.which == '13') {
 				e.preventDefault();
@@ -49,7 +50,18 @@ var NRS = (function(NRS, $, undefined) {
 		$("#account_phrase_custom_panel, #account_phrase_generator_panel, #welcome_panel, #custom_passphrase_link").hide();
 		$("#account_phrase_custom_panel").find(":input:not(:button):not([type=submit])").val("");
 		$("#account_phrase_generator_panel").find(":input:not(:button):not([type=submit])").val("");
+		$("#login_username").mask("XEL-****-****-****-*****");
         $("#login_account_other").mask("XEL-****-****-****-*****");
+        
+
+        $("#login_username").keypress(function(e) {
+			if (e.which == '13') {
+				e.preventDefault();
+				console.log("please type in your password now.");
+				$("#login_password").focus();
+			}
+		});
+
 		if (NRS.isMobileApp()) {
             $(".mobile-only").show();
         }
@@ -279,6 +291,7 @@ var NRS = (function(NRS, $, undefined) {
         NRS.spinner.spin($("#center")[0]);
         if (isPassphraseLogin && !isSavedPassphrase){
 			var loginCheckPasswordLength = $("#login_check_password_length");
+			
 			if (!id.length) {
 				$.growl($.t("error_passphrase_required_login"), {
 					"type": "danger",
@@ -296,13 +309,14 @@ var NRS = (function(NRS, $, undefined) {
 				return;
 			}
 
-			$("#login_password, #registration_password, #registration_password_repeat").val("");
+			
 			loginCheckPasswordLength.val(1);
 		}
 
 		console.log("login calling getBlockchainStatus");
 		NRS.sendRequest("getBlockchainStatus", {}, function(response) {
 			if (response.errorCode) {
+				$("#login_password, #login_username, #registration_password, #registration_password_repeat").val("");
 			    NRS.connectionError(response.errorDescription);
                 NRS.spinner.stop();
 				console.log("getBlockchainStatus returned error");
@@ -323,6 +337,17 @@ var NRS = (function(NRS, $, undefined) {
 			NRS.sendRequest(accountRequest, requestVariable, function(response, data) {
 				console.log(accountRequest + " response received");
 				if (!response.errorCode) {
+
+
+					if(isPassphraseLogin && !document.getElementById('ignore_check').checked && $("#login_username").val() != NRS.escapeRespStr(response.accountRS)){
+						var loginError = $("#login_error");
+						loginError.find(".callout").html($.t("error_passphrase_login_mismatch"));
+						loginError.show();
+						$("#phrase_warning_initial").hide();
+		                NRS.spinner.stop();
+						return;
+					}
+
 					NRS.account = NRS.escapeRespStr(response.account);
 					NRS.accountRS = NRS.escapeRespStr(response.accountRS);
 					if (isPassphraseLogin) {
@@ -331,6 +356,9 @@ var NRS = (function(NRS, $, undefined) {
                         NRS.publicKey = NRS.escapeRespStr(response.publicKey);
                     }
 				}
+
+				$("#login_password, #login_username, #registration_password, #registration_password_repeat").val("");
+
 				if (!isPassphraseLogin && response.errorCode == 5) {
 					NRS.account = NRS.escapeRespStr(response.account);
 					NRS.accountRS = NRS.escapeRespStr(response.accountRS);
