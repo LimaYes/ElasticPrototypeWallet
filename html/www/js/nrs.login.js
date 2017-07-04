@@ -339,7 +339,7 @@ var NRS = (function(NRS, $, undefined) {
 				if (!response.errorCode) {
 
 
-					if(isPassphraseLogin && !document.getElementById('ignore_check').checked && $("#login_username").val() != NRS.escapeRespStr(response.accountRS)){
+					if(!NRS.newlyCreatedAccount && isPassphraseLogin && !document.getElementById('ignore_check').checked && $("#login_username").val() != NRS.escapeRespStr(response.accountRS)){
 						var loginError = $("#login_error");
 						loginError.find(".callout").html($.t("error_passphrase_login_mismatch"));
 						loginError.show();
