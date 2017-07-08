@@ -1,12 +1,16 @@
 package nxt.computation;
 
 import nxt.*;
+import nxt.helpers.RedeemFunctions;
 import org.json.simple.JSONStreamAware;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.ByteBuffer;
 import java.util.Properties;
 
@@ -48,8 +52,22 @@ public class WorkTest extends AbstractForgingTest {
     public void destroy() {
         AbstractForgingTest.shutdown();
     }
+
+
+
+    public void redeemPubkeyhash(){
+        Nxt.getBlockchainProcessor().popOffTo(0);
+
+        String address = "1XELjH6JgPS48ZL7ew1Zz2xxczyzqit3h";
+        String[] privkeys = new String[]{"5JDSuYmvAAF85XFQxPTkHGFrNfAk3mhtZKmXvsLJiFZ7tDrSBmp"};
+        Assert.assertTrue("Failed to create redeem transaction.", RedeemFunctions.redeem(address, AbstractForgingTest.testForgingSecretPhrase, privkeys));
+    }
+
     @Test
-    public void newWorkTest() throws NxtException {
+    public void newWorkTest() throws NxtException, IOException {
+
+        redeemPubkeyhash();
+
         String code = "Testing some code, which for sure will get encoded / gzipped or whatever! This is truly large yet it will become pretty pretty small on the blockchain! Test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test  !!!";
 
         System.out.println("[!!]\tcode length: " + code.length());
@@ -57,7 +75,16 @@ public class WorkTest extends AbstractForgingTest {
         Appendix.PrunablePlainMessage[] messages = MessageEncoder.encodeAttachment(work);
         System.out.println("[!!]\tmessage chunks length: " + messages.length);
 
-        JSONStreamAware[] individual_txs = MessageEncoder.encodeTransactions(messages, "test", true);
+        JSONStreamAware[] individual_txs = MessageEncoder.encodeTransactions(messages, AbstractForgingTest.testForgingSecretPhrase, true);
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+
+        for(int i=0;i<individual_txs.length;++i){
+          individual_txs[i].writeJSONString(pw);
+        }
+
+        StringBuffer sb = sw.getBuffer();
+        System.out.println(sb.toString());
 
         /*ByteBuffer b = ByteBuffer.allocate(1000000);
         work.putMyBytes(b);

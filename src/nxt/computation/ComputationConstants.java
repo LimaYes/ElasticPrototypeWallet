@@ -33,6 +33,7 @@ public class ComputationConstants {
     public static final long BTY_PER_ITER_MAX = 10;
     public static final int ITER_MIN = 1;
     public static final int ITER_MAX = 100;
+    public static final long WORK_MESSAGE_RECEIVER_ACCOUNT = 100010001000L;
 
     public static final int MAX_CHAINED_TX_ACCEPTED = 5; // no more than 10 chained TX
     public static final int MAX_UNCOMPRESSED_WORK_SIZE = 6*1024*1024; // 6 MB is the maximum for now

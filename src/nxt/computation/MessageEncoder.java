@@ -1,9 +1,7 @@
 package nxt.computation;
 
-import nxt.Appendix;
-import nxt.Constants;
-import nxt.NxtException;
-import nxt.Transaction;
+import nxt.*;
+import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
 
 import java.nio.ByteBuffer;
@@ -37,13 +35,61 @@ public class MessageEncoder {
     static byte[] MAGIC_INTERMEDIATE = {(byte)0xef, (byte)0xbe, (byte)0xad, (byte)0xde, (byte)0xde, (byte)0xad, (byte)0xbe, (byte)0xef};
 
 
-    public static JSONStreamAware[] encodeTransactions(Appendix.PrunablePlainMessage[] msgs, String passphraseOrPubkey, boolean isPassphrase) throws NxtException {
+    public Appendix.PrunablePlainMessage[] extractMessages(Transaction _t) throws NxtException.ValidationException {
+
+        Transaction t = _t;
+
+        ArrayList<Appendix.PrunablePlainMessage> arl = new ArrayList<>();
+
+        if(t == null) throw new NxtException.NotValidException("This transaction is not a valid work-encoder");
+        Appendix.PrunablePlainMessage pm = t.getPrunablePlainMessage();
+        if(pm == null) throw new NxtException.NotValidException("This transaction is not a valid work-encoder");
+
+        if(!checkMessageForPiggyback(pm, true, false)){
+            throw new NxtException.NotValidException("This transaction is not a valid work-encoder");
+        }
+
+        arl.add(pm);
+
+        int counter = 0;
+
+        // now, that we have the original transaction we have to fetch (possible) referenced transactions
+        while(t.getReferencedTransactionFullHash() != null){
+            t = Nxt.getBlockchain().getTransactionByFullHash(t.getReferencedTransactionFullHash());
+
+            if(t == null) throw new NxtException.NotValidException("This transaction is not a valid work-encoder");
+            pm = t.getPrunablePlainMessage();
+            if(pm == null) throw new NxtException.NotValidException("This transaction is not a valid work-encoder");
+
+            if(!checkMessageForPiggyback(pm, false, true)){
+                throw new NxtException.NotValidException("This transaction is not a valid work-encoder");
+            }
+
+            arl.add(0, pm);
+
+            counter = counter + 1;
+            if(counter > ComputationConstants.MAX_CHAINED_TX_ACCEPTED)
+                throw new NxtException.NotValidException("This transaction references a chain which is too long");
+        }
+
+        return arl.toArray(new Appendix.PrunablePlainMessage[arl.size()]);
+    }
+
+
+    public static JSONStreamAware[] encodeTransactions(Appendix.PrunablePlainMessage[] msgs, String passphraseOrPubkey) throws NxtException {
         ArrayList<JSONStreamAware> array_tx = new ArrayList<>(msgs.length);
 
         // Transactions have to be created from "end to start" to get the "referenced tx hashes" chained up correctly
+        String previousHash = "";
         for(int i=msgs.length-1; i>=0; --i){
-            JSONStreamAware t = CustomTransactionBuilder.createTransaction(msgs[i], passphraseOrPubkey, isPassphrase);
-            array_tx.add(t);
+            Pair<JSONStreamAware, String> t = null;
+            if(previousHash.length()==0) {
+                t = CustomTransactionBuilder.createTransaction(msgs[i], passphraseOrPubkey);
+                previousHash = t.getElement1();
+            }
+            else
+                t = CustomTransactionBuilder.createTransaction(msgs[i], passphraseOrPubkey, previousHash);
+            array_tx.add(t.getElement0());
         }
 
         return array_tx.toArray(new JSONStreamAware[msgs.length]);
@@ -114,10 +160,10 @@ public class MessageEncoder {
     }
 
     public static boolean checkMessageForPiggyback(Appendix.PrunablePlainMessage plainMessage){
-        return checkMessageForPiggyback(plainMessage, false);
+        return checkMessageForPiggyback(plainMessage, false, false);
     }
 
-    public static boolean checkMessageForPiggyback(Appendix.PrunablePlainMessage plainMessage, boolean onlyFinalMessageOfChain){
+    public static boolean checkMessageForPiggyback(Appendix.PrunablePlainMessage plainMessage, boolean onlyFinalMessageOfChain, boolean onlyMidMessage){
 
         try {
             if (plainMessage.isText())
@@ -127,12 +173,17 @@ public class MessageEncoder {
             if (msg.length < MAGIC.length) return false;
 
             boolean returned = true;
-            for (int i = 0; i < MAGIC.length; ++i) {
-                if (msg[i] != MAGIC[i]){
-                    returned = false;
-                    break;
+            if(!onlyMidMessage) {
+                for (int i = 0; i < MAGIC.length; ++i) {
+                    if (msg[i] != MAGIC[i]) {
+                        returned = false;
+                        break;
+                    }
                 }
+            }else{
+                returned = false;
             }
+
             if(!returned && !onlyFinalMessageOfChain)
             {
                 returned = true;
