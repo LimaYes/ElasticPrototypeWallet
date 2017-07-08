@@ -3,13 +3,14 @@ package nxt.computation;
 import nxt.*;
 import nxt.util.Convert;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+
+import static nxt.computation.ComputationConstants.MAX_UNCOMPRESSED_WORK_SIZE;
+
+// TODO: Check the entire file for unhandled exceptions
 
 /******************************************************************************
  * Copyright © 2017 The XEL Core Developers.                                  *
@@ -29,23 +30,16 @@ import java.util.zip.GZIPOutputStream;
 
 public class CommandNewWork extends IComputationAttachment {
 
-    private final short deadline;
+    private short deadline;
 
-    private final long xelPerPow;
-    private final long xelPerBounty;
+    private long xelPerPow;
+    private long xelPerBounty;
 
-    private final int bountiesPerIteration;
-    private final int numberOfIterations;
-
+    private int bountiesPerIteration;
+    private int numberOfIterations;
+    boolean validated = false;
     private byte[] sourceCode;
     private byte[] sourceCodeCompressed;
-
-    boolean validated = false;
-
-    private boolean isCompressed(final byte[] compressed) {
-        return (compressed[0] == (byte) (GZIPInputStream.GZIP_MAGIC)) && (compressed[1] == (byte) (GZIPInputStream.GZIP_MAGIC >> 8));
-    }
-
 
     public CommandNewWork(short deadline, long xelPerPow, long xelPerBounty, int bountiesPerIteration, int numberOfIterations, byte[] sourceCode){
         super();
@@ -54,7 +48,10 @@ public class CommandNewWork extends IComputationAttachment {
         this.xelPerBounty = xelPerBounty;
         this.bountiesPerIteration = bountiesPerIteration;
         this.numberOfIterations = numberOfIterations;
-        this.sourceCode = sourceCode;
+        if(sourceCode.length <= MAX_UNCOMPRESSED_WORK_SIZE)
+            this.sourceCode = sourceCode;
+        else
+            this.sourceCode = new byte[0];
 
         try {
             ByteArrayOutputStream obj = new ByteArrayOutputStream();
@@ -64,73 +61,78 @@ public class CommandNewWork extends IComputationAttachment {
             gzip.close();
             sourceCodeCompressed = obj.toByteArray();
         }catch(Exception e){
-            sourceCodeCompressed = null;
+            sourceCodeCompressed = new byte[0];
         }
     }
 
-    public CommandNewWork(short deadline, long xelPerPow, long xelPerBounty, int bountiesPerIteration, int numberOfIterations, String sourceCode){
-        super();
-        this.deadline = deadline;
-        this.xelPerPow = xelPerPow;
-        this.xelPerBounty = xelPerBounty;
-        this.bountiesPerIteration = bountiesPerIteration;
-        this.numberOfIterations = numberOfIterations;
-        this.sourceCode = Convert.toBytes(sourceCode);
-        try {
-            ByteArrayOutputStream obj = new ByteArrayOutputStream();
-            GZIPOutputStream gzip = new GZIPOutputStream(obj);
-            gzip.write(sourceCode.getBytes("UTF-8"));
-            gzip.flush();
-            gzip.close();
-            sourceCodeCompressed = obj.toByteArray();
-        }catch(Exception e){
-            sourceCodeCompressed = null;
-        }
+
+    public CommandNewWork(short deadline, long xelPerPow, long xelPerBounty, int bountiesPerIteration, int numberOfIterations, String sourceCode) throws UnsupportedEncodingException {
+        this(deadline, xelPerPow, xelPerBounty, bountiesPerIteration, numberOfIterations, sourceCode.getBytes("UTF-8"));
     }
 
     CommandNewWork(ByteBuffer buffer) {
         super(buffer);
+        byte compressed_or_not = 0; // assume false
+        try {
+            compressed_or_not = buffer.get();
+            this.deadline = buffer.getShort();
+            this.xelPerPow = buffer.getLong();
+            this.xelPerBounty = buffer.getLong();
+            this.bountiesPerIteration = buffer.getInt();
+            this.numberOfIterations = buffer.getInt();
 
-        byte compressed_or_not = buffer.get();
+            if(compressed_or_not == 0) {
+                short len = buffer.getShort();
+                if(len > MAX_UNCOMPRESSED_WORK_SIZE)
+                    this.sourceCode = new byte[0];
+                else
+                    this.sourceCode = new byte[len];
 
-        this.deadline = buffer.getShort();
-        this.xelPerPow = buffer.getLong();
-        this.xelPerBounty = buffer.getLong();
-        this.bountiesPerIteration = buffer.getInt();
-        this.numberOfIterations = buffer.getInt();
+               if (this.sourceCode.length > 0)
+                        buffer.get(this.sourceCode);
 
-        if(compressed_or_not == 0) {
-            this.sourceCode = new byte[buffer.getShort()];
-            buffer.get(this.sourceCode);
-            try {
-                ByteArrayOutputStream obj = new ByteArrayOutputStream();
-                GZIPOutputStream gzip = new GZIPOutputStream(obj);
-                gzip.write(sourceCode);
-                gzip.flush();
-                gzip.close();
-                sourceCodeCompressed = obj.toByteArray();
-            }catch(Exception e){
-                sourceCodeCompressed = null;
-            }
-        }else{
-            this.sourceCodeCompressed = new byte[buffer.getShort()];
-            buffer.get(this.sourceCodeCompressed);
-            if ((this.sourceCodeCompressed == null) || (this.sourceCodeCompressed.length == 0)) return;
-            try {
-                if (isCompressed(this.sourceCodeCompressed)) {
-                    GZIPInputStream gis = new GZIPInputStream(new ByteArrayInputStream(this.sourceCodeCompressed));
-                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(gis, "UTF-8"));
-                    String outStr = "";
-                    String line;
-                    while ((line = bufferedReader.readLine()) != null) {
-                        outStr += line;
+
+                    ByteArrayOutputStream obj = new ByteArrayOutputStream();
+                    GZIPOutputStream gzip = new GZIPOutputStream(obj);
+                    gzip.write(sourceCode);
+                    gzip.flush();
+                    gzip.close();
+                    sourceCodeCompressed = obj.toByteArray();
+
+            }else{
+                this.sourceCodeCompressed = new byte[buffer.getShort()];
+                buffer.get(this.sourceCodeCompressed);
+                if ((this.sourceCodeCompressed == null) || (this.sourceCodeCompressed.length == 0)) return;
+                try {
+                    if (isCompressed(this.sourceCodeCompressed)) {
+                        GZIPInputStream gis = new GZIPInputStream(new ByteArrayInputStream(this.sourceCodeCompressed));
+                        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(gis, "UTF-8"));
+                        String outStr = "";
+                        String line;
+                        while ((line = bufferedReader.readLine()) != null) {
+                            outStr += line;
+                        }
+                        this.sourceCode = outStr.getBytes("UTF-8");
+                        if(this.sourceCode.length>MAX_UNCOMPRESSED_WORK_SIZE)
+                            this.sourceCode = new byte[0];
                     }
-                    this.sourceCode = outStr.getBytes("UTF-8");
+                }catch(Exception e){
+                    this.sourceCode = null;
                 }
-            }catch(Exception e){
-                this.sourceCode = null;
             }
+        }catch(Exception e){
+            // pass through any error
+            this.deadline = 0;
+            this.xelPerPow = 0;
+            this.xelPerBounty = 0;
+            this.bountiesPerIteration = 0;
+            this.numberOfIterations = 0;
+            this.sourceCode = null;
         }
+    }
+
+    private boolean isCompressed(final byte[] compressed) {
+        return (compressed[0] == (byte) (GZIPInputStream.GZIP_MAGIC)) && (compressed[1] == (byte) (GZIPInputStream.GZIP_MAGIC >> 8));
     }
 
     @Override

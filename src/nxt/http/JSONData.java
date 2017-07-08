@@ -363,7 +363,7 @@ public final class JSONData {
         return json;
     }
 
-    static JSONObject unconfirmedTransaction(Transaction transaction) {
+    public static JSONObject unconfirmedTransaction(Transaction transaction) {
         return unconfirmedTransaction(transaction, null);
     }
 
@@ -544,7 +544,7 @@ public final class JSONData {
         }
     }
 
-    static void putException(JSONObject json, Exception e) {
+    public static void putException(JSONObject json, Exception e) {
         putException(json, e, "");
     }
 
