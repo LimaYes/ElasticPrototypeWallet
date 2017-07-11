@@ -1192,11 +1192,18 @@ class NxtDbVersion extends DbVersion {
                 // Here, the work related stuff begins
             case 490:
                 apply("CREATE TABLE IF NOT EXISTS work (db_id IDENTITY, closing_timestamp INT NOT NULL, id BIGINT NOT NULL, block_id BIGINT NOT NULL, sender_account_id BIGINT NOT NULL, xel_per_pow BIGINT NOT NULL, iterations SMALLINT NOT NULL, iterations_left SMALLINT NOT NULL, blocks_remaining SMALLINT NOT NULL, closed BOOLEAN NOT NULL DEFAULT FALSE, cancelled BOOLEAN NOT NULL DEFAULT FALSE, timedout BOOLEAN NOT NULL DEFAULT FALSE, xel_per_bounty BIGINT NOT NULL, received_bounties INT NOT NULL, received_pows INT NOT NULL, bounty_limit_per_iteration INT NOT NULL, originating_height INT NOT NULL, combined_storage VARBINARY NOT NULL, height INT NOT NULL, latest BOOLEAN NOT NULL DEFAULT TRUE)");            case 491:
-                return;
+                apply("CREATE INDEX IF NOT EXISTS workA ON work (id)");
+                apply("CREATE INDEX IF NOT EXISTS workC ON work (sender_account_id)");
+                apply("CREATE INDEX IF NOT EXISTS workD ON work (closed)");
             case 492:
-
+                apply(
+                        "CREATE TABLE IF NOT EXISTS pow_and_bounty (db_id IDENTITY, id BIGINT NOT NULL,too_late BOOLEAN NOT NULL DEFAULT FALSE, work_id BIGINT NOT NULL, hash BINARY(32), multiplier_or_storage VARBINARY, account_id BIGINT NOT NULL, is_pow BOOLEAN NOT NULL DEFAULT TRUE, height INT NOT NULL, latest BOOLEAN NOT NULL DEFAULT TRUE)");
+                apply("CREATE INDEX IF NOT EXISTS pow_and_bountyA ON pow_and_bounty (id)");
+                apply("CREATE INDEX IF NOT EXISTS pow_and_bountyB ON pow_and_bounty (work_id)");
+                apply("CREATE INDEX IF NOT EXISTS pow_and_bountyC ON pow_and_bounty (is_pow)");
+                apply("CREATE INDEX IF NOT EXISTS pow_and_bountyD ON pow_and_bounty (height)");
             case 493:
-
+                return;
             case 494:
 
             case 495:

@@ -40,4 +40,5 @@ public class ComputationConstants {
     public static final short WORK_TRANSACTION_DEADLINE_VALUE = 48;
     public static final int START_ENCODING_BLOCK = 0;
     public static final int BOUNTY_STORAGE_INTS = 32;
+    public static final short MULTIPLIER_LENGTH = 32;
 }

@@ -5,18 +5,14 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
 
 import nxt.computation.CommandPowBty;
-import org.json.simple.JSONObject;
 
 import nxt.db.DbClause;
 import nxt.db.DbIterator;
 import nxt.db.DbKey;
 import nxt.db.DbUtils;
 import nxt.db.VersionedEntityDbTable;
-import nxt.util.Convert;
 import nxt.util.Listener;
 import nxt.util.Listeners;
 
@@ -71,11 +67,16 @@ public final class PowAndBounty {
     };
 
 
-    static PowAndBounty addPowBty(final Transaction transaction, final CommandPowBty attachment) {
+    public static void addPowBty(final Transaction transaction, final CommandPowBty attachment) {
         PowAndBounty shuffling = new PowAndBounty(transaction, attachment);
+
+        // Here check if it is counting or if it is "old"
+
         PowAndBounty.powAndBountyTable.insert(shuffling);
-        PowAndBounty.listeners.notify(shuffling, (attachment.isIs_proof_of_work())?Event.POW_SUBMITTED:Event.BOUNTY_SUBMITTED);
+        PowAndBounty.listeners.notify(shuffling, (shuffling.is_pow)?Event.POW_SUBMITTED:Event.BOUNTY_SUBMITTED);
     }
+
+
 
 
 
@@ -144,16 +145,14 @@ public final class PowAndBounty {
     }
 
     private final long id;
-    private final long referenced_storage_height;
     private final boolean is_pow;
     private boolean too_late;
     private final long work_id;
     private final long accountId;
     private final DbKey dbKey;
-
-
     private final byte[] hash;
-    private final byte[] storage_hash;
+    private final byte[] multiplier_or_storage;
+
 
     public long getWork_id() {
         return work_id;
@@ -166,24 +165,22 @@ public final class PowAndBounty {
     private PowAndBounty(final ResultSet rs, final DbKey dbKey) throws SQLException {
         this.id = rs.getLong("id");
         this.work_id = rs.getLong("work_id");
-        this.referenced_storage_height = rs.getLong("referenced_storage_height");
         this.accountId = rs.getLong("account_id");
         this.is_pow = rs.getBoolean("is_pow");
         this.dbKey = dbKey;
         this.too_late = rs.getBoolean("too_late");
         this.hash = rs.getBytes("hash");
-        this.storage_hash = rs.getBytes("storage_hash");
+        this.multiplier_or_storage = rs.getBytes("multiplier_or_storage");
     }
 
     private PowAndBounty(final Transaction transaction, final CommandPowBty attachment) {
         this.id = transaction.getId();
         this.work_id = attachment.getWork_id();
-        this.referenced_storage_height = attachment.getReferenced_storage_height();
         this.accountId = transaction.getSenderId();
         this.dbKey = PowAndBounty.powAndBountyDbKeyFactory.newKey(this.id);
         this.is_pow = attachment.isIs_proof_of_work();
-        this.hash = attachment.getHash(); // FIXME TODO
-        this.storage_hash = attachment.getStorage_hash();
+        this.hash = attachment.getHash();
+        this.multiplier_or_storage = attachment.getMultiplier_or_storage();
         this.too_late = false;
     }
 
@@ -194,34 +191,18 @@ public final class PowAndBounty {
 
     private void save(final Connection con) throws SQLException {
         try (PreparedStatement pstmt = con.prepareStatement(
-                "MERGE INTO pow_and_bounty (id, referenced_storage_height, too_late, work_id, hash, storage_hash, account_id, is_pow, "
-                        + " height, latest) " + "KEY (id, height) " + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, TRUE)")) {
+                "MERGE INTO pow_and_bounty (id, too_late, work_id, hash, multiplier_or_storage, account_id, is_pow, "
+                        + " height, latest) " + "KEY (id, height) " + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, TRUE)")) {
             int i = 0;
             pstmt.setLong(++i, this.id);
-            pstmt.setLong(++i, this.referenced_storage_height);
             pstmt.setBoolean(++i, this.too_late);
             pstmt.setLong(++i, this.work_id);
             DbUtils.setBytes(pstmt, ++i, this.hash);
-            DbUtils.setBytes(pstmt, ++i, this.storage_hash);
+            DbUtils.setBytes(pstmt, ++i, this.multiplier_or_storage);
             pstmt.setLong(++i, this.accountId);
             pstmt.setBoolean(++i, this.is_pow);
             pstmt.setInt(++i, Nxt.getBlockchain().getHeight());
             pstmt.executeUpdate();
         }
     }
-
-    public JSONObject toJsonObject() {
-        final JSONObject response = new JSONObject();
-        response.put("id", Convert.toUnsignedLong(this.id));
-        final Transaction t = TransactionDb.findTransaction(this.id);
-        response.put("storage_hash", Convert.toString(this.storage_hash, false));
-        if (t != null) {
-            response.put("date", Convert.toUnsignedLong(t.getTimestamp()));
-            response.put("referenced_storage_height", Convert.toUnsignedLong(this.referenced_storage_height));
-        } else response.put("error", "Transaction not found");
-        return response;
-    }
-
-
-
 }
