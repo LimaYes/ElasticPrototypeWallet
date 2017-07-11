@@ -358,6 +358,7 @@ public final class Nxt {
                 PhasingPoll.init();
                 Redeem.init();
                 Vote.init();
+                Work.init();
                 PhasingVote.init();
                 PrunableMessage.init();
                 TaggedData.init();

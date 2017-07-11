@@ -52,6 +52,6 @@ public abstract class IComputationAttachment  {
     abstract void putMyBytes(ByteBuffer buffer);
 
     abstract boolean validate(Transaction transaction) throws NxtException.ValidationException;
-    abstract void apply(Transaction transaction, Account senderAccount);
+    abstract void apply(Transaction transaction);
 
 }

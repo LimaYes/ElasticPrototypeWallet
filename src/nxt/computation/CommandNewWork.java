@@ -2,6 +2,7 @@ package nxt.computation;
 
 import nxt.*;
 import nxt.util.Convert;
+import nxt.util.Logger;
 
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -32,8 +33,32 @@ public class CommandNewWork extends IComputationAttachment {
 
     private short deadline;
 
+    public long getXelPerPow() {
+        return xelPerPow;
+    }
+
+    public long getXelPerBounty() {
+        return xelPerBounty;
+    }
+
+    public int getBountiesPerIteration() {
+        return bountiesPerIteration;
+    }
+
+    public int getNumberOfIterations() {
+        return numberOfIterations;
+    }
+
+    public byte[] getSourceCode() {
+        return sourceCode;
+    }
+
     private long xelPerPow;
     private long xelPerBounty;
+
+    public short getDeadline() {
+        return deadline;
+    }
 
     private int bountiesPerIteration;
     private int numberOfIterations;
@@ -209,14 +234,15 @@ public class CommandNewWork extends IComputationAttachment {
     }
 
     @Override
-    void apply(Transaction transaction, Account senderAccount) {
+    void apply(Transaction transaction) {
         if ((this.sourceCode == null) || (this.sourceCode.length == 0)) return;
 
         if(!validated){
             if(!validate(transaction))
                 return;
         }
-
         // Here, apply the actual package
+        Logger.logInfoMessage("new work package submitted: id=" + Long.toUnsignedString(transaction.getId()));
+        Work.addWork(transaction, this);
     }
 }

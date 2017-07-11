@@ -1,12 +1,17 @@
 package nxt.computation;
 
 import nxt.*;
+import nxt.http.ParameterException;
+import nxt.http.ParameterParser;
+import nxt.peer.Peers;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /******************************************************************************
  * Copyright © 2017 The XEL Core Developers.                                  *
@@ -35,7 +40,36 @@ public class MessageEncoder {
     static byte[] MAGIC_INTERMEDIATE = {(byte)0xef, (byte)0xbe, (byte)0xad, (byte)0xde, (byte)0xde, (byte)0xad, (byte)0xbe, (byte)0xef};
 
 
-    public Appendix.PrunablePlainMessage[] extractMessages(Transaction _t) throws NxtException.ValidationException {
+    static {
+        Nxt.getBlockchainProcessor().addListener(block -> {
+            if (block.getHeight() <= ComputationConstants.START_ENCODING_BLOCK) {
+                return;
+            }
+
+            // Check all TX for relevant stuff
+            for(Transaction t : block.getTransactions()){
+                Appendix.PrunablePlainMessage m = t.getPrunablePlainMessage();
+                if(m==null) continue;
+                if(MessageEncoder.checkMessageForPiggyback(m, true, false)){
+                    try {
+                        Appendix.PrunablePlainMessage[] reconstructedChain = MessageEncoder.extractMessages(t);
+
+                        // Allow the decoding of the attachment
+                        IComputationAttachment att = MessageEncoder.decodeAttachment(reconstructedChain);
+                        if(att == null) continue;
+                        att.apply(t);
+                    } catch (Exception e) {
+                        // generous catch, do not allow anything to cripple the blockchain integrity
+                        continue;
+                    }
+                }
+            }
+
+        }, BlockchainProcessor.Event.AFTER_BLOCK_APPLY);
+    }
+
+
+    public static Appendix.PrunablePlainMessage[] extractMessages(Transaction _t) throws NxtException.ValidationException {
 
         Transaction t = _t;
 
@@ -95,6 +129,22 @@ public class MessageEncoder {
         return array_tx.toArray(new JSONStreamAware[msgs.length]);
     }
 
+    public static void pushThemAll(JSONStreamAware[] aw) throws NxtException.ValidationException, ParameterException {
+        List<Transaction> toPush = new ArrayList<>();
+
+        for(int i=0;i<aw.length;++i)
+        {
+            Transaction.Builder builder = ParameterParser.parseTransaction(aw[i].toString(), null, null);
+            Transaction transaction = builder.build();
+            transaction.validate(); // safe guard, so it cannot happen that tx1 goes through and tx2 fails validation
+            toPush.add(transaction);
+        }
+
+        for(Transaction t : toPush){
+            Nxt.getTransactionProcessor().broadcast(t);
+        }
+    }
+
     public static Appendix.PrunablePlainMessage[] encodeAttachment(IComputationAttachment att){
         try {
             ArrayList<Appendix.PrunablePlainMessage> preparation = new ArrayList<>();
@@ -107,7 +157,7 @@ public class MessageEncoder {
                 pos_counter += maximum_read;
 
                 // now, depending on pos_counter decide whether MAGIC or MAGIC_INTERMEDIATE is appended
-                if(pos_counter<to_encode.length)
+                if(pos_counter==to_encode.length)
                     System.arraycopy(MessageEncoder.MAGIC, 0, msg, 0, MessageEncoder.MAGIC.length);
                 else
                     System.arraycopy(MessageEncoder.MAGIC_INTERMEDIATE, 0, msg, 0, MessageEncoder.MAGIC_INTERMEDIATE.length);
@@ -149,6 +199,9 @@ public class MessageEncoder {
             byte messageType = wp_bb.get();
             if(messageType == CommandsEnum.CREATE_NEW_WORK.getCode()){
                 return new CommandNewWork(wp_bb);
+            }
+            else if(messageType == CommandsEnum.CANCEL_WORK.getCode()){
+                return new CommandCancelWork(wp_bb);
             }
             else{
                 return null;

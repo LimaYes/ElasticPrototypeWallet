@@ -17,7 +17,7 @@ package nxt.computation;
  ******************************************************************************/
 
 public enum CommandsEnum {
-    CREATE_NEW_WORK('N'), DUMMY1('D'), DUMMY2('X');
+    CREATE_NEW_WORK('N'), CANCEL_WORK('C'), POWBTY('P'), DUMMY1('D'), DUMMY2('X');
 
     private final byte code;
 
