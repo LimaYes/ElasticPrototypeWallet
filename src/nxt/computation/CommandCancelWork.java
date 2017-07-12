@@ -81,6 +81,12 @@ public class CommandCancelWork extends IComputationAttachment {
         Work w = Work.getWork(this.cancel_work_id);
         if(w == null) return false;
         if(w.isClosed() == true) return false;
+
+        if(transaction.getSenderId() != w.getSender_account_id()){
+            // only the author can close jobs
+            return false;
+        }
+
         return true;
     }
 

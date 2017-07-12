@@ -16,6 +16,7 @@
 
 package nxt;
 
+import nxt.PowAndBounty;
 import nxt.addons.AddOns;
 import nxt.crypto.Crypto;
 import nxt.env.DirProvider;
@@ -359,6 +360,7 @@ public final class Nxt {
                 Redeem.init();
                 Vote.init();
                 Work.init();
+                PowAndBounty.init();
                 PhasingVote.init();
                 PrunableMessage.init();
                 TaggedData.init();

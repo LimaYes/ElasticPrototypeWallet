@@ -203,6 +203,9 @@ public class MessageEncoder {
             else if(messageType == CommandsEnum.CANCEL_WORK.getCode()){
                 return new CommandCancelWork(wp_bb);
             }
+            else if(messageType == CommandsEnum.POWBTY.getCode()){
+                return new CommandPowBty(wp_bb);
+            }
             else{
                 return null;
             }

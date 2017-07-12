@@ -37,6 +37,9 @@ public class CommandPowBty extends IComputationAttachment {
     private boolean is_proof_of_work;
     private byte[] multiplier_or_storage;
 
+    private boolean validated = false;
+    private boolean isValid = false;
+
     public CommandPowBty(long work_id, boolean is_proof_of_work, byte[] multiplier_or_storage) {
         super();
         this.work_id = work_id;
@@ -110,12 +113,29 @@ public class CommandPowBty extends IComputationAttachment {
         return multiplier_or_storage;
     }
 
+    private boolean validatePow(){
+        return true;
+    }
+    private boolean validateBty(){
+        return true;
+    }
+
     @Override
     boolean validate(Transaction transaction) {
+
+        // This construction avoids multiple code-evaluations which are not really required
+        if(validated) return isValid;
+        validated = true;
         if (this.work_id == 0) return false;
         Work w = Work.getWork(this.work_id);
         if (w == null) return false;
         if (w.isClosed() == true) return false;
+
+        // Now check for duplicate entry (hash already contains work_id, type and storage/multiplier)
+        byte[] myHash = this.getHash();
+        if(PowAndBounty.hasHash(myHash))
+            return false;
+
         // Multiplier must be exact length
         if (this.is_proof_of_work && multiplier_or_storage.length != ComputationConstants.MULTIPLIER_LENGTH) {
             return false;
@@ -123,7 +143,19 @@ public class CommandPowBty extends IComputationAttachment {
         if (!this.is_proof_of_work && multiplier_or_storage.length > ComputationConstants.BOUNTY_STORAGE_INTS * 4) {
             return false;
         }
+
+        // Validate code-level
+        if (this.is_proof_of_work && !validatePow()) {
+            return false;
+        }
+        if (!this.is_proof_of_work && !validateBty()) {
+            return false;
+        }
+
         // more validation
+
+
+        isValid = true;
         return true;
     }
 
@@ -133,13 +165,10 @@ public class CommandPowBty extends IComputationAttachment {
             return;
         // Here, apply the actual package
         Logger.logInfoMessage("processing pow-or-bty for work: id=" + Long.toUnsignedString(this.work_id));
-        Work w = Work.getWork(this.work_id);
-        if (w != null && w.isClosed() == false) {
-            // Apply the Pow or BTY here
-            PowAndBounty.addPowBty(transaction, this);
-        }
+        PowAndBounty.addPowBty(transaction, this);
     }
 
+    // todo: only include storage that is used in verify
     public byte[] getHash() {
         final MessageDigest dig = Crypto.sha256();
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();

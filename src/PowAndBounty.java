@@ -1,4 +1,3 @@
-
 package nxt;
 
 import java.sql.Connection;
@@ -71,7 +70,42 @@ public final class PowAndBounty {
         PowAndBounty shuffling = new PowAndBounty(transaction, attachment);
 
         // Here check if it is counting or if it is "old"
+        Work w = Work.getWork(attachment.getWork_id());
+        if(w == null ||w.isClosed()){
+            return; // just another line of defense
+        }
 
+        // Now the work itself has to be manipulated (and close if necessary)
+        if(attachment.isIs_proof_of_work())
+        {
+            // logic for PoW
+            w.setReceived_pows(w.getReceived_pows() + 1);
+            System.out.println("Work already got " + w.getReceived_pows() + " of " + w.getCap_number_pow() + " POWS!");
+
+            // Close work if enough bounties were received
+            int cap = w.getCap_number_pow();
+            if(w.getReceived_pows() == cap){
+                w.setClosed(true);
+            }
+
+            w.EmitPow();
+            w.JustSave();
+        }
+        else
+        {
+            // logic for BTY
+            w.setReceived_bounties(w.getReceived_bounties() + 1);
+
+
+            // Close work if enough bounties were received
+            int cap = w.getIterations() * w.getBounty_limit_per_iteration();
+            if(w.getReceived_bounties() == cap){
+                w.setClosed(true);
+            }
+
+            w.EmitBty();
+            w.JustSave();
+        }
         PowAndBounty.powAndBountyTable.insert(shuffling);
         PowAndBounty.listeners.notify(shuffling, (shuffling.is_pow)?Event.POW_SUBMITTED:Event.BOUNTY_SUBMITTED);
     }
@@ -132,9 +166,9 @@ public final class PowAndBounty {
                 .and(new DbClause.BooleanClause("latest", true)), 0, -1, "");
     }
 
-    static boolean hasHash(final long workId, final byte[] hash) {
+    public static boolean hasHash(final byte[] hash) {
         return PowAndBounty.powAndBountyTable
-                .getCount(new DbClause.BytesClause("hash", hash).and(new DbClause.LongClause("work_id", workId))) > 0;
+                .getCount(new DbClause.BytesClause("hash", hash)) > 0;
     }
 
     static void init() {

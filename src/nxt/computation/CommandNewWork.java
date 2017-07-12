@@ -41,6 +41,10 @@ public class CommandNewWork extends IComputationAttachment {
         return xelPerBounty;
     }
 
+    public int getCap_number_pow() {
+        return cap_number_pow;
+    }
+
     public int getBountiesPerIteration() {
         return bountiesPerIteration;
     }
@@ -55,6 +59,7 @@ public class CommandNewWork extends IComputationAttachment {
 
     private long xelPerPow;
     private long xelPerBounty;
+    private int cap_number_pow;
 
     public short getDeadline() {
         return deadline;
@@ -66,8 +71,10 @@ public class CommandNewWork extends IComputationAttachment {
     private byte[] sourceCode;
     private byte[] sourceCodeCompressed;
 
-    public CommandNewWork(short deadline, long xelPerPow, long xelPerBounty, int bountiesPerIteration, int numberOfIterations, byte[] sourceCode){
+    public CommandNewWork(int cap_number_pow, short deadline, long xelPerPow, long xelPerBounty, int
+            bountiesPerIteration, int numberOfIterations, byte[] sourceCode){
         super();
+        this.cap_number_pow = cap_number_pow;
         this.deadline = deadline;
         this.xelPerPow = xelPerPow;
         this.xelPerBounty = xelPerBounty;
@@ -91,8 +98,9 @@ public class CommandNewWork extends IComputationAttachment {
     }
 
 
-    public CommandNewWork(short deadline, long xelPerPow, long xelPerBounty, int bountiesPerIteration, int numberOfIterations, String sourceCode) throws UnsupportedEncodingException {
-        this(deadline, xelPerPow, xelPerBounty, bountiesPerIteration, numberOfIterations, sourceCode.getBytes("UTF-8"));
+    public CommandNewWork(int cap_number_pow, short deadline, long xelPerPow, long xelPerBounty, int bountiesPerIteration, int numberOfIterations, String sourceCode) throws UnsupportedEncodingException {
+        this(cap_number_pow, deadline, xelPerPow, xelPerBounty, bountiesPerIteration, numberOfIterations, sourceCode
+                .getBytes("UTF-8"));
     }
 
     CommandNewWork(ByteBuffer buffer) {
@@ -105,6 +113,7 @@ public class CommandNewWork extends IComputationAttachment {
             this.xelPerBounty = buffer.getLong();
             this.bountiesPerIteration = buffer.getInt();
             this.numberOfIterations = buffer.getInt();
+            this.cap_number_pow = buffer.getInt();
 
             if(compressed_or_not == 0) {
                 short len = buffer.getShort();
@@ -150,6 +159,7 @@ public class CommandNewWork extends IComputationAttachment {
             this.deadline = 0;
             this.xelPerPow = 0;
             this.xelPerBounty = 0;
+            this.cap_number_pow = 0;
             this.bountiesPerIteration = 0;
             this.numberOfIterations = 0;
             this.sourceCode = null;
@@ -172,7 +182,7 @@ public class CommandNewWork extends IComputationAttachment {
             min = this.sourceCode.length;
         else
             min = (this.sourceCode.length<this.sourceCodeCompressed.length)?this.sourceCode.length:this.sourceCodeCompressed.length;
-        return 1+2+8+8+4+4+2+min;
+        return 1+2+8+8+4+4+4+2+min;
     }
 
     @Override
@@ -198,6 +208,7 @@ public class CommandNewWork extends IComputationAttachment {
         buffer.putLong(this.xelPerBounty);
         buffer.putInt(this.bountiesPerIteration);
         buffer.putInt(this.numberOfIterations);
+        buffer.putInt(this.cap_number_pow);
 
         if(compressed){
             buffer.putShort((short) this.sourceCodeCompressed.length);
@@ -226,6 +237,9 @@ public class CommandNewWork extends IComputationAttachment {
             return false;
 
         if(!Commons.checkRange(ComputationConstants.ITER_MIN, ComputationConstants.ITER_MAX, this.numberOfIterations))
+            return false;
+
+        if(!Commons.checkRange(ComputationConstants.POW_MIN, ComputationConstants.POW_MAX, this.cap_number_pow))
             return false;
 
         validated = true;

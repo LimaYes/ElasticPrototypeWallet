@@ -4,6 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import nxt.computation.CommandNewWork;
 import nxt.computation.ComputationConstants;
@@ -15,6 +16,8 @@ import nxt.db.VersionedEntityDbTable;
 import nxt.util.Convert;
 import nxt.util.Listener;
 import nxt.util.Listeners;
+import nxt.util.Logger;
+import org.json.simple.JSONObject;
 
 /******************************************************************************
  * Copyright © 2017 The XEL Core Developers.                                  *
@@ -59,6 +62,8 @@ public final class Work {
     };
 
     // this will check whether work needs to be closed after applying each block
+    // Later, close work if users balance drops before the estimated remaning balances or if payouts are not
+    // performed at all
     static {
         Nxt.getBlockchainProcessor().addListener(block -> {
             final List<Work> shufflings = new ArrayList<>();
@@ -74,6 +79,7 @@ public final class Work {
     private final long id;
     private final DbKey dbKey;
     private final long block_id;
+    private final int cap_number_pow;
     private final long sender_account_id;
     private final long xel_per_pow;
     private final int iterations;
@@ -90,6 +96,42 @@ public final class Work {
     private int closing_timestamp;
     private int[] combined_storage;
 
+    public void setClosed(boolean closed) {
+        this.closed = closed;
+    }
+
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
+    }
+
+    public void setTimedout(boolean timedout) {
+        this.timedout = timedout;
+    }
+
+    public void setIterations_left(int iterations_left) {
+        this.iterations_left = iterations_left;
+    }
+
+    public void setReceived_bounties(int received_bounties) {
+        this.received_bounties = received_bounties;
+    }
+
+    public void setReceived_pows(int received_pows) {
+        this.received_pows = received_pows;
+    }
+
+    public void setBlocksRemaining(short blocksRemaining) {
+        this.blocksRemaining = blocksRemaining;
+    }
+
+    public void setClosing_timestamp(int closing_timestamp) {
+        this.closing_timestamp = closing_timestamp;
+    }
+
+    public void setCombined_storage(int[] combined_storage) {
+        this.combined_storage = combined_storage;
+    }
+
     // todo: maximum iteration number (because otherwise storage grows too much)
     private Work(final ResultSet rs, final DbKey dbKey) throws SQLException {
 
@@ -97,6 +139,7 @@ public final class Work {
         this.block_id = rs.getLong("block_id");
         this.dbKey = dbKey;
         this.xel_per_pow = rs.getLong("xel_per_pow");
+        this.cap_number_pow = rs.getInt("cap_number_pow");
         this.blocksRemaining = rs.getShort("blocks_remaining");
         this.closed = rs.getBoolean("closed");
         this.cancelled = rs.getBoolean("cancelled");
@@ -117,6 +160,7 @@ public final class Work {
         this.block_id = transaction.getBlockId();
         this.dbKey = Work.workDbKeyFactory.newKey(this.id);
         this.xel_per_pow = attachment.getXelPerPow();
+        this.cap_number_pow = attachment.getCap_number_pow();
         this.iterations = attachment.getNumberOfIterations();
         this.iterations_left = iterations;
         this.blocksRemaining = attachment.getDeadline();
@@ -143,25 +187,29 @@ public final class Work {
         Work.listeners.notify(shuffling, Event.WORK_CREATED);
     }
 
-    public static int countAccountWork(final long accountId, final boolean onlyOpen) {
-        if (onlyOpen) return Work.workTable.getCount(new DbClause.BooleanClause("closed", false)
-                .and(new DbClause.LongClause("sender_account_id", accountId)));
-        else return Work.workTable.getCount(new DbClause.LongClause("sender_account_id", accountId));
-    }
 
-    public static List<Work> getAccountWork(final long accountId, final boolean includeFinished, final int from,
+    public static List<Work> getWork(final long accountId, final boolean includeFinished, final int from,
                                             final int to, final long onlyOneId) {
         final List<Work> ret = new ArrayList<>();
 
-        try (Connection con = Db.db.getConnection();
-             PreparedStatement pstmt = con
-                     .prepareStatement("SELECT work.* FROM work WHERE work.sender_account_id = ? "
+        try (Connection con = Db.db.getConnection();) {
+
+            PreparedStatement pstmt = null;
+            if(accountId != 0)
+                pstmt = con.prepareStatement("SELECT work.* FROM work WHERE work.sender_account_id = ? "
                              + (includeFinished ? "" : "AND work.blocks_remaining IS NOT NULL ")
                              + (onlyOneId == 0 ? "" : "AND work.work_id = ? ")
                              + "AND work.latest = TRUE ORDER BY closed, originating_height DESC "
-                             + DbUtils.limitsClause(from, to))) {
+                             + DbUtils.limitsClause(from, to));
+            else
+                pstmt = con.prepareStatement("SELECT work.* FROM work WHERE work.sender_account_id != 0 "
+                        + (includeFinished ? "" : "AND work.blocks_remaining IS NOT NULL ")
+                        + (onlyOneId == 0 ? "" : "AND work.work_id = ? ")
+                        + "AND work.latest = TRUE ORDER BY closed, originating_height DESC "
+                        + DbUtils.limitsClause(from, to));
             int i = 0;
-            pstmt.setLong(++i, accountId);
+            if(accountId != 0)
+                pstmt.setLong(++i, accountId);
             if (onlyOneId != 0) pstmt.setLong(++i, onlyOneId);
             DbUtils.setLimits(++i, pstmt, from, to);
             try (DbIterator<Work> w_it = Work.workTable.getManyBy(con, pstmt, true)) {
@@ -305,11 +353,13 @@ public final class Work {
 
     private void save(final Connection con) throws SQLException {
         try (PreparedStatement pstmt = con.prepareStatement(
-                "MERGE INTO work (id, closing_timestamp, block_id, sender_account_id, xel_per_pow, iterations, iterations_left, blocks_remaining, closed, cancelled, timedout, xel_per_bounty, received_bounties, received_pows, bounty_limit_per_iteration, originating_height, height, combined_storage, latest) "
+                "MERGE INTO work (id, cap_number_pow, closing_timestamp, block_id, sender_account_id, xel_per_pow, " +
+                        "iterations, iterations_left, blocks_remaining, closed, cancelled, timedout, xel_per_bounty, received_bounties, received_pows, bounty_limit_per_iteration, originating_height, height, combined_storage, latest) "
                         + "KEY (id, height) "
-                        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, TRUE)")) {
+                        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, TRUE)")) {
             int i = 0;
             pstmt.setLong(++i, this.id);
+            pstmt.setInt(++i, this.cap_number_pow);
             pstmt.setInt(++i, this.closing_timestamp);
             pstmt.setLong(++i, this.block_id);
             pstmt.setLong(++i, this.sender_account_id);
@@ -340,22 +390,78 @@ public final class Work {
             this.closing_timestamp = bl.getTimestamp();
             Work.workTable.insert(this);
             Work.listeners.notify(this, Event.WORK_CANCELLED);
+            Logger.logInfoMessage("work closed on user request: id=" + Long.toUnsignedString(this.id));
         }
+    }
+
+    public void JustSave(){
+        Work.workTable.insert(this);
+        if(this.isClosed()) {
+            Logger.logInfoMessage("work closed by pow/bty handler: id=" + Long.toUnsignedString(this.id));
+            Work.listeners.notify(this, Event.WORK_CANCELLED);
+        }
+    }
+
+    public void EmitPow(){
+        Work.listeners.notify(this, Event.WORK_POW_RECEIVED);
+    }
+
+    public void EmitBty(){
+        Work.listeners.notify(this, Event.WORK_BOUNTY_RECEIVED);
     }
 
     private void CheckForAutoClose(Block bl) {
         if(this.closed == false) {
-
-            // todo, check for payment related closing due to funds-reach-0
-
             if(this.originating_height + this.blocksRemaining == bl.getHeight()){
                 this.closed = true;
                 this.timedout = true;
                 this.closing_timestamp = bl.getTimestamp();
                 Work.workTable.insert(this);
                 Work.listeners.notify(this, Event.WORK_TIMEOUTED);
+                Logger.logInfoMessage("work automatically closed due to timeout: id=" + Long.toUnsignedString(this.id));
             }
         }
+    }
+
+    public int getCap_number_pow() {
+        return cap_number_pow;
+    }
+
+    public static JSONObject toJson(Work work) {
+        final JSONObject response = new JSONObject();
+        response.put("id", Long.toUnsignedString(work.id));
+        response.put("block_id", Long.toUnsignedString(work.block_id));
+        response.put("xel_per_pow", work.xel_per_pow);
+        response.put("iterations", work.iterations);
+        response.put("iterations_left", work.iterations_left);
+        response.put("originating_height", work.originating_height);
+        response.put("max_closing_height", work.originating_height + work.blocksRemaining);
+        response.put("closed", work.closed);
+        response.put("closing_timestamp", work.closing_timestamp);
+        response.put("cancelled", work.cancelled);
+        response.put("timedout", work.timedout);
+        response.put("xel_per_bounty", work.getXel_per_bounty());
+        response.put("received_bounties", work.received_bounties);
+        response.put("received_pows", work.received_pows);
+        response.put("bounty_limit_per_iteration", work.bounty_limit_per_iteration);
+        response.put("cap_number_pow", work.cap_number_pow);
+        response.put("sender_account_id", Long.toUnsignedString(work.sender_account_id));
+        return response;
+    }
+
+    public static JSONObject toJson(Work work, boolean storage, boolean source) {
+        final JSONObject response = toJson(work);
+
+        if(storage)
+            response.put("combined_storage", Convert.toHexString(Convert.int2byte(work.combined_storage)));
+
+        // todo: source
+
+        return response;
+    }
+
+    public static JSONObject toJsonWithAll(Work work) {
+        return toJson(work, true, true);
     }
 
     public enum Event {

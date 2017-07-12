@@ -86,7 +86,7 @@ public class WorkTest extends AbstractForgingTest {
         String code = "Testing some code, which for sure will get encoded / gzipped or whatever! This is truly large yet it will become pretty pretty small on the blockchain! Test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test  !!!";
 
         System.out.println("[!!]\tcode length: " + code.length());
-        CommandNewWork work = new CommandNewWork((short)15,1000001,1000001,10,10, code.getBytes());
+        CommandNewWork work = new CommandNewWork(100, (short)15,1000001,1000001,10,10, code.getBytes());
         push(work);
 
         // Mine a bit so the work gets confirmed
@@ -123,7 +123,7 @@ public class WorkTest extends AbstractForgingTest {
         redeemPubkeyhash();
         String code = "Testing some code, which for sure will get encoded / gzipped or whatever! This is truly large yet it will become pretty pretty small on the blockchain! Test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test  !!!";
         System.out.println("[!!]\tcode length: " + code.length());
-        CommandNewWork work = new CommandNewWork((short)15,1000001,1000001,10,10, code.getBytes());
+        CommandNewWork work = new CommandNewWork(100, (short)15,1000001,1000001,10,10, code.getBytes());
         push(work);
 
         // Mine a bit so the work gets confirmed
@@ -136,6 +136,45 @@ public class WorkTest extends AbstractForgingTest {
         // Mine a bit so the work times out
         AbstractBlockchainTest.forgeNumberOfBlocks(20, AbstractForgingTest.testForgingSecretPhrase);
 
+        // Test work db table
+        Assert.assertEquals(1, Work.getCount());
+        Assert.assertEquals(0, Work.getActiveCount());
+
+    }
+
+    @Test
+    public void newWorkTestWithEnoughBounties() throws NxtException, IOException {
+
+        redeemPubkeyhash();
+        String code = "Testing some code, which for sure will get encoded / gzipped or whatever! This is truly large yet it will become pretty pretty small on the blockchain! Test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test  !!!";
+        System.out.println("[!!]\tcode length: " + code.length());
+        CommandNewWork work = new CommandNewWork(10, (short)100,1000001,1000001,10,10, code.getBytes());
+        push(work);
+
+        // Mine a bit so the work gets confirmed
+        AbstractBlockchainTest.forgeNumberOfBlocks(1, AbstractForgingTest.testForgingSecretPhrase);
+
+        long id = 0;
+        try(DbIterator<Work> wxx = Work.getActiveWork()){
+            Work w = wxx.next();
+            id = w.getId();
+            System.out.println("Found work in DB with id = " + Long.toUnsignedString(w.getId()));
+        }
+
+        // Test work db table
+        Assert.assertEquals(1, Work.getCount());
+        Assert.assertEquals(1, Work.getActiveCount());
+
+        byte[] testarray = new byte[32];
+        for(int i=0;i<25; ++i) {
+            testarray[0]=(byte)(testarray[0]+1);
+            CommandPowBty pow = new CommandPowBty(id, true, testarray);
+            push(pow);
+            // Mine a bit so the work times out
+            AbstractBlockchainTest.forgeNumberOfBlocks(1, AbstractForgingTest.testForgingSecretPhrase);
+        }
+
+        // After getting enough Pow work must be closed
         // Test work db table
         Assert.assertEquals(1, Work.getCount());
         Assert.assertEquals(0, Work.getActiveCount());
