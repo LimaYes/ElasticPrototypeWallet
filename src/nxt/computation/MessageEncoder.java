@@ -7,6 +7,9 @@ import nxt.peer.Peers;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -68,6 +71,18 @@ public class MessageEncoder {
         }, BlockchainProcessor.Event.AFTER_BLOCK_APPLY);
     }
 
+
+    public static void push(IComputationAttachment work, String secretPhrase) throws NxtException, IOException {
+        Appendix.PrunablePlainMessage[] messages = MessageEncoder.encodeAttachment(work);
+        JSONStreamAware[] individual_txs = MessageEncoder.encodeTransactions(messages, secretPhrase);
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        for(int i=0;i<individual_txs.length;++i){
+            individual_txs[i].writeJSONString(pw);
+        }
+        StringBuffer sb = sw.getBuffer();
+        MessageEncoder.pushThemAll(individual_txs);
+    }
 
     public static Appendix.PrunablePlainMessage[] extractMessages(Transaction _t) throws NxtException.ValidationException {
 

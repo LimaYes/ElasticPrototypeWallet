@@ -86,5 +86,4 @@ public final class GetWork extends APIServlet.APIRequestHandler {
         response.put("work_packages", work_packages);
         return response;
     }
-
 }

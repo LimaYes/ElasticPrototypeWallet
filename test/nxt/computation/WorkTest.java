@@ -61,23 +61,6 @@ public class WorkTest extends AbstractForgingTest {
         Assert.assertTrue("Failed to create redeem transaction.", RedeemFunctions.redeem(address, AbstractForgingTest.testForgingSecretPhrase, privkeys));
     }
 
-    public void push(IComputationAttachment work) throws NxtException, IOException{
-        Appendix.PrunablePlainMessage[] messages = MessageEncoder.encodeAttachment(work);
-        System.out.println("[!!]\tmessage chunks length: " + messages.length);
-
-        JSONStreamAware[] individual_txs = MessageEncoder.encodeTransactions(messages, AbstractForgingTest.testForgingSecretPhrase);
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-
-        for(int i=0;i<individual_txs.length;++i){
-            individual_txs[i].writeJSONString(pw);
-        }
-
-        StringBuffer sb = sw.getBuffer();
-        System.out.println("TX:\n" + sb.toString());
-
-        MessageEncoder.pushThemAll(individual_txs);
-    }
     @Test
     public void newWorkTest() throws NxtException, IOException {
 
@@ -87,7 +70,7 @@ public class WorkTest extends AbstractForgingTest {
 
         System.out.println("[!!]\tcode length: " + code.length());
         CommandNewWork work = new CommandNewWork(100, (short)15,1000001,1000001,10,10, code.getBytes());
-        push(work);
+        MessageEncoder.push(work, AbstractForgingTest.testForgingSecretPhrase);
 
         // Mine a bit so the work gets confirmed
         AbstractBlockchainTest.forgeNumberOfBlocks(1, AbstractForgingTest.testForgingSecretPhrase);
@@ -103,7 +86,7 @@ public class WorkTest extends AbstractForgingTest {
         }
 
         CommandCancelWork cancel = new CommandCancelWork(id);
-        push(cancel);
+        MessageEncoder.push(cancel, AbstractForgingTest.testForgingSecretPhrase);
 
         // Mine a bit so the work gets confirmed
         AbstractBlockchainTest.forgeNumberOfBlocks(5, AbstractForgingTest.testForgingSecretPhrase);
@@ -124,7 +107,7 @@ public class WorkTest extends AbstractForgingTest {
         String code = "Testing some code, which for sure will get encoded / gzipped or whatever! This is truly large yet it will become pretty pretty small on the blockchain! Test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test  !!!";
         System.out.println("[!!]\tcode length: " + code.length());
         CommandNewWork work = new CommandNewWork(100, (short)15,1000001,1000001,10,10, code.getBytes());
-        push(work);
+        MessageEncoder.push(work, AbstractForgingTest.testForgingSecretPhrase);
 
         // Mine a bit so the work gets confirmed
         AbstractBlockchainTest.forgeNumberOfBlocks(1, AbstractForgingTest.testForgingSecretPhrase);
@@ -149,7 +132,7 @@ public class WorkTest extends AbstractForgingTest {
         String code = "Testing some code, which for sure will get encoded / gzipped or whatever! This is truly large yet it will become pretty pretty small on the blockchain! Test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test  !!!";
         System.out.println("[!!]\tcode length: " + code.length());
         CommandNewWork work = new CommandNewWork(10, (short)100,1000001,1000001,10,10, code.getBytes());
-        push(work);
+        MessageEncoder.push(work, AbstractForgingTest.testForgingSecretPhrase);
 
         // Mine a bit so the work gets confirmed
         AbstractBlockchainTest.forgeNumberOfBlocks(1, AbstractForgingTest.testForgingSecretPhrase);
@@ -169,7 +152,7 @@ public class WorkTest extends AbstractForgingTest {
         for(int i=0;i<25; ++i) {
             testarray[0]=(byte)(testarray[0]+1);
             CommandPowBty pow = new CommandPowBty(id, true, testarray);
-            push(pow);
+            MessageEncoder.push(pow, AbstractForgingTest.testForgingSecretPhrase);
             // Mine a bit so the work times out
             AbstractBlockchainTest.forgeNumberOfBlocks(1, AbstractForgingTest.testForgingSecretPhrase);
         }

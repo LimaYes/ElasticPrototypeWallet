@@ -29,8 +29,8 @@ public class ComputationConstants {
     public static final long XEL_POW_MAX = Constants.MAX_CURRENCY_TOTAL_SUPPLY;
     public static final long XEL_BTY_MIN = 1;
     public static final long XEL_BTY_MAX = Constants.MAX_CURRENCY_TOTAL_SUPPLY;
-    public static final long BTY_PER_ITER_MIN = 1;
-    public static final long BTY_PER_ITER_MAX = 10;
+    public static final int BTY_PER_ITER_MIN = 1;
+    public static final int BTY_PER_ITER_MAX = 10;
     public static final int ITER_MIN = 1;
     public static final int ITER_MAX = 100;
     public static final long WORK_MESSAGE_RECEIVER_ACCOUNT = 100010001000L;

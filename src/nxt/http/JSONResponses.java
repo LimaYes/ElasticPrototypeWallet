@@ -158,6 +158,13 @@ public final class JSONResponses {
     public static final JSONStreamAware INCORRECT_EC_BLOCK = incorrect("ecBlockId", "ecBlockId does not match the block id at ecBlockHeight");
 
     public static final JSONStreamAware NOT_ENOUGH_FUNDS;
+    public static final JSONStreamAware MISSING_XEL_PER_POW = missing("correct xel per pow value");
+    public static final JSONStreamAware MISSING_XEL_PER_BOUNTY = missing("correct xel per bounty value");
+    public static final JSONStreamAware MISSING_BOUNTYLIMIT = missing("correct bounties per iteration value");
+    public static final JSONStreamAware MISSING_ITERATIOS = missing("correct iteration count");
+    public static final JSONStreamAware MISSING_CAPPOW = missing("correct limit of pow-submissions");
+    public static final JSONStreamAware MISSING_PROGAMCODE = missing("program source code");
+
     static {
         JSONObject response = new JSONObject();
         response.put("errorCode", 6);
@@ -211,6 +218,14 @@ public final class JSONResponses {
         response.put("errorCode", 1);
         response.put("errorDescription", "Incorrect request");
         ERROR_INCORRECT_REQUEST = JSON.prepare(response);
+    }
+
+    public static final JSONStreamAware EVERYTHING_ALRIGHT;
+    static {
+        JSONObject response  = new JSONObject();
+        response.put("errorCode", 1001);
+        response.put("errorDescription", "Transaction has been successfully submitted");
+        EVERYTHING_ALRIGHT = JSON.prepare(response);
     }
 
     public static final JSONStreamAware NOT_FORGING;
