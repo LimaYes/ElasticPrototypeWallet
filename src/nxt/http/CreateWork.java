@@ -24,7 +24,6 @@ import nxt.computation.Commons;
 import nxt.computation.ComputationConstants;
 import nxt.computation.MessageEncoder;
 import org.json.simple.JSONStreamAware;
-import nxt.Account;
 import nxt.NxtException;
 
 import java.io.IOException;
