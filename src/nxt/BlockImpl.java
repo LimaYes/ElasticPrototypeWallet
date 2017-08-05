@@ -123,6 +123,11 @@ final class BlockImpl implements Block {
     }
 
     @Override
+    public void setLocallyProcessed() {
+        BlockDb.updateBlockLocallyProcessed(this);
+    }
+
+    @Override
     public int getVersion() {
         return version;
     }

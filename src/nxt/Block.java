@@ -23,6 +23,8 @@ import java.util.List;
 
 public interface Block {
 
+    void setLocallyProcessed();
+
     int getVersion();
 
     long getId();

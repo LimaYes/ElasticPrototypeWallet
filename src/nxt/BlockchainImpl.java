@@ -16,6 +16,7 @@
 
 package nxt;
 
+import nxt.computation.ComputationConstants;
 import nxt.db.DbIterator;
 import nxt.db.DbUtils;
 import nxt.util.Convert;
@@ -83,6 +84,30 @@ final class BlockchainImpl implements Blockchain {
     public int getHeight() {
         BlockImpl last = lastBlock.get();
         return last == null ? 0 : last.getHeight();
+    }
+
+    @Override
+    public int getLastLocallyProcessedHeight() {
+
+        // Does not need to be super efficient because only executed ONCE on program start
+
+        int ret = ComputationConstants.START_ENCODING_BLOCK;
+        Connection con = null;
+        try {
+            con = Db.db.getConnection();
+            PreparedStatement pstmt = con.prepareStatement("SELECT * FROM block WHERE locally_processed = TRUE ORDER BY height DESC LIMIT 1");
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (!rs.next()) {
+                    return ret;
+                }
+                int rettmp = rs.getInt("height");
+                if(rettmp > ret) ret = rettmp;
+            }
+        } catch (SQLException e) {
+            DbUtils.close(con);
+            throw new RuntimeException(e.toString(), e);
+        }
+        return ret;
     }
 
     @Override

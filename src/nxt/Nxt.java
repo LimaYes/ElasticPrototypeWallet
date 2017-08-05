@@ -18,6 +18,7 @@ package nxt;
 
 import nxt.PowAndBounty;
 import nxt.addons.AddOns;
+import nxt.computation.MessageEncoder;
 import nxt.crypto.Crypto;
 import nxt.env.DirProvider;
 import nxt.env.RuntimeEnvironment;
@@ -371,6 +372,7 @@ public final class Nxt {
                 API.init();
                 Users.init();
                 DebugTrace.init();
+
                 int timeMultiplier = (Constants.isTestnet && Constants.isOffline) ? Math.max(Nxt.getIntProperty("nxt.timeMultiplier"), 1) : 1;
                 ThreadPool.start(timeMultiplier);
                 if (timeMultiplier > 1) {
@@ -382,6 +384,12 @@ public final class Nxt {
                 } catch (InterruptedException ignore) {}
                 testSecureRandom();
                 long currentTime = System.currentTimeMillis();
+
+                // At this point we can catch up work related stuff
+                Logger.logInfoMessage("STARTED: Catching up work related transaction history.");
+                MessageEncoder.init();
+                Logger.logInfoMessage("FINISHED: Work related transaction history is up to date.");
+
                 Logger.logMessage("Initialization took " + (currentTime - startTime) / 1000 + " seconds");
                 Logger.logMessage("Nxt server " + VERSION + " started successfully.");
                 Logger.logMessage("Copyright © 2013-2016 The Nxt Core Developers.");

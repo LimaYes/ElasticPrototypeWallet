@@ -4,6 +4,7 @@ import nxt.*;
 import nxt.http.ParameterException;
 import nxt.http.ParameterParser;
 import nxt.peer.Peers;
+import nxt.util.Logger;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
 
@@ -35,7 +36,6 @@ import java.util.List;
 
 public class MessageEncoder {
 
-
     /*
     the reason that both are present is, that messages can be split up in multiple chunks. Each chunk must be identifies as a NON message, but the last chunk only triggers the message parsing
      warning: both must be of same length */
@@ -43,32 +43,59 @@ public class MessageEncoder {
     static byte[] MAGIC_INTERMEDIATE = {(byte)0xef, (byte)0xbe, (byte)0xad, (byte)0xde, (byte)0xde, (byte)0xad, (byte)0xbe, (byte)0xef};
 
 
-    static {
-        Nxt.getBlockchainProcessor().addListener(block -> {
-            if (block.getHeight() <= ComputationConstants.START_ENCODING_BLOCK) {
-                return;
-            }
+    static boolean useComputationEngine = Nxt.getBooleanProperty("nxt.enableComputationEngine");
 
-            // Check all TX for relevant stuff
-            for(Transaction t : block.getTransactions()){
-                Appendix.PrunablePlainMessage m = t.getPrunablePlainMessage();
-                if(m==null) continue;
-                if(MessageEncoder.checkMessageForPiggyback(m, true, false)){
-                    try {
-                        Appendix.PrunablePlainMessage[] reconstructedChain = MessageEncoder.extractMessages(t);
+    static void processBlockInternal(Block block){
+        // Check all TX for relevant stuff
+        for(Transaction t : block.getTransactions()){
+            Appendix.PrunablePlainMessage m = t.getPrunablePlainMessage();
+            if(m==null) continue;
+            if(MessageEncoder.checkMessageForPiggyback(m, true, false)){
+                try {
+                    Appendix.PrunablePlainMessage[] reconstructedChain = MessageEncoder.extractMessages(t);
 
-                        // Allow the decoding of the attachment
-                        IComputationAttachment att = MessageEncoder.decodeAttachment(reconstructedChain);
-                        if(att == null) continue;
-                        att.apply(t);
-                    } catch (Exception e) {
-                        // generous catch, do not allow anything to cripple the blockchain integrity
-                        continue;
-                    }
+                    // Allow the decoding of the attachment
+                    IComputationAttachment att = MessageEncoder.decodeAttachment(reconstructedChain);
+                    if(att == null) continue;
+                    att.apply(t);
+                } catch (Exception e) {
+                    // generous catch, do not allow anything to cripple the blockchain integrity
+                    continue;
                 }
             }
+        }
 
+        block.setLocallyProcessed();
+    }
+
+    static {
+        Nxt.getBlockchainProcessor().addListener(block -> {
+            if (block.getHeight() < ComputationConstants.START_ENCODING_BLOCK || !useComputationEngine) {
+                return;
+            }
+            processBlockInternal(block);
         }, BlockchainProcessor.Event.AFTER_BLOCK_APPLY);
+    }
+
+    public static void init(){
+        // Here, we need to catch up if there are blocks remaining which have not been "work parsed" and the computation engine is started/active
+        int current_height = Nxt.getBlockchain().getHeight();
+        int last_processed_height = Nxt.getBlockchain().getLastLocallyProcessedHeight();
+
+        if(last_processed_height == current_height) return; // no need to do anything
+        if(last_processed_height > current_height) return; // this should never happen anyways, jetz keep it in here to avoid any chance of an infinite loop
+
+        // Catch up!
+        for(int i=last_processed_height + 1; i<=last_processed_height; ++i){
+
+            Block block = Nxt.getBlockchain().getBlockAtHeight(i);
+            if(block==null){
+                // This is bad!
+                throw new RuntimeException("Could not retrieve Block from BlockDB (height: " + i);
+            }
+            processBlockInternal(block);
+            Logger.logInfoMessage("Catching up work related information from past blocks - block " + i + " of " + last_processed_height);
+        }
     }
 
 
