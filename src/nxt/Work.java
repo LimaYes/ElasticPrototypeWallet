@@ -95,6 +95,11 @@ public final class Work {
     private short blocksRemaining;
     private int closing_timestamp;
     private int[] combined_storage;
+    private int storage_size;
+
+    public int getStorage_size() {
+        return storage_size;
+    }
 
     public void setClosed(boolean closed) {
         this.closed = closed;
@@ -154,6 +159,7 @@ public final class Work {
         this.originating_height = rs.getInt("originating_height");
         this.closing_timestamp = rs.getInt("closing_timestamp");
         this.combined_storage = Convert.byte2int(rs.getBytes("combined_storage"));
+        this.storage_size = rs.getInt("storage_size");
     }
     private Work(final Transaction transaction, final CommandNewWork attachment) {
         this.id = transaction.getId();
@@ -175,6 +181,7 @@ public final class Work {
         this.timedout = false;
         this.originating_height = transaction.getBlock().getHeight();
         this.closing_timestamp = 0;
+        this.storage_size = attachment.getStorageSize();
     }
 
     public static boolean addListener(final Listener<Work> listener, final Event eventType) {
@@ -255,7 +262,7 @@ public final class Work {
 
         try (Connection con = Db.db.getConnection();
              PreparedStatement pstmt = con
-                     .prepareStatement("SELECT work.* FROM work WHERE work.work_id = ? AND work.latest = TRUE")) {
+                     .prepareStatement("SELECT work.* FROM work WHERE work.id = ? AND work.latest = TRUE")) {
             int i = 0;
             pstmt.setLong(++i, work_id);
             final DbIterator<Work> it = Work.workTable.getManyBy(con, pstmt, true);
@@ -354,9 +361,9 @@ public final class Work {
     private void save(final Connection con) throws SQLException {
         try (PreparedStatement pstmt = con.prepareStatement(
                 "MERGE INTO work (id, cap_number_pow, closing_timestamp, block_id, sender_account_id, xel_per_pow, " +
-                        "iterations, iterations_left, blocks_remaining, closed, cancelled, timedout, xel_per_bounty, received_bounties, received_pows, bounty_limit_per_iteration, originating_height, height, combined_storage, latest) "
+                        "iterations, iterations_left, blocks_remaining, closed, cancelled, timedout, xel_per_bounty, received_bounties, received_pows, bounty_limit_per_iteration, originating_height, height, combined_storage, storage_size, latest) "
                         + "KEY (id, height) "
-                        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, TRUE)")) {
+                        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, TRUE)")) {
             int i = 0;
             pstmt.setLong(++i, this.id);
             pstmt.setInt(++i, this.cap_number_pow);
@@ -377,6 +384,7 @@ public final class Work {
             pstmt.setInt(++i, this.originating_height);
             pstmt.setInt(++i,Nxt.getBlockchain().getHeight());
             pstmt.setBytes(++i, Convert.int2byte(this.combined_storage));
+            pstmt.setInt(++i, this.storage_size);
             pstmt.executeUpdate();
         }catch(Exception e){
             e.printStackTrace();
@@ -446,6 +454,7 @@ public final class Work {
         response.put("bounty_limit_per_iteration", work.bounty_limit_per_iteration);
         response.put("cap_number_pow", work.cap_number_pow);
         response.put("sender_account_id", Long.toUnsignedString(work.sender_account_id));
+        response.put("storage_size", work.storage_size);
         return response;
     }
 

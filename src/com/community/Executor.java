@@ -57,11 +57,36 @@ public class Executor {
             sandbox.setInstructionLimit(Constants.INSTRUCTION_LIMIT);
             sandbox.setMaxDuration(Constants.SAFE_TIME_LIMIT);
             sandbox.inject("s", storage_array);
+
+
+
             Object res = sandbox.eval("epl", verifyCode + " verify();");
             return res.equals(new Double(1.0));
         }catch(Exception e){
+            e.printStackTrace();
             return false; // Failed execution (reason does not matter)
         }
     }
 
+    public static int checkCodeAndReturnStorageSize(String elasticPL) throws Exceptions.SyntaxErrorException {
+        if(elasticPL.length()>MAX_SOURCE_SIZE) throw new Exceptions.SyntaxErrorException("Code length exceeded");
+        TokenManager t = new TokenManager();
+        t.build_token_list(elasticPL);
+        ASTBuilder.parse_token_list(t.state);
+        int wcet = WCETCalculator.calc_wcet(t.state);
+        int verify_wcet = WCETCalculator.get_verify_wcet(t.state);
+        //System.out.println("Debug: WCETS " + wcet + ", verify " + verify_wcet);
+        if(wcet > Constants.ABSOLUTELY_MAXIMUM_WCET){
+            throw new Exceptions.SyntaxErrorException("Absolutely maximum WCET of " + Constants
+                    .ABSOLUTELY_MAXIMUM_WCET + " exceeded: your script has a WCET of " + wcet + ".");
+        }
+        if(verify_wcet < 0){
+            throw new Exceptions.SyntaxErrorException("Absolutely maximum verify function WCET has a strange value.");
+        }
+        if(verify_wcet > Constants.ABSOLUTELY_MAXIMUM_VERIFY_WCET){
+            throw new Exceptions.SyntaxErrorException("Absolutely maximum verify function WCET of " + Constants
+                    .ABSOLUTELY_MAXIMUM_VERIFY_WCET + " exceeded: your script has a verify function WCET of " + wcet + ".");
+        }
+        return t.state.ast_storage_sz;
+    }
 }

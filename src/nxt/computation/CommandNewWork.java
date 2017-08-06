@@ -268,4 +268,12 @@ public class CommandNewWork extends IComputationAttachment {
         Logger.logInfoMessage("new work package submitted: id=" + Long.toUnsignedString(transaction.getId()));
         Work.addWork(transaction, this);
     }
+
+    public int getStorageSize() {
+        try{
+            return Executor.checkCodeAndReturnStorageSize(new String(this.sourceCode));
+        }catch(Exception e){
+            return 0;
+        }
+    }
 }

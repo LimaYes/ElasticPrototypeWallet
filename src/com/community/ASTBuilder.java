@@ -763,6 +763,7 @@ public class ASTBuilder {
             }
         }
 
+        // todo: check if storage import index needs to be checked not to overlap the end?
         // If Storage Is Declared, Ensure Both Count & Index Are There
         if (storage_sz_idx>0 || storage_idx_idx>0) {
             if (storage_sz_idx == 0 || state.ast_storage_sz == 0) {
