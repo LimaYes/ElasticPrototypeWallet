@@ -464,7 +464,7 @@ public final class Work {
         if(storage)
             response.put("combined_storage", Convert.toHexString(Convert.int2byte(work.combined_storage)));
 
-        // todo: source
+        // todo: source, we need to get this directly from the message @ chain, it is not store redundantly in the work table
 
         return response;
     }

@@ -139,6 +139,29 @@ public class ExecutionEngineTests {
     }
 
     @Test
+    public void testCompileAndExecute2(){
+        String code = null;
+        boolean threw_exception = false;
+        try {
+            code = readFile("test/testfiles/bountytest.epl", Charset.defaultCharset());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            String epl = Executor.checkCodeAndReturnVerify(code);
+
+            int[] s = new int[]{9000,4,3,1,4,5,5,5,5};
+            Assert.assertTrue(Executor.executeCode(epl, s));
+
+
+            System.out.println(epl);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.assertTrue(false);
+        }
+    }
+
+    @Test
     public void testCompileAndExecute(){
         String code = null;
         boolean threw_exception = false;

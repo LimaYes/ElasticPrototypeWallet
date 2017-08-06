@@ -116,6 +116,7 @@ public class CommandPowBty extends IComputationAttachment {
         return true;
     }
     private boolean validateBty(){
+
         return true;
     }
 
@@ -130,9 +131,12 @@ public class CommandPowBty extends IComputationAttachment {
         if (w == null) return false;
         if (w.isClosed() == true) return false;
 
-        // Now check for duplicate entry (hash already contains work_id, type and storage/multiplier)
+        // Now check for duplicate entry (I guess storage hash and full hash need to be checked)
         byte[] myHash = this.getHash();
         if(PowAndBounty.hasHash(myHash))
+            return false;
+        myHash = this.getStorageHash();
+        if(PowAndBounty.hasStorageHash(w.getId(), myHash))
             return false;
 
         // Multiplier must be exact length
@@ -142,11 +146,10 @@ public class CommandPowBty extends IComputationAttachment {
         if (!this.is_proof_of_work && multiplier_or_storage.length > ComputationConstants.BOUNTY_STORAGE_INTS * 4) {
             return false;
         }
-        if (!this.is_proof_of_work && multiplier_or_storage.length*4 != w.getStorage_size()) {
+        if (!this.is_proof_of_work && multiplier_or_storage.length/4 != w.getStorage_size()) {
             return false;
         }
 
-        // todo: verify the storage length
 
         // Validate code-level
         if (this.is_proof_of_work && !validatePow()) {

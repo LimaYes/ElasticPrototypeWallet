@@ -167,6 +167,14 @@ public final class PowAndBounty {
                 .getCount(new DbClause.BytesClause("hash", hash)) > 0;
     }
 
+
+    // storage hash linked to wid only
+    public static boolean hasStorageHash(long workId, byte[] hash) {
+        return PowAndBounty.powAndBountyTable
+                .getCount(new DbClause.BytesClause("storage_hash", hash).and(new DbClause.LongClause("work_id",workId))) > 0;
+    }
+
+
     static void init() {
     }
 
@@ -181,6 +189,7 @@ public final class PowAndBounty {
     private final long accountId;
     private final DbKey dbKey;
     private final byte[] hash;
+    private final byte[] storage_hash;
     private final byte[] multiplier_or_storage;
 
 
@@ -200,6 +209,7 @@ public final class PowAndBounty {
         this.dbKey = dbKey;
         this.too_late = rs.getBoolean("too_late");
         this.hash = rs.getBytes("hash");
+        this.storage_hash = rs.getBytes("hash");
         this.multiplier_or_storage = rs.getBytes("multiplier_or_storage");
     }
 
@@ -210,6 +220,7 @@ public final class PowAndBounty {
         this.dbKey = PowAndBounty.powAndBountyDbKeyFactory.newKey(this.id);
         this.is_pow = attachment.isIs_proof_of_work();
         this.hash = attachment.getHash();
+        this.storage_hash = attachment.getStorageHash();
         this.multiplier_or_storage = attachment.getMultiplier_or_storage();
         this.too_late = false;
     }
@@ -221,8 +232,8 @@ public final class PowAndBounty {
 
     private void save(final Connection con) throws SQLException {
         try (PreparedStatement pstmt = con.prepareStatement(
-                "MERGE INTO pow_and_bounty (id, too_late, work_id, hash, multiplier_or_storage, account_id, is_pow, "
-                        + " height, latest) " + "KEY (id, height) " + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, TRUE)")) {
+                "MERGE INTO pow_and_bounty (id, too_late, work_id, hash, multiplier_or_storage, account_id, is_pow, storage_hash, "
+                        + " height, latest) " + "KEY (id, height) " + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, TRUE)")) {
             int i = 0;
             pstmt.setLong(++i, this.id);
             pstmt.setBoolean(++i, this.too_late);
@@ -231,6 +242,7 @@ public final class PowAndBounty {
             DbUtils.setBytes(pstmt, ++i, this.multiplier_or_storage);
             pstmt.setLong(++i, this.accountId);
             pstmt.setBoolean(++i, this.is_pow);
+            DbUtils.setBytes(pstmt, ++i, this.storage_hash);
             pstmt.setInt(++i, Nxt.getBlockchain().getHeight());
             pstmt.executeUpdate();
         }

@@ -273,7 +273,7 @@ public class CommandNewWork extends IComputationAttachment {
         try{
             return Executor.checkCodeAndReturnStorageSize(new String(this.sourceCode));
         }catch(Exception e){
-            return 0;
+            return -1;
         }
     }
 }

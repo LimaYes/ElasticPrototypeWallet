@@ -1104,7 +1104,7 @@ public class ASTBuilder {
             // Expressions w/ 1 Variable (Left Operand)
             case NODE_INCREMENT_R:
             case NODE_DECREMENT_R:
-                if (top_exp(state).is_vm_mem || top_exp(state).is_vm_storage) {
+                if (top_exp(state).is_vm_mem /* || top_exp(state).is_vm_storage */ /* changed: allow to write into storage */) {
                 throw new Exceptions.SyntaxErrorException("Syntax Error: Line: " + token.line_num + " - Illegal assignment to m/s array");
             }
 
@@ -1116,7 +1116,7 @@ public class ASTBuilder {
             // Expressions w/ 1 Variable (Right Operand)
             case NODE_INCREMENT_L:
             case NODE_DECREMENT_L:
-                if (top_exp(state).is_vm_mem || top_exp(state).is_vm_storage) {
+                if (top_exp(state).is_vm_mem /* || top_exp(state).is_vm_storage */ /* changed: allow to write into storage */) {
                 throw new Exceptions.SyntaxErrorException("Syntax Error: Line: " + token.line_num + " - Illegal assignment to m/s array");
             }
 
@@ -1131,7 +1131,7 @@ public class ASTBuilder {
             case NODE_SUB_ASSIGN:
             case NODE_MUL_ASSIGN:
             case NODE_DIV_ASSIGN:
-                if (state.stack_exp.get(state.stack_exp.size()-2).is_vm_mem || state.stack_exp.get(state.stack_exp.size()-2).is_vm_storage) {
+                if (state.stack_exp.get(state.stack_exp.size()-2).is_vm_mem /*|| state.stack_exp.get(state.stack_exp.size()-2).is_vm_storage */ /* changed: allow to write into storage */) {
                 throw new Exceptions.SyntaxErrorException("Syntax Error: Line: " + token.line_num + " - Illegal assignment to m/s array");
             }
 
@@ -1148,7 +1148,7 @@ public class ASTBuilder {
             case NODE_AND_ASSIGN:
             case NODE_XOR_ASSIGN:
             case NODE_OR_ASSIGN:
-                if (state.stack_exp.get(state.stack_exp.size()-2).is_vm_mem || state.stack_exp.get(state.stack_exp.size()-2).is_vm_storage) {
+                if (state.stack_exp.get(state.stack_exp.size()-2).is_vm_mem /*|| state.stack_exp.get(state.stack_exp.size()-2).is_vm_storage */ /* changed: allow to write into storage */) {
                 throw new Exceptions.SyntaxErrorException("Syntax Error: Line: " + token.line_num + " - Illegal assignment to m/s array");
             }
 

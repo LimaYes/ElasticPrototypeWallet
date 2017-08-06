@@ -174,17 +174,17 @@ public class WorkTest extends AbstractForgingTest {
     public void newWorkTestWithBounties() throws NxtException, IOException {
 
         redeemPubkeyhash();
-        String code = ExecutionEngineTests.readFile("test/testfiles/test2.epl", Charset.forName("UTF-8"));
+        String code = ExecutionEngineTests.readFile("test/testfiles/bountytest.epl", Charset.forName("UTF-8"));
         System.out.println("[!!]\tcode length: " + code.length());
         CommandNewWork work = new CommandNewWork(10, (short)100,1000001,1000001,10,10, code.getBytes());
         MessageEncoder.push(work, AbstractForgingTest.testForgingSecretPhrase);
-
+        Work w = null;
         // Mine a bit so the work gets confirmed
         AbstractBlockchainTest.forgeNumberOfBlocks(1, AbstractForgingTest.testForgingSecretPhrase);
 
         long id = 0;
         try(DbIterator<Work> wxx = Work.getActiveWork()){
-            Work w = wxx.next();
+            w = wxx.next();
             id = w.getId();
             System.out.println("Found work in DB with id = " + Long.toUnsignedString(w.getId()));
         }
@@ -193,7 +193,7 @@ public class WorkTest extends AbstractForgingTest {
         Assert.assertEquals(1, Work.getCount());
         Assert.assertEquals(1, Work.getActiveCount());
 
-        byte[] testarray = new byte[32];
+        byte[] testarray = new byte[w.getStorage_size()*4];
         testarray[0]=(byte)(testarray[0]+1);
         CommandPowBty pow = new CommandPowBty(id, false, testarray);
         MessageEncoder.push(pow, AbstractForgingTest.testForgingSecretPhrase);

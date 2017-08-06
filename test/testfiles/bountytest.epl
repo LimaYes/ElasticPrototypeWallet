@@ -1,0 +1,14 @@
+array_uint   1000;
+storage_sz 32;
+storage_idx 0;
+
+function main {
+    u[1]=u[1]*132;
+    u[2]=u[1]*54;
+    s[0]=u[1]+u[2];
+}
+
+
+function verify {
+    result (s[0]%1000==0);
+}
