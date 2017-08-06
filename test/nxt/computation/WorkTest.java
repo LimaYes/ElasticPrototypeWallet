@@ -68,8 +68,8 @@ public class WorkTest extends AbstractForgingTest {
 
         redeemPubkeyhash();
 
-        String code = ExecutionEngineTests.readFile("test/testfiles/test2.epl", Charset.defaultCharset());
-
+        String code = ExecutionEngineTests.readFile("test/testfiles/test2.epl", Charset.forName("UTF-8"));
+        String doublecheckcode = new String(code.getBytes());
         System.out.println("[!!]\tcode length: " + code.length());
         CommandNewWork work = new CommandNewWork(100, (short)15,1000001,1000001,10,10, code.getBytes());
         MessageEncoder.push(work, AbstractForgingTest.testForgingSecretPhrase);
@@ -108,7 +108,7 @@ public class WorkTest extends AbstractForgingTest {
     public void newWorkTestWithNaturalTimeout() throws NxtException, IOException {
 
         redeemPubkeyhash();
-        String code = ExecutionEngineTests.readFile("test/testfiles/test2.epl", Charset.defaultCharset());
+        String code = ExecutionEngineTests.readFile("test/testfiles/test2.epl", Charset.forName("UTF-8"));
         System.out.println("[!!]\tcode length: " + code.length());
         CommandNewWork work = new CommandNewWork(100, (short)15,1000001,1000001,10,10, code.getBytes());
         MessageEncoder.push(work, AbstractForgingTest.testForgingSecretPhrase);
@@ -135,7 +135,7 @@ public class WorkTest extends AbstractForgingTest {
     public void newWorkTestWithEnoughBounties() throws NxtException, IOException {
 
         redeemPubkeyhash();
-        String code = ExecutionEngineTests.readFile("test/testfiles/test2.epl", Charset.defaultCharset());
+        String code = ExecutionEngineTests.readFile("test/testfiles/test2.epl", Charset.forName("UTF-8"));
         System.out.println("[!!]\tcode length: " + code.length());
         CommandNewWork work = new CommandNewWork(10, (short)100,1000001,1000001,10,10, code.getBytes());
         MessageEncoder.push(work, AbstractForgingTest.testForgingSecretPhrase);

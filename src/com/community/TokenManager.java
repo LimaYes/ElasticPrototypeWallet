@@ -238,8 +238,12 @@ public class TokenManager {
                 // Remove Single Comments
                 if (epl_token[token_id].type == TOKEN_COMMENT) {
                     int pos = str.indexOf("\n",idx);
-                    if (pos >= 0)
-                        idx = pos + 1; // todo: double check if 1 is needed here
+
+                    if (pos == -1){
+                        throw new Exceptions.SyntaxErrorException("Syntax Error - Missing new line after single line comment: " + line_num);
+                    }
+
+                    idx = pos + 1; // todo: double check if 1 is needed here
                     line_num++;
                     continue;
                 }

@@ -145,7 +145,7 @@ public class CommandNewWork extends IComputationAttachment {
                         String outStr = "";
                         String line;
                         while ((line = bufferedReader.readLine()) != null) {
-                            outStr += line;
+                            outStr += line + "\n";
                         }
                         this.sourceCode = outStr.getBytes("UTF-8");
                         if(this.sourceCode.length>MAX_UNCOMPRESSED_WORK_SIZE)
