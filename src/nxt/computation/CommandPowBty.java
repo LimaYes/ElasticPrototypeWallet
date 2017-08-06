@@ -142,7 +142,7 @@ public class CommandPowBty extends IComputationAttachment {
         if (!this.is_proof_of_work && multiplier_or_storage.length > ComputationConstants.BOUNTY_STORAGE_INTS * 4) {
             return false;
         }
-        if (!this.is_proof_of_work && multiplier_or_storage.length != w.getStorage_size()) {
+        if (!this.is_proof_of_work && multiplier_or_storage.length*4 != w.getStorage_size()) {
             return false;
         }
 
