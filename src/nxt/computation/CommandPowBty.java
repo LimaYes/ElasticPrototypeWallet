@@ -36,7 +36,6 @@ public class CommandPowBty extends IComputationAttachment {
     private long work_id;
     private boolean is_proof_of_work;
     private byte[] multiplier_or_storage;
-
     private boolean validated = false;
     private boolean isValid = false;
 
@@ -168,15 +167,31 @@ public class CommandPowBty extends IComputationAttachment {
         PowAndBounty.addPowBty(transaction, this);
     }
 
-    // todo: only include storage that is used in verify
+    // todo: Make this only invariant to the storage which is really used in the verify function
+    public byte[] getStorageHash() {
+        final MessageDigest dig = Crypto.sha256();
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        final DataOutputStream dos = new DataOutputStream(baos);
+        try {
+            dos.write(this.multiplier_or_storage);
+            dos.close();
+        } catch (final IOException ignored) {
+
+        }
+        byte[] longBytes = baos.toByteArray();
+        if (longBytes == null) longBytes = new byte[0];
+        dig.update(longBytes);
+        return dig.digest();
+    }
+
     public byte[] getHash() {
         final MessageDigest dig = Crypto.sha256();
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         final DataOutputStream dos = new DataOutputStream(baos);
         try {
             dos.writeLong(this.work_id);
-            dos.write(this.multiplier_or_storage);
             dos.writeBoolean(this.is_proof_of_work); // distinguish between pow and bounty
+            dos.write(getStorageHash());
             dos.close();
         } catch (final IOException ignored) {
 

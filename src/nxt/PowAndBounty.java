@@ -111,10 +111,6 @@ public final class PowAndBounty {
     }
 
 
-
-
-
-
     public static boolean addListener(final Listener<PowAndBounty> listener, final Event eventType) {
         return PowAndBounty.listeners.addListener(listener, eventType);
     }
