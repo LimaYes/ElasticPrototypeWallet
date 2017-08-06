@@ -143,6 +143,8 @@ public class CommandPowBty extends IComputationAttachment {
             return false;
         }
 
+        // todo: verify the storage length
+
         // Validate code-level
         if (this.is_proof_of_work && !validatePow()) {
             return false;

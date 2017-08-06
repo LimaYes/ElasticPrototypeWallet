@@ -242,6 +242,11 @@ public class CommandNewWork extends IComputationAttachment {
         if(!Commons.checkRange(ComputationConstants.POW_MIN, ComputationConstants.POW_MAX, this.cap_number_pow))
             return false;
 
+        // Now, we have to validate whether the source code makes sense at all and meets the required WCET criteria
+        // for the main as well as for the verify part. We can do this all within the sandboxed epl-language package
+
+
+
         validated = true;
 
         return true;
