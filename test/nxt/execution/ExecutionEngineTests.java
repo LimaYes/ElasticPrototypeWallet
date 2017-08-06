@@ -28,7 +28,7 @@ import java.nio.file.Paths;
  ******************************************************************************/
 public class ExecutionEngineTests {
 
-    static String readFile(String path, Charset encoding)
+    public static String readFile(String path, Charset encoding)
             throws IOException {
         byte[] encoded = Files.readAllBytes(Paths.get(path));
         return new String(encoded, encoding);

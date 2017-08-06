@@ -2,6 +2,7 @@ package nxt.computation;
 
 import nxt.*;
 import nxt.db.DbIterator;
+import nxt.execution.ExecutionEngineTests;
 import nxt.helpers.RedeemFunctions;
 import nxt.http.JSONData;
 import org.json.simple.JSONStreamAware;
@@ -14,6 +15,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.util.Properties;
 
 /******************************************************************************
@@ -66,7 +68,7 @@ public class WorkTest extends AbstractForgingTest {
 
         redeemPubkeyhash();
 
-        String code = "Testing some code, which for sure will get encoded / gzipped or whatever! This is truly large yet it will become pretty pretty small on the blockchain! Test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test  !!!";
+        String code = ExecutionEngineTests.readFile("test/testfiles/test2.epl", Charset.defaultCharset());
 
         System.out.println("[!!]\tcode length: " + code.length());
         CommandNewWork work = new CommandNewWork(100, (short)15,1000001,1000001,10,10, code.getBytes());
@@ -106,7 +108,7 @@ public class WorkTest extends AbstractForgingTest {
     public void newWorkTestWithNaturalTimeout() throws NxtException, IOException {
 
         redeemPubkeyhash();
-        String code = "Testing some code, which for sure will get encoded / gzipped or whatever! This is truly large yet it will become pretty pretty small on the blockchain! Test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test  !!!";
+        String code = ExecutionEngineTests.readFile("test/testfiles/test2.epl", Charset.defaultCharset());
         System.out.println("[!!]\tcode length: " + code.length());
         CommandNewWork work = new CommandNewWork(100, (short)15,1000001,1000001,10,10, code.getBytes());
         MessageEncoder.push(work, AbstractForgingTest.testForgingSecretPhrase);
@@ -133,7 +135,7 @@ public class WorkTest extends AbstractForgingTest {
     public void newWorkTestWithEnoughBounties() throws NxtException, IOException {
 
         redeemPubkeyhash();
-        String code = "Testing some code, which for sure will get encoded / gzipped or whatever! This is truly large yet it will become pretty pretty small on the blockchain! Test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test  !!!";
+        String code = ExecutionEngineTests.readFile("test/testfiles/test2.epl", Charset.defaultCharset());
         System.out.println("[!!]\tcode length: " + code.length());
         CommandNewWork work = new CommandNewWork(10, (short)100,1000001,1000001,10,10, code.getBytes());
         MessageEncoder.push(work, AbstractForgingTest.testForgingSecretPhrase);
