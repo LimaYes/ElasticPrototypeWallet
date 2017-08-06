@@ -43,4 +43,6 @@ public class ComputationConstants {
     public static final short MULTIPLIER_LENGTH = 32;
     public static final int POW_MIN = 10;
     public static final int POW_MAX = Integer.MAX_VALUE;
+    public static final int MAX_INSTRUCTION_LIMIT = 10000000;
+    public static final int MAX_EXECUTION_TIME_IN_MS = 15 * 1000;
 }

@@ -1,5 +1,6 @@
 package nxt.computation;
 
+import com.community.Executor;
 import nxt.*;
 import nxt.util.Convert;
 import nxt.util.Logger;
@@ -245,9 +246,12 @@ public class CommandNewWork extends IComputationAttachment {
         // Now, we have to validate whether the source code makes sense at all and meets the required WCET criteria
         // for the main as well as for the verify part. We can do this all within the sandboxed epl-language package
 
-
-
-        validated = true;
+        try{
+            Executor.checkCodeAndReturnVerify(new String(this.sourceCode));
+            validated = true;
+        }catch(Exception e){
+            return false;
+        }
 
         return true;
     }
