@@ -1,0 +1,107 @@
+/******************************************************************************
+ *
+ * Data Type Declarations
+ *
+ *  - At least 1 declaration is required
+ *  - Each data type can only be declared at most once
+ *  - Total size of declared memory usage cannot exceed 1MB
+ *
+ *  array_int    <number of ints>;
+ *  array_uint   <number of uints>;
+ *  array_long   <number of longs>;
+ *  array_ulong  <number of ulongs>;
+ *  array_float  <number of floats>;
+ *  array_double <number of double>;
+ *
+ *****************************************************************************/
+
+array_uint   1000;
+array_float   1;
+
+
+/******************************************************************************
+ *
+ * Storage Declarations
+ *
+ *  - Storage declarations are optional
+ *  - The Unsigned Int array must be declared before declaring storage
+ *  - If used, both storage_cnt & storage_idx are required and must fit
+ *    within the u[] size.
+ *
+ *  storage_sz <number of unsigned ints to store>;
+ *  storage_idx <starting index of u[] to extract storage from>;
+ *
+ *****************************************************************************/
+
+storage_sz 32;
+storage_idx 0;
+
+
+/******************************************************************************
+ *
+ * User Defined Functions
+ *
+ *  - Optional
+ *  - Names can be made up of numbers (0-9), letters (a-z), and underscores '_'
+ *  - Names cannot begin with any reserved word in the ElasticPL language
+ *
+ *  function <function name> { }
+ *
+ *****************************************************************************/
+
+function example_function_1 {
+  // Add some code here - This is just dummy code that creates some random #s
+  repeat (u[100], 32, 32) {               // Repeat 32 times using u[100] as loop counter
+    u[0] = ( m[4] <<< u[100] ) ^ u[100];  // m[4] - m[8] have random unsigned ints
+  }
+}
+
+function example_function_2 {
+  // Add some code here - This is just dummy code that adds a random #
+  repeat (u[100], 32, 32) {  // Repeat 32 times using u[100] as loop counter
+    u[0] = u[0] + m[5];      // m[5] is a random unsigned int
+  }
+}
+
+
+/******************************************************************************
+ *
+ * Main Function
+ *
+ *  - Main Function is required
+ *  - This is the entry point for the ElasticPL job
+ *
+ *  function main { }
+ *
+ *****************************************************************************/
+
+function main {
+
+  example_function_1();
+
+  // Call an example function
+  example_function_2();
+
+}
+
+
+/******************************************************************************
+ *
+ * Verify Function
+ *
+ *  - Verify Function is required
+ *  - This is the logic to determine if a Bounty Solution has been found
+ *
+ *  function main { }
+ *
+ *****************************************************************************/
+
+function verify {
+
+  u[200] = u[0] + u[1];
+  f[0]=u[200]*0.91;
+  u[200]=f[0];
+
+  result (u[200] < 1000);
+
+}

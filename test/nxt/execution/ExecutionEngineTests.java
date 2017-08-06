@@ -124,7 +124,7 @@ public class ExecutionEngineTests {
         String code = null;
         boolean threw_exception = false;
         try {
-            code = readFile("example/test2.epl", Charset.defaultCharset());
+            code = readFile("test/testfiles/test2.epl", Charset.defaultCharset());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -143,7 +143,7 @@ public class ExecutionEngineTests {
         String code = null;
         boolean threw_exception = false;
         try {
-            code = readFile("example/test2.epl", Charset.defaultCharset());
+            code = readFile("test/testfiles/test2.epl", Charset.defaultCharset());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -162,7 +162,7 @@ public class ExecutionEngineTests {
         String code = null;
         boolean threw_exception = false;
         try {
-            code = readFile("example/epl_with_syntax_error.epl", Charset.defaultCharset());
+            code = readFile("test/testfiles/epl_with_syntax_error.epl", Charset.defaultCharset());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -181,7 +181,7 @@ public class ExecutionEngineTests {
         String code = null;
         boolean threw_exception = false;
         try {
-            code = readFile("example/epl_with_too_high_wcet.epl", Charset.defaultCharset());
+            code = readFile("test/testfiles/epl_with_too_high_wcet.epl", Charset.defaultCharset());
         } catch (IOException e) {
             e.printStackTrace();
         }
