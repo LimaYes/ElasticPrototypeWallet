@@ -94,8 +94,14 @@ public final class Work {
     private int received_pows;
     private short blocksRemaining;
     private int closing_timestamp;
+
+    public String getVerifyFunction() {
+        return verifyFunction;
+    }
+
     private int[] combined_storage;
     private int storage_size;
+    private String verifyFunction;
 
     public int getStorage_size() {
         return storage_size;
@@ -160,6 +166,7 @@ public final class Work {
         this.closing_timestamp = rs.getInt("closing_timestamp");
         this.combined_storage = Convert.byte2int(rs.getBytes("combined_storage"));
         this.storage_size = rs.getInt("storage_size");
+        this.verifyFunction = rs.getString("verify_function");
     }
     private Work(final Transaction transaction, final CommandNewWork attachment) {
         this.id = transaction.getId();
@@ -182,6 +189,7 @@ public final class Work {
         this.originating_height = transaction.getBlock().getHeight();
         this.closing_timestamp = 0;
         this.storage_size = attachment.getStorageSize();
+        this.verifyFunction = attachment.getVerifyFunction();
     }
 
     public static boolean addListener(final Listener<Work> listener, final Event eventType) {
@@ -361,9 +369,9 @@ public final class Work {
     private void save(final Connection con) throws SQLException {
         try (PreparedStatement pstmt = con.prepareStatement(
                 "MERGE INTO work (id, cap_number_pow, closing_timestamp, block_id, sender_account_id, xel_per_pow, " +
-                        "iterations, iterations_left, blocks_remaining, closed, cancelled, timedout, xel_per_bounty, received_bounties, received_pows, bounty_limit_per_iteration, originating_height, height, combined_storage, storage_size, latest) "
+                        "iterations, iterations_left, blocks_remaining, closed, cancelled, timedout, xel_per_bounty, received_bounties, received_pows, bounty_limit_per_iteration, originating_height, height, combined_storage, storage_size, verify_function, latest) "
                         + "KEY (id, height) "
-                        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, TRUE)")) {
+                        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, TRUE)")) {
             int i = 0;
             pstmt.setLong(++i, this.id);
             pstmt.setInt(++i, this.cap_number_pow);
@@ -385,6 +393,8 @@ public final class Work {
             pstmt.setInt(++i,Nxt.getBlockchain().getHeight());
             pstmt.setBytes(++i, Convert.int2byte(this.combined_storage));
             pstmt.setInt(++i, this.storage_size);
+            pstmt.setString(++i, this.verifyFunction);
+
             pstmt.executeUpdate();
         }catch(Exception e){
             e.printStackTrace();
@@ -455,6 +465,7 @@ public final class Work {
         response.put("cap_number_pow", work.cap_number_pow);
         response.put("sender_account_id", Long.toUnsignedString(work.sender_account_id));
         response.put("storage_size", work.storage_size);
+        response.put("verify_function", work.verifyFunction);
         return response;
     }
 

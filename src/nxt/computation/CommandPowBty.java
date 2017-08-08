@@ -1,10 +1,12 @@
 package nxt.computation;
 
+import com.community.Executor;
 import nxt.NxtException;
 import nxt.PowAndBounty;
 import nxt.Transaction;
 import nxt.Work;
 import nxt.crypto.Crypto;
+import nxt.util.Convert;
 import nxt.util.Logger;
 
 import java.io.ByteArrayOutputStream;
@@ -115,9 +117,10 @@ public class CommandPowBty extends IComputationAttachment {
     private boolean validatePow(){
         return true;
     }
-    private boolean validateBty(){
-
-        return true;
+    private boolean validateBty(String vcode){
+        int[] storage_array = Convert.byte2int(this.getMultiplier_or_storage());
+        boolean result = Executor.executeCode(vcode, storage_array);
+        return result;
     }
 
     @Override
@@ -131,11 +134,8 @@ public class CommandPowBty extends IComputationAttachment {
         if (w == null) return false;
         if (w.isClosed() == true) return false;
 
-        // Now check for duplicate entry (I guess storage hash and full hash need to be checked)
-        byte[] myHash = this.getHash();
-        if(PowAndBounty.hasHash(myHash))
-            return false;
-        myHash = this.getStorageHash();
+        // Now check for duplicate entry (I guess storage hash is enough, isn't it?)
+        byte[] myHash = this.getStorageHash();
         if(PowAndBounty.hasStorageHash(w.getId(), myHash))
             return false;
 
@@ -155,7 +155,7 @@ public class CommandPowBty extends IComputationAttachment {
         if (this.is_proof_of_work && !validatePow()) {
             return false;
         }
-        if (!this.is_proof_of_work && !validateBty()) {
+        if (!this.is_proof_of_work && !validateBty(w.getVerifyFunction())) {
             return false;
         }
 

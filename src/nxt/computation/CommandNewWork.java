@@ -4,6 +4,7 @@ import com.community.Executor;
 import nxt.*;
 import nxt.util.Convert;
 import nxt.util.Logger;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -33,6 +34,7 @@ import static nxt.computation.ComputationConstants.MAX_UNCOMPRESSED_WORK_SIZE;
 public class CommandNewWork extends IComputationAttachment {
 
     private short deadline;
+    private String verify_function = null;
 
     public long getXelPerPow() {
         return xelPerPow;
@@ -247,7 +249,7 @@ public class CommandNewWork extends IComputationAttachment {
         // for the main as well as for the verify part. We can do this all within the sandboxed epl-language package
 
         try{
-            Executor.checkCodeAndReturnVerify(new String(this.sourceCode));
+            this.verify_function = Executor.checkCodeAndReturnVerify(new String(this.sourceCode));
             validated = true;
         }catch(Exception e){
             return false;
@@ -261,7 +263,7 @@ public class CommandNewWork extends IComputationAttachment {
         if ((this.sourceCode == null) || (this.sourceCode.length == 0)) return;
 
         if(!validated){
-            if(!validate(transaction))
+            if(!validate(transaction) || this.verify_function == null)
                 return;
         }
         // Here, apply the actual package
@@ -275,5 +277,9 @@ public class CommandNewWork extends IComputationAttachment {
         }catch(Exception e){
             return -1;
         }
+    }
+
+    public String getVerifyFunction() {
+        return this.verify_function;
     }
 }
