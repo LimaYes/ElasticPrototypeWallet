@@ -5,6 +5,7 @@ import nxt.db.DbIterator;
 import nxt.execution.ExecutionEngineTests;
 import nxt.helpers.RedeemFunctions;
 import nxt.http.JSONData;
+import nxt.util.Convert;
 import org.json.simple.JSONStreamAware;
 import org.junit.After;
 import org.junit.Assert;
@@ -193,15 +194,16 @@ public class WorkTest extends AbstractForgingTest {
         Assert.assertEquals(1, Work.getCount());
         Assert.assertEquals(1, Work.getActiveCount());
 
-        byte[] testarray = new byte[w.getStorage_size()*4];
-        testarray[0]=(byte)(testarray[0]+1);
-        CommandPowBty pow = new CommandPowBty(id, false, testarray);
+        int[] testarray = new int[w.getStorage_size()];
+        testarray[0]=6000;
+        CommandPowBty pow = new CommandPowBty(id, false, Convert.int2byte(testarray));
         MessageEncoder.push(pow, AbstractForgingTest.testForgingSecretPhrase);
         AbstractBlockchainTest.forgeNumberOfBlocks(5, AbstractForgingTest.testForgingSecretPhrase);
 
 
         // After getting enough Pow work must be closed
         // Test work db table
+        System.out.println(Work.getWorkById(id).getVerifyFunction());
         Assert.assertEquals(1, Work.getCount());
         Assert.assertEquals(1, Work.getActiveCount());
         Assert.assertEquals(1, Work.getWorkById(id).getReceived_bounties()); // Did the bounty count correctly???
