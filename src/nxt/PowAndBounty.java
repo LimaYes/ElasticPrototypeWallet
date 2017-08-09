@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 
 import nxt.computation.CommandPowBty;
 
@@ -12,8 +13,10 @@ import nxt.db.DbIterator;
 import nxt.db.DbKey;
 import nxt.db.DbUtils;
 import nxt.db.VersionedEntityDbTable;
+import nxt.util.Convert;
 import nxt.util.Listener;
 import nxt.util.Listeners;
+import nxt.util.Logger;
 
 /******************************************************************************
  * Copyright © 2017 The XEL Core Developers.                                  *
@@ -68,6 +71,7 @@ public final class PowAndBounty {
 
     public static void addPowBty(final Transaction transaction, final CommandPowBty attachment) {
         PowAndBounty shuffling = new PowAndBounty(transaction, attachment);
+        PowAndBounty.powAndBountyTable.insert(shuffling); // store immedeately!
 
         // Here check if it is counting or if it is "old"
         Work w = Work.getWork(attachment.getWork_id());
@@ -103,14 +107,39 @@ public final class PowAndBounty {
                 w.setClosed(true);
             }
 
-            // In all cases (even after close case) make sure the combined storage is updated properly!
-            // todo
-
 
             w.EmitBty();
-            w.JustSave();
+            w.JustSave(); // we will have to save again when storage gets consolidated in the next step! Do it more elegant later on
+
+
+            // In all cases (even after close case) make sure the combined storage is updated properly!
+            if(w.getReceived_bounties()%w.getBounty_limit_per_iteration()==0){
+
+                int cntr = 0;
+                String xxxx = Arrays.toString(w.getCombined_storage());
+                byte[] fullstorage = new byte[w.getBounty_limit_per_iteration()*w.getStorage_size()*4]; // todo: triplecheck size here
+                try(DbIterator<PowAndBounty> it = getLastBountiesRelevantForStorageGeneration(w.getId())){
+                    while(it.hasNext()){
+                        PowAndBounty n = it.next();
+                        byte[] storage = n.multiplier_or_storage;
+                        for(int i=0;i<storage.length;++i){
+                            fullstorage[cntr*w.getStorage_size()*4+i] = storage[i];
+                        }
+                        cntr++;
+                    }
+                    w.setCombined_storage(Convert.byte2int(fullstorage));
+                    w.JustSave();
+                }
+
+
+
+                Logger.logDebugMessage("Consolidating storage for job " + w.getId() + " after " + w.getReceived_bounties() + " bounties. [processing cntr = " + cntr + "]");
+                Logger.logDebugMessage("Full Storage: before: " + xxxx + ", after: " + Arrays.toString(Convert.byte2int(fullstorage)));
+            }
+
+
+
         }
-        PowAndBounty.powAndBountyTable.insert(shuffling);
         PowAndBounty.listeners.notify(shuffling, (shuffling.is_pow)?Event.POW_SUBMITTED:Event.BOUNTY_SUBMITTED);
     }
 
