@@ -177,7 +177,7 @@ public class WorkTest extends AbstractForgingTest {
         redeemPubkeyhash();
         String code = ExecutionEngineTests.readFile("test/testfiles/bountytest.epl", Charset.forName("UTF-8"));
         System.out.println("[!!]\tcode length: " + code.length());
-        CommandNewWork work = new CommandNewWork(10, (short)100,1000001,1000001,10,10, code.getBytes());
+        CommandNewWork work = new CommandNewWork(10, (short)100,1000001,1000001,2,2, code.getBytes());
         MessageEncoder.push(work, AbstractForgingTest.testForgingSecretPhrase);
         Work w = null;
         // Mine a bit so the work gets confirmed
@@ -190,15 +190,20 @@ public class WorkTest extends AbstractForgingTest {
             System.out.println("Found work in DB with id = " + Long.toUnsignedString(w.getId()));
         }
 
+        Assert.assertEquals(0, Work.getWorkById(id).getReceived_bounties()); // Did the bounty count correctly???
+
+
         // Test work db table
         Assert.assertEquals(1, Work.getCount());
         Assert.assertEquals(1, Work.getActiveCount());
 
-        int[] testarray = new int[w.getStorage_size()];
-        testarray[0]=6000;
-        CommandPowBty pow = new CommandPowBty(id, false, Convert.int2byte(testarray));
-        MessageEncoder.push(pow, AbstractForgingTest.testForgingSecretPhrase);
-        AbstractBlockchainTest.forgeNumberOfBlocks(5, AbstractForgingTest.testForgingSecretPhrase);
+        {
+            int[] testarray = new int[w.getStorage_size()];
+            testarray[0] = 6000;
+            CommandPowBty pow = new CommandPowBty(id, false, Convert.int2byte(testarray));
+            MessageEncoder.push(pow, AbstractForgingTest.testForgingSecretPhrase);
+            AbstractBlockchainTest.forgeNumberOfBlocks(5, AbstractForgingTest.testForgingSecretPhrase);
+        }
 
 
         // After getting enough Pow work must be closed
@@ -207,5 +212,52 @@ public class WorkTest extends AbstractForgingTest {
         Assert.assertEquals(1, Work.getCount());
         Assert.assertEquals(1, Work.getActiveCount());
         Assert.assertEquals(1, Work.getWorkById(id).getReceived_bounties()); // Did the bounty count correctly???
+
+        {
+            int[] testarray = new int[w.getStorage_size()];
+            testarray[0] = 6002;
+            CommandPowBty pow = new CommandPowBty(id, false, Convert.int2byte(testarray));
+            MessageEncoder.push(pow, AbstractForgingTest.testForgingSecretPhrase);
+            AbstractBlockchainTest.forgeNumberOfBlocks(5, AbstractForgingTest.testForgingSecretPhrase);
+        }
+
+        Assert.assertEquals(1, Work.getWorkById(id).getReceived_bounties()); // Last one didnt work, still only got 1 valid bty
+
+        {
+            int[] testarray = new int[w.getStorage_size()];
+            testarray[0] = 3000;
+            CommandPowBty pow = new CommandPowBty(id, false, Convert.int2byte(testarray));
+            MessageEncoder.push(pow, AbstractForgingTest.testForgingSecretPhrase);
+            AbstractBlockchainTest.forgeNumberOfBlocks(5, AbstractForgingTest.testForgingSecretPhrase);
+        }
+
+        // Work still open
+        Assert.assertEquals(1, Work.getActiveCount());
+
+        Assert.assertEquals(2, Work.getWorkById(id).getReceived_bounties()); // This one must have worked
+
+        {
+            int[] testarray = new int[w.getStorage_size()];
+            testarray[0] = 10000;
+            CommandPowBty pow = new CommandPowBty(id, false, Convert.int2byte(testarray));
+            MessageEncoder.push(pow, AbstractForgingTest.testForgingSecretPhrase);
+        }
+        {
+            int[] testarray = new int[w.getStorage_size()];
+            testarray[0] = 5000;
+            CommandPowBty pow = new CommandPowBty(id, false, Convert.int2byte(testarray));
+            MessageEncoder.push(pow, AbstractForgingTest.testForgingSecretPhrase);
+        }
+        // Forge two at the same time, should work as well! Check the order carefully during testing!
+        AbstractBlockchainTest.forgeNumberOfBlocks(5, AbstractForgingTest.testForgingSecretPhrase);
+
+
+        Assert.assertEquals(4, Work.getWorkById(id).getReceived_bounties()); // This one must have worked
+
+        // We have received 2 bounties, right now the work should be closed automatically!!
+        Assert.assertEquals(0, Work.getActiveCount());
+
+
+
     }
 }

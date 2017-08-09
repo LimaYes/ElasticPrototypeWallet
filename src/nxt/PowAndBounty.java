@@ -103,6 +103,10 @@ public final class PowAndBounty {
                 w.setClosed(true);
             }
 
+            // In all cases (even after close case) make sure the combined storage is updated properly!
+            // todo
+
+
             w.EmitBty();
             w.JustSave();
         }
