@@ -187,7 +187,7 @@ public class WorkTest extends AbstractForgingTest {
         try(DbIterator<Work> wxx = Work.getActiveWork()){
             w = wxx.next();
             id = w.getId();
-            System.out.println("Found work in DB with id = " + Long.toUnsignedString(w.getId()));
+            System.out.println("Found work in DB with id = " + Long.toUnsignedString(w.getId()) + ", source code len = " + w.getSource_code().length() + " (" + w.getSource_code().substring(0,25) + "...)");
         }
 
         Assert.assertEquals(0, Work.getWorkById(id).getReceived_bounties()); // Did the bounty count correctly???
@@ -248,6 +248,15 @@ public class WorkTest extends AbstractForgingTest {
             CommandPowBty pow = new CommandPowBty(id, false, Convert.int2byte(testarray));
             MessageEncoder.push(pow, AbstractForgingTest.testForgingSecretPhrase);
         }
+
+        // Also do some other good ones in the same block (see if the cut off mechanism works)
+        {
+            int[] testarray = new int[w.getStorage_size()];
+            testarray[0] = 65000;
+            CommandPowBty pow = new CommandPowBty(id, false, Convert.int2byte(testarray));
+            MessageEncoder.push(pow, AbstractForgingTest.testForgingSecretPhrase);
+        }
+
         // Forge two at the same time, should work as well! Check the order carefully during testing!
         AbstractBlockchainTest.forgeNumberOfBlocks(5, AbstractForgingTest.testForgingSecretPhrase);
 

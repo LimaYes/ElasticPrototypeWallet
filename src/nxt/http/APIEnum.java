@@ -32,6 +32,7 @@ public enum APIEnum {
     GET_UNCLAIMED_REDEEMS("getUnclaimedRedeems", GetUnclaimedRedeems.instance),
     GET_WORK("getWork", GetWork.instance),
     CREATE_WORK("createWork", CreateWork.instance),
+    GET_MINEABLE_WORK("getMineableWork", GetMineableWork.instance),
     /* ELASTIC SPECIFIC END */
 
     APPROVE_TRANSACTION("approveTransaction", ApproveTransaction.instance),
