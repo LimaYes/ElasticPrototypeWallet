@@ -10,8 +10,8 @@ function shit {
 function main {
     u[1]=u[1]*132;
     u[2]=u[1]*54;
-    s[0]=u[1]+u[2];
     verify();
+    
 }
 
 

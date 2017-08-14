@@ -788,6 +788,8 @@ public class ASTBuilder {
         state.ast_main_idx = 0;
         state.ast_verify_idx = 0;
 
+        boolean m_bty_flg = false, m_pow_flg = false, v_bty_flg = false, v_pow_flg = false, m_ver_flg = false;
+
         for (i = state.ast_func_idx; i < state.stack_exp.size(); i++) { //todo: why was <= here before??
 
             if (state.stack_exp.get(i).type != NODE_FUNCTION) {
@@ -803,7 +805,7 @@ public class ASTBuilder {
             }
 
             // Validate That Only One Instance Of "Verify" Function Exists
-		else if (state.stack_exp.get(i).svalue.equalsIgnoreCase("verify")) {
+		    else if (state.stack_exp.get(i).svalue.equalsIgnoreCase("verify")) {
                 if (state.ast_verify_idx > 0) {
                     throw new Exceptions.SyntaxErrorException("Syntax Error: Line: \" +  state.stack_exp.get(i).line_num + \" - \"verify\" function already declared");
                 }
@@ -824,8 +826,54 @@ public class ASTBuilder {
 
             exp = state.stack_exp.get(i);
             while (exp.right != null) {
-                if (exp.right.left != null && !exp.right.left.end_stmnt) {
-                    throw new Exceptions.SyntaxErrorException("Syntax Error: Line: " +  exp.line_num + " - Invalid Statement");
+
+                // Validate That 'verify_' Calls Are Only In 'main' & 'verify' Functions & Only Declared Once
+                if (exp.right.left != null) {
+                    if (exp.right.left.type == NODE_VERIFY_BTY) {
+                        if (i == state.ast_main_idx) {
+                            if (m_bty_flg) {
+                                throw new Exceptions.SyntaxErrorException("Syntax Error: Line: " + exp.right.left.line_num + " - 'verify_bty' statement can only be called once from 'main' function.");
+                            }
+                            m_bty_flg = true;
+                        } else if (i == state.ast_verify_idx) {
+                            if (v_bty_flg) {
+                                throw new Exceptions.SyntaxErrorException("Syntax Error: Line: " + exp.right.left.line_num + " - 'verify_bty' statement can only be called once from 'verify' function.");
+                            }
+                            v_bty_flg = true;
+                        } else {
+                            throw new Exceptions.SyntaxErrorException("Syntax Error: Line: " + exp.right.left.line_num + " - 'verify_bty' statement can only be called from 'main' & 'verify' functions.");
+                        }
+                    } else if (exp.right.left.type == NODE_VERIFY_POW) {
+                        if (i == state.ast_main_idx) {
+                            if (m_pow_flg) {
+                                throw new Exceptions.SyntaxErrorException("Syntax Error: Line: " + exp.right.left.line_num + " - 'verify_pow' statement can only be called once from 'main' function.");
+                            }
+                            m_pow_flg = true;
+                        } else if (i == state.ast_verify_idx) {
+                            if (v_pow_flg) {
+                                throw new Exceptions.SyntaxErrorException("Syntax Error: Line: " + exp.right.left.line_num + " - 'verify_pow' statement can only be called once from 'verify' function.");
+                            }
+                            v_pow_flg = true;
+                        } else {
+                            throw new Exceptions.SyntaxErrorException("Syntax Error: Line: " + exp.right.left.line_num + " - 'verify_pow' statement can only be called from 'main' & 'verify' functions.");
+                        }
+                    } else if ((exp.right.left.type == NODE_CALL_FUNCTION) && exp.right.left.svalue!=null && !strcmp(exp.right.left.svalue, "verify")) {
+                        if (i != state.ast_main_idx) {
+                            throw new Exceptions.SyntaxErrorException("Syntax Error: Line: %d - 'verify()' function can only be called from 'main' function.");
+                        } else if (m_ver_flg) {
+                            throw new Exceptions.SyntaxErrorException("Syntax Error: Line: " + exp.right.left.line_num + " - 'verify()' function can only be called once from 'main' function.");
+                        }
+                        m_ver_flg = true;
+                    }
+
+                    if (m_ver_flg && (m_bty_flg || m_pow_flg)) {
+                        throw new Exceptions.SyntaxErrorException("Syntax Error: Line: " + exp.right.left.line_num + " - Both 'verify' function and 'verify_bty' / 'verify_pow' statements cannot be use in 'main'.");
+                    }
+                }
+
+                // Make Sure End Statement Flag Is Set
+                if (exp.right.left!=null && !exp.right.left.end_stmnt) {
+                    throw new Exceptions.SyntaxErrorException("Syntax Error: Line: " + exp.line_num + " - Invalid Statement");
                 }
                 exp = exp.right;
             }
@@ -1436,179 +1484,155 @@ public class ASTBuilder {
             }
     }
 
-    // TODO FIX THIS NOW!!!!!!!!!!
-    private static void validate_function_calls(Primitives.STATE state) throws Exceptions
-            .SyntaxErrorException {
+    private static void validate_function_calls(Primitives.STATE state) throws Exceptions.SyntaxErrorException {
         int i, j;
         boolean downward = true;
         AST root = null;
         AST ast_ptr = null;
         Stack<AST> call_stack = new Stack<>();
         Stack<AST> rpt_stack = new Stack<>();
-
-        // Set Root To Main / Verify Function
-        root = state.stack_exp.get(function_idx);
         // First Validate 'main' Then 'verify'
         for (j = 0; j < 2; j++) {
+
             if (j == 0) {
-               // Set Root To 'main' Function
-               root = stack_exp[ast_main_idx];
+                // Set Root To 'main' Function
+                root = state.stack_exp.get(state.ast_main_idx);
             }
             else {
                 // Set Root To 'verify' Function
-                root = stack_exp[ast_verify_idx];
+                root = state.stack_exp.get(state.ast_verify_idx);
                 // Reset To Navigate Downward
                 downward = true;
             }
-        call_stack.add(root);
-
-        ast_ptr = root;
-
-        while (ast_ptr!=null) {
-
-            // Navigate Down The Tree
-            if (downward) {
-
-                // Navigate To Lowest Left Parent Node
-                while (ast_ptr.left != null) {
-                    ast_ptr = ast_ptr.left;
-
-                    // Validate Repeat Node
-                    if (ast_ptr.type == NODE_REPEAT) {
-
-                        // Validate That Repeat Counter Has Not Been Used
-                        for (i = 0; i < rpt_stack.size(); i++) {
-                            if (ast_ptr.uvalue == rpt_stack.get(i).uvalue) {
-                                throw new Exceptions.SyntaxErrorException("Syntax Error: Line: " + ast_ptr.line_num + " - Repeat loop counter already used");
-                            }
-                        }
-
-                        rpt_stack.add(ast_ptr);
-
-                        if (rpt_stack.size() >= REPEAT_STACK_SIZE) {
-                            throw new Exceptions.SyntaxErrorException("Syntax Error: Line: " + ast_ptr.line_num + " -" +
-                                    " Repeat statements can only be nested up to " + (REPEAT_STACK_SIZE - 1) +
-                                    " levels");
-                        }
-
-                    }
-                }
-
-                // Switch To Root Of Called Function
-                if (ast_ptr.type == NODE_CALL_FUNCTION) {
-                    if (ast_ptr.left != null)
+            call_stack.push(root);
+            ast_ptr = root;
+            while (ast_ptr != null) {
+                //System.out.println(downward + " -> " + ast_ptr.data_type + " (" + ast_ptr.svalue + ")");
+                // Navigate Down The Tree
+                if (downward) {
+                    // Navigate To Lowest Left Parent Node
+                    while (ast_ptr.left != null) {
                         ast_ptr = ast_ptr.left;
-                    // Get AST Index For The Function
-                    if (ast_ptr.uvalue == 0) {
 
-                        for (i = 0; i < state.stack_exp.size(); i++) {
-                            if ((state.stack_exp.get(i).type == NODE_FUNCTION) && state.stack_exp.get(i).svalue
-                                    .equalsIgnoreCase(ast_ptr.svalue)) {
+                        // Validate Repeat Node
+                        if (ast_ptr.type == NODE_REPEAT) {
+
+                            // Validate That Repeat Counter Has Not Been Used
+                            for (i = 0; i < rpt_stack.size(); i++) { // todo check if -1 required
+                                if (ast_ptr.uvalue == rpt_stack.get(i).uvalue) {
+                                    throw new Exceptions.SyntaxErrorException("Syntax Error: Line: " + (ast_ptr.line_num) + ") - Repeat loop counter already used");
+                                }
+                            }
+
+                            rpt_stack.push(ast_ptr);
+
+                            if (rpt_stack.size() >= REPEAT_STACK_SIZE) {
+                                throw new Exceptions.SyntaxErrorException("Syntax Error: Line: " + ast_ptr.line_num + " - Repeat statements can only be nested up to " + (REPEAT_STACK_SIZE - 1) + " levels");
+                            }
+
+                        }
+                    }
+
+                    // Switch To Root Of Called Function
+                    if (ast_ptr.type == NODE_CALL_FUNCTION) {
+                        if (ast_ptr.left != null)
+                            ast_ptr = ast_ptr.left;
+
+                        //System.out.println(String.format("Call Function: '%s()'", ast_ptr.svalue));
+
+
+                        // Get AST Index For The Function
+                        if (ast_ptr.uvalue == 0) {
+
+                            for (i = 0; i < state.stack_exp.size(); i++) {
+                                if ((state.stack_exp.get(i).type == NODE_FUNCTION) && !strcmp(state.stack_exp.get(i).svalue, ast_ptr.svalue))
                                 ast_ptr.uvalue = i;
                             }
                         }
-                    }
 
-                    // Validate Function Exists
-                    if (ast_ptr.uvalue == 0) {
-                        throw new Exceptions.SyntaxErrorException("Syntax Error: Line: " + ast_ptr.line_num + " - " +
-                                "Function '" +  ast_ptr.svalue + "' not found");
-                    }
-
-                    // Validate That "main" Function Is Not Called
-                    if ((ast_ptr.uvalue == state.ast_main_idx)) {
-                        throw new Exceptions.SyntaxErrorException("Syntax Error: Line: " + ast_ptr.line_num + " - Illegal function call");
-                    }
-
-                    // Validate That "verify" Function Is Only Called From "main"
-                    if (ast_ptr.uvalue == state.ast_verify_idx) {
-                        if (ast_ptr.parent==null || ast_ptr.parent.parent == null || ast_ptr.parent.parent.svalue ==
-                                null
-                                ||
-                                strcmp(ast_ptr.parent.parent.svalue, "main")) {
-                            throw new Exceptions.SyntaxErrorException("Syntax Error: Line: " + ast_ptr.line_num + " -" +
-                                    " Illegal 'verify' function call");
+                        // Validate Function Exists
+                        if (ast_ptr.uvalue == 0) {
+                            throw new Exceptions.SyntaxErrorException("Syntax Error: Line: " + ast_ptr.line_num + "  - Function '" + ast_ptr.line_num + "' not found");
                         }
-                    }
 
-                    // Validate That Functions Is Not Recursively Called
-                    for (i = 0; i < call_stack.size(); i++) {
-                        if (ast_ptr.svalue != null && call_stack.get(i).svalue != null && !strcmp(ast_ptr.svalue,
-                                call_stack.get(i).svalue)) {
-                            throw new Exceptions.SyntaxErrorException("Syntax Error: Line: " + ast_ptr.line_num + " - Illegal recursive function call");
+                        // Validate That "main" Function Is Not Called
+                        if (ast_ptr.uvalue == state.ast_main_idx) {
+                            throw new Exceptions.SyntaxErrorException("Syntax Error: Line: " + ast_ptr.line_num + "  - Illegal 'main' function call");
                         }
-                    }
 
-                    // Store The Lowest Level In Call Stack For The Function
-                    // Needed To Determine Order Of Processing Functions During WCET Calc
-                    if (call_stack.size() > state.stack_exp.get((int)ast_ptr.uvalue).uvalue) { // todo: check if > or >=
-                        state.stack_exp.get((int) ast_ptr.uvalue).uvalue = call_stack.size(); // same here (todo)
-                    }
-
-                    call_stack.push(ast_ptr);
-                    ast_ptr = state.stack_exp.get((int)ast_ptr.uvalue);
-
-                    if (call_stack.size() >= CALL_STACK_SIZE) {
-                        throw new Exceptions.SyntaxErrorException("Syntax Error: Line: " + ast_ptr.line_num + " - " +
-                                "Functions can only be nested up to " + (CALL_STACK_SIZE - 1) + " levels");
-                    }
-
-                }
-
-                // If There Is A Right Node, Switch To It
-                if (ast_ptr.right!=null) {
-                    ast_ptr = ast_ptr.right;
-
-                    // Validate Repeat Node
-                    if (ast_ptr.type == NODE_REPEAT) {
-
-                        // Validate That Repeat Counter Has Not Been Used
-                        for (i = 0; i < rpt_stack.size(); i++) {
-                            if (ast_ptr.uvalue == rpt_stack.get(i).uvalue) {
-                                throw new Exceptions.SyntaxErrorException("Syntax Error: Line: " + ast_ptr.line_num + " - Repeat loop counter already used");
+                        // Validate That Functions Is Not Recursively Called
+                        for (i = 0; i < call_stack.size(); i++) { // todo: check if -1 required
+                            if (ast_ptr.svalue != null && call_stack.get(i).svalue != null && !strcmp(ast_ptr.svalue, call_stack.get(i).svalue)) {
+                                throw new Exceptions.SyntaxErrorException("Syntax Error: Line: " + ast_ptr.line_num + "  - Illegal recursive function call");
                             }
                         }
 
-                        rpt_stack.push(ast_ptr);
+                        // Store The Lowest Level In Call Stack For The Function
+                        // Needed To Determine Order Of Processing Functions During WCET Calc
+                        if (call_stack.size() > state.stack_exp.get((int) ast_ptr.uvalue).uvalue) // todo: check for -1 // testing REQUIRED!!!!!
+                            state.stack_exp.get((int) ast_ptr.uvalue).uvalue = call_stack.size() - 1; // check if -1 required
 
-                        if (rpt_stack.size() >= REPEAT_STACK_SIZE) {
-                            throw new Exceptions.SyntaxErrorException("Syntax Error: Line: " + ast_ptr.line_num + " -" +
-                                    " Repeat statements can only be nested up to " + (REPEAT_STACK_SIZE - 1) + " " +
-                                    "levels");
+                        call_stack.push(ast_ptr);
+                        ast_ptr = state.stack_exp.get((int) ast_ptr.uvalue);
+
+                        if (call_stack.size() >= CALL_STACK_SIZE) {
+                            throw new Exceptions.SyntaxErrorException("Syntax Error: Line: " + ast_ptr.line_num + "  - Functions can only be nested up to " + (CALL_STACK_SIZE - 1) + " levels");
+                        }
+
+                    }
+
+                    // If There Is A Right Node, Switch To It
+                    if (ast_ptr.right != null) {
+                        ast_ptr = ast_ptr.right;
+
+                        // Validate Repeat Node
+                        if (ast_ptr.type == NODE_REPEAT) {
+
+                            // Validate That Repeat Counter Has Not Been Used
+                            for (i = 0; i < rpt_stack.size(); i++) {
+                                if (ast_ptr.uvalue == rpt_stack.get(i).uvalue) {
+                                    throw new Exceptions.SyntaxErrorException("Syntax Error: Line: " + ast_ptr.line_num + "  - Repeat loop counter already used");
+                                }
+                            }
+                            rpt_stack.push(ast_ptr);
+                            if (rpt_stack.size() >= REPEAT_STACK_SIZE) {
+                                throw new Exceptions.SyntaxErrorException("Syntax Error: Line: " + ast_ptr.line_num + "  - Repeat statements can only be nested up to " +  (REPEAT_STACK_SIZE - 1) + " levels");
+                            }
                         }
                     }
+                    // Otherwise, Print Current Node & Navigate Back Up The Tree
+                    else {
+                        downward = false;
+                    }
                 }
-                // Otherwise, Print Current Node & Navigate Back Up The Tree
+                // Navigate Back Up The Tree
                 else {
-                    downward = false;
-                }
-            }
+                    //System.out.println("  up");
+                    // Quit When We Reach The Root Of Main Function
+                    if (ast_ptr == root)
+                        break;
 
-            // Navigate Back Up The Tree
-            else {
+                    // Remove 'Repeat' From Stack
+                    if (ast_ptr.type == NODE_REPEAT) {
+                        rpt_stack.pop();
+                    }
 
-                // Quit When We Reach The Root Of Main Function
-                if (ast_ptr == root)
-                    break;
+                    // Return To Calling Function When We Reach The Root Of Called Function
 
-                // Remove 'Repeat' From Stack
-                if (ast_ptr.type == NODE_REPEAT) {
-                    rpt_stack.pop();
-                }
-
-                // Return To Calling Function When We Reach The Root Of Called Function
-                if (ast_ptr.parent.type == NODE_FUNCTION) {
-                    //call_stack.pop();
-                    ast_ptr = call_stack.pop();
-                }
-                else {
-                    // Check If We Need To Navigate Back Down A Right Branch
-                    if ((ast_ptr == ast_ptr.parent.left) && (ast_ptr.parent.right!=null)) {
-                        ast_ptr = ast_ptr.parent.right;
-                        downward = true;
+                    if (ast_ptr.parent.type == NODE_FUNCTION) {
+                        call_stack.pop();
+                        ast_ptr = call_stack.peek(); // is this the top element
+                        //System.out.println(String.format("Return From:   '%s()'\n", call_stack.get(call_stack.size()-1).svalue));
                     }
                     else {
-                        ast_ptr = ast_ptr.parent;
+                        // Check If We Need To Navigate Back Down A Right Branch
+                        if ((ast_ptr == ast_ptr.parent.left) && (ast_ptr.parent.right != null)) {
+                            ast_ptr = ast_ptr.parent.right;
+                            downward = true;
+                        }
+                        else {
+                            ast_ptr = ast_ptr.parent;
+                        }
                     }
                 }
             }
