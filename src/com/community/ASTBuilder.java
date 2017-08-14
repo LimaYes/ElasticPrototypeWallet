@@ -249,7 +249,8 @@ public class ASTBuilder {
             case TOKEN_STORAGE_IDX:		node_type = NODE_STORAGE_IDX; 	break;
             case TOKEN_FUNCTION:		node_type = NODE_FUNCTION;		break;
             case TOKEN_CALL_FUNCTION:	node_type = NODE_CALL_FUNCTION;	break;
-            case TOKEN_RESULT:			node_type = NODE_RESULT;		break;
+            case TOKEN_VERIFY_BTY:		node_type = NODE_VERIFY_BTY;	break;
+            case TOKEN_VERIFY_POW:		node_type = NODE_VERIFY_POW;	break;
             default: return NODE_ERROR;
         }
 
@@ -492,7 +493,9 @@ public class ASTBuilder {
 
         if (exp!=null) {
             // Update The "End Statement" Indicator For If/Else/Repeat/Block/Function/Result
-            if ((exp.type == NODE_IF) || (exp.type == NODE_ELSE) || (exp.type == NODE_REPEAT) || (exp.type == NODE_BLOCK) || (exp.type == NODE_FUNCTION) || (exp.type == NODE_RESULT))
+            if ((exp.type == NODE_IF) || (exp.type == NODE_ELSE) || (exp.type == NODE_REPEAT) || (exp.type ==
+                    NODE_BLOCK) || (exp.type == NODE_FUNCTION) || (exp.type == NODE_VERIFY_BTY) || (exp.type ==
+                    NODE_VERIFY_POW))
                 exp.end_stmnt = true;
 
             push_exp(state, exp);
@@ -817,13 +820,15 @@ public class ASTBuilder {
             }
 
             // Validate Function Only Contains Valid Statements
-            exp = state.stack_exp.get(i);
+
+            // todo: to be fixed
+            /*exp = state.stack_exp.get(i);
             while (exp.right != null) {
                 if (exp.right.left != null && !exp.right.left.end_stmnt) {
                     throw new Exceptions.SyntaxErrorException("Syntax Error: Line: " +  exp.line_num + " - Invalid Statement");
                 }
                 exp = exp.right;
-            }
+            }*/
         }
 
         // Validate That "Main" Function Exists
@@ -1029,7 +1034,9 @@ public class ASTBuilder {
 
             // Function Declarations (1 Constant & 1 Block)
             case NODE_FUNCTION: // todo: is -2 correct here`
-                if ((state.stack_exp.get(state.stack_exp.size()-2).type == NODE_CONSTANT) && (top_exp(state).type == NODE_BLOCK))
+                // todo: i dont understand this
+                if ((state.stack_exp.get(state.stack_exp.size()-2).type == NODE_CONSTANT) || (state.stack_exp.get
+                        (state.stack_exp.size()-2).type == NODE_FUNCTION))
                 return;
             break;
 
@@ -1078,7 +1085,7 @@ public class ASTBuilder {
             break;
 
             // Expressions w/ 1 Number (Right Operand)
-            case NODE_RESULT:
+            case NODE_VERIFY_BTY:
             case NODE_NOT:
                 if ((top_exp(state).token_num > token_num) && (top_exp(state).data_type != DT_NONE))
                 return;
@@ -1198,6 +1205,19 @@ public class ASTBuilder {
                 return;
             break;
 
+            // Expressions w/ 4 Uints
+            case NODE_VERIFY_POW:
+                if (((state.stack_exp.get(state.stack_exp.size()-4).token_num > token_num) &&
+                            (state.stack_exp.get(state.stack_exp.size()-1).token_num > token_num)) &&
+                			(state.stack_exp.get(state.stack_exp.size()-4).data_type == DT_UINT) &&
+                			(state.stack_exp.get(state.stack_exp.size()-3).data_type == DT_UINT) &&
+                			(state.stack_exp.get(state.stack_exp.size()-2).data_type == DT_UINT) &&
+                			(state.stack_exp.get(state.stack_exp.size()-1).data_type == DT_UINT))
+                			return;
+            	break;
+
+
+
             // Built-in Functions w/ 1 Number
             case NODE_SIN:
             case NODE_COS:
@@ -1266,8 +1286,10 @@ public class ASTBuilder {
                     return "function";
                 case NODE_CALL_FUNCTION:
                     return "(call)";
-                case NODE_RESULT:
-                    return "result";
+                case NODE_VERIFY_BTY:
+                    return "verify_bty";
+                case NODE_VERIFY_POW:
+                    return "verify_pow";
                 case NODE_ASSIGN:
                     return "=";
                 case NODE_OR:

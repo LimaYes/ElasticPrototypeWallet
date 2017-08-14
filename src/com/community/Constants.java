@@ -30,7 +30,8 @@ public class Constants {
     public static final int MAX_AST_DEPTH = 20000;				// Maximum Depth Allowed In The AST Tree - TODO: Finalize Size
     public static final int ast_vm_MEMORY_SIZE = 100000;		// Maximum Number Of Bytes That Can Be Used By VM Memory Model - TODO: Finalize Size
     public static final int VM_M_ARRAY_SIZE =	12;				// Number Of Unsigned Ints Initialized By VM
-    public static final int MAX_SOURCE_SIZE = 1024 * 512;        // 512KB - Maximum Size Of Decoded ElasticPL Source Code
+    public static final int MAX_SOURCE_SIZE = 1024 * 512; // 512KB - Maximum Size Of Decoded ElasticPL Source Code
+    public static final int MAX_VERIFY_SIZE = 1024 * 512;		// 512KB - TODO: Finalize Size
     public static final int INSTRUCTION_LIMIT = 10000000;
     public static final int SAFE_TIME_LIMIT = 15 * 1000;// 15 sek should be never reached, but lets keep it safe
     public static final int ABSOLUTELY_MAXIMUM_WCET = 1000000;
@@ -74,7 +75,11 @@ public class Constants {
                 new Primitives.EXP_TOKEN_LIST( "break",						5,	TOKEN_BREAK,		EXP_STATEMENT,	0,	2,	DT_NONE ),
                 new Primitives.EXP_TOKEN_LIST( "continue",					8,	TOKEN_CONTINUE,		EXP_STATEMENT,	0,	2,	DT_NONE ),
                 new Primitives.EXP_TOKEN_LIST( "function",					8,	TOKEN_FUNCTION,		EXP_STATEMENT,	2,	2,	DT_NONE ),
-                new Primitives.EXP_TOKEN_LIST( "result",						6,	TOKEN_RESULT,		EXP_STATEMENT,	1,	2,	DT_NONE ),
+                new Primitives.EXP_TOKEN_LIST( "verify_bty",						10,	TOKEN_VERIFY_BTY,   EXP_STATEMENT,
+                        1,	2,	DT_NONE ),
+                new Primitives.EXP_TOKEN_LIST( "verify_pow",						10,	TOKEN_VERIFY_POW,
+                        EXP_STATEMENT,
+                        4,	2,	DT_NONE ),
                 new Primitives.EXP_TOKEN_LIST( "i[",							2,	TOKEN_VAR_BEGIN,	EXP_EXPRESSION,	1,	4,	DT_INT ),
                 new Primitives.EXP_TOKEN_LIST( "u[",							2,	TOKEN_VAR_BEGIN,	EXP_EXPRESSION,	1,	4,	DT_UINT ),
                 new Primitives.EXP_TOKEN_LIST( "l[",							2,	TOKEN_VAR_BEGIN,	EXP_EXPRESSION,	1,	4,	DT_LONG ),

@@ -112,7 +112,7 @@ public class CodeConverter {
             case NODE_NEG:
             case NODE_IF:
             case NODE_REPEAT:
-            case NODE_RESULT:
+            case NODE_VERIFY_BTY:
             case NODE_PARAM:
             case NODE_SIN:
             case NODE_COS:
@@ -184,7 +184,19 @@ public class CodeConverter {
                             node.line_num);
                 }
                 break;
-
+            case NODE_VERIFY_POW:
+                try {
+                    String[] pop = new String[4];
+                    pop[0] = state.stack_code.pop();
+                    pop[1] = state.stack_code.pop();
+                    pop[2] = state.stack_code.pop();
+                    pop[3] = state.stack_code.pop();
+                    mylrstr.lstr = String.format("%s,%s,%s,%s",pop[3],pop[2],pop[1],pop[0]);
+                }catch (Exception e)
+                {
+                    throw new Exceptions.SyntaxErrorException("Compiler Error: Corupted code stack at Line: " +
+                            node.line_num);
+                }
             case NODE_ELSE:
             case NODE_BLOCK:
             case NODE_COND_ELSE:
@@ -212,19 +224,23 @@ public class CodeConverter {
 
         switch (node.type) {
             case NODE_FUNCTION:
-                
                 if ((!strcmp(node.svalue, "main")) || (!strcmp(node.svalue, "verify")))
                     str = String.format("function %s() {\n", node.svalue); // function was uint32_t before
                 else
-                    str = String.format("function %s() {\n", node.svalue); // function was void before
+                    str = String.format("function %s(verify_pow, target) {\n", node.svalue); // function was void before
                 break;
             case NODE_CALL_FUNCTION:
-                
+                // TODO: Fix This
+                 if (!strcmp(node.svalue, "verify"))
+                    return;
+
                 str = String.format("%s()", node.svalue);
                 break;
-            case NODE_RESULT:
-                
-                str = String.format("return (%s != 0 ? 1 : 0)", mylrstr.lstr);
+            case NODE_VERIFY_BTY:
+                str = String.format("bounty_found = (%s != 0 ? 1 : 0);", mylrstr.lstr);
+                break;
+            case NODE_VERIFY_POW:
+                str = String.format("if (verify_pow == 1)\n\t\tpow_found = check_pow(%s, target);\n\telse\n\t\tpow_found = 0", mylrstr.lstr);
                 break;
             case NODE_CONSTANT:
                 
@@ -365,7 +381,7 @@ public class CodeConverter {
                 if (node.parent.type == NODE_FUNCTION) {
                     // Call Verify Function At End Of Main Function
                     if (!strcmp(node.parent.svalue, "main"))
-                        str = String.format("\n\treturn verify();\n}\n");
+                        str = String.format("\n\tverify(verify_pow, target);\n}\n");
                     else
                         str = String.format("}\n");
                 }

@@ -110,7 +110,8 @@ public class Primitives {
                 NODE_STORAGE_IDX,
                 NODE_FUNCTION,
                 NODE_CALL_FUNCTION,
-                NODE_RESULT
+                NODE_VERIFY_BTY,
+                NODE_VERIFY_POW
     };
 
     public enum EPL_TOKEN_TYPE {
@@ -203,7 +204,8 @@ public class Primitives {
                 TOKEN_STORAGE_IDX,
                 TOKEN_FUNCTION,
                 TOKEN_CALL_FUNCTION,
-                TOKEN_RESULT
+                TOKEN_VERIFY_BTY,
+                TOKEN_VERIFY_POW
     };
 
     public enum EXP_TYPE {
