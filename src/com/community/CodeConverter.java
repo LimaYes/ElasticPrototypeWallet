@@ -95,7 +95,9 @@ public class CodeConverter {
 
 
     public static void convert_verify(Primitives.STATE state) throws Exceptions.SyntaxErrorException {
-        convert_function(state, state.stack_exp.get(state.ast_verify_idx));
+        for (int i = state.ast_func_idx; i < state.stack_exp.size(); i++) {
+            convert_function(state, state.stack_exp.get(i));
+        }
     }
 
     private static void get_node_inputs(Primitives.STATE state, Primitives.AST node, lrstr mylrstr) throws Exceptions.SyntaxErrorException {
