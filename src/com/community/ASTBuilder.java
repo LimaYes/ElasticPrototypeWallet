@@ -1494,8 +1494,8 @@ public class ASTBuilder {
                                 "Function '" +  ast_ptr.svalue + "' not found");
                     }
 
-                    // Validate That "main" & "verify" Functions Are Not Called
-                    if ((ast_ptr.uvalue == state.ast_main_idx) || (ast_ptr.uvalue == state.ast_verify_idx)) {
+                    // Validate That "main" Function Is Not Called
+                    if ((ast_ptr.uvalue == state.ast_main_idx)) {
                         throw new Exceptions.SyntaxErrorException("Syntax Error: Line: " + ast_ptr.line_num + " - Illegal function call");
                     }
 

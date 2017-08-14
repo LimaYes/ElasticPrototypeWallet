@@ -44,13 +44,26 @@ public class ExecutionEngineTests {
 
     @Test
     public void notAllowedAccess() {
-        sandbox.eval("epl", "java.lang.System.out.println('hello');");
+        boolean aborted = false;
+        try {
+            sandbox.eval("epl", "java.lang.System.out.println('hello');");
+        }catch(Exception e){
+            aborted=true;
+        }
+        Assert.assertTrue(aborted);
     }
 
     @Test
     public void injectedObjectDisallowed() {
-        sandbox.inject("fromJava", new Object());
-        sandbox.eval("epl", "fromJava.getClass();");
+        boolean aborted = false;
+        try {
+            sandbox.inject("fromJava", new Object());
+            sandbox.eval("epl", "fromJava.getClass();");
+        }catch(Exception e){
+            aborted=true;
+        }
+        Assert.assertTrue(aborted);
+
     }
 
     @Test
@@ -108,34 +121,31 @@ public class ExecutionEngineTests {
         Assert.assertTrue(aborted);
     }
 
-    @Test
-    public void testLiveImplementation(){
-        String code = "function verify() {\treturn ((s[1]) == (0) != 0 ? 1 : 0);}";
-        int[] s = new int[]{9,0,3,1,4,5,5,5,5};
-        Assert.assertTrue(Executor.executeCode(code, s, true, new int[]{0,0}).bty);
 
-        code = "function verify() {\treturn ((s[1]) == (0) != 0 ? 1 : 0);}";
-        s = new int[]{9,4,3,1,4,5,5,5,5};
-        Assert.assertFalse(Executor.executeCode(code, s, true, new int[]{0,0}).bty);
-    }
 
     @Test
     public void testCompile(){
         String code = null;
         boolean threw_exception = false;
         try {
-            code = readFile("test/testfiles/test2.epl", Charset.defaultCharset());
+            code = readFile("test/testfiles/btc.epl", Charset.defaultCharset());
         } catch (IOException e) {
             e.printStackTrace();
         }
         try {
             String epl = Executor.checkCodeAndReturnVerify(code);
             System.out.println(epl);
+
+            int[] s = new int[]{9000,4,3,1,4,5,5,5,5};
+            Executor.CODE_RESULT cd = Executor.executeCode(epl, s, true, new int[]{0,0});
+            Assert.assertFalse(cd.error);
+
+            System.out.println("Result:\nbty\t" + cd.bty);
+            System.out.println("pow\t" + cd.pow);
         } catch (Exception e) {
             e.printStackTrace();
-            threw_exception = true;
+            Assert.assertTrue(false);
         }
-        Assert.assertFalse(threw_exception);
     }
 
     @Test
@@ -154,6 +164,7 @@ public class ExecutionEngineTests {
             int[] s = new int[]{9000,4,3,1,4,5,5,5,5};
             Executor.CODE_RESULT cd = Executor.executeCode(epl, s, true, new int[]{0,0});
             Assert.assertTrue(cd.bty);
+            Assert.assertFalse(cd.error);
             System.out.println("Result:\nbty\t" + cd.bty);
             System.out.println("pow\t" + cd.pow);
         } catch (Exception e) {
@@ -167,7 +178,7 @@ public class ExecutionEngineTests {
         String code = null;
         boolean threw_exception = false;
         try {
-            code = readFile("test/testfiles/test2.epl", Charset.defaultCharset());
+            code = readFile("test/testfiles/btc.epl", Charset.defaultCharset());
         } catch (IOException e) {
             e.printStackTrace();
         }

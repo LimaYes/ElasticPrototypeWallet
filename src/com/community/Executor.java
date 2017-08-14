@@ -28,10 +28,8 @@ import static com.community.Constants.MAX_SOURCE_SIZE;
  ******************************************************************************/
 public class Executor {
 
-    public static ExposedToRhino exprin = new ExposedToRhino();
-    public static Context cx = Context.enter();
-    public static ScriptableObject scope = cx.initStandardObjects();
-    public static Object jsObj = Context.javaToJS(exprin, scope);
+
+    public static Object jsObj = new ExposedToRhino();
 
     public static String checkCodeAndReturnVerify(String elasticPL) throws Exception{
         if(elasticPL.length()>MAX_SOURCE_SIZE) throw new Exceptions.SyntaxErrorException("Code length exceeded");
@@ -73,6 +71,7 @@ public class Executor {
         CODE_RESULT result = new CODE_RESULT();
         result.bty = false;
         result.pow = false;
+        result.error = false;
         try {
             delight.rhinosandox.RhinoSandbox sandbox = delight.rhinosandox.RhinoSandboxes.create();
             sandbox.setInstructionLimit(Constants.INSTRUCTION_LIMIT);
@@ -88,7 +87,7 @@ public class Executor {
             float[] f = new float[10000];
             double[] d = new double[10000];
             sandbox.inject("u", u);
-            sandbox.inject("i", i);
+            sandbox.inject("m", i);
             sandbox.inject("f", f);
             sandbox.inject("d", d);
 
@@ -113,6 +112,7 @@ public class Executor {
             e.printStackTrace();
             result.pow = false;
             result.bty = false;
+            result.error = true;
             return result; // Failed execution (reason does not matter)
         }
     }
@@ -142,5 +142,6 @@ public class Executor {
     public static class CODE_RESULT {
         public boolean pow;
         public boolean bty;
+        public boolean error;
     }
 }
