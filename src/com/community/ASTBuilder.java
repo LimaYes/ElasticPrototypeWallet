@@ -842,8 +842,7 @@ public class ASTBuilder {
         }
 
         // Check For Recursive Calls To Functions
-        validate_function_calls(state, state.ast_main_idx);
-        validate_function_calls(state, state.ast_verify_idx);
+        validate_function_calls(state);
 
 
     }
@@ -1437,9 +1436,10 @@ public class ASTBuilder {
             }
     }
 
-    private static void validate_function_calls(Primitives.STATE state, int function_idx) throws Exceptions
+    // TODO FIX THIS NOW!!!!!!!!!!
+    private static void validate_function_calls(Primitives.STATE state) throws Exceptions
             .SyntaxErrorException {
-        int i;
+        int i, j;
         boolean downward = true;
         AST root = null;
         AST ast_ptr = null;
@@ -1448,6 +1448,18 @@ public class ASTBuilder {
 
         // Set Root To Main / Verify Function
         root = state.stack_exp.get(function_idx);
+        // First Validate 'main' Then 'verify'
+        for (j = 0; j < 2; j++) {
+            if (j == 0) {
+               // Set Root To 'main' Function
+               root = stack_exp[ast_main_idx];
+            }
+            else {
+                // Set Root To 'verify' Function
+                root = stack_exp[ast_verify_idx];
+                // Reset To Navigate Downward
+                downward = true;
+            }
         call_stack.add(root);
 
         ast_ptr = root;
