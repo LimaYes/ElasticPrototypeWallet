@@ -38,7 +38,7 @@ public class CodeConverter {
     private static String[] tab = {"\t", "\t\t", "\t\t\t", "\t\t\t\t", "\t\t\t\t\t", "\t\t\t\t\t\t", "\t\t\t\t\t\t\t",
             "\t\t\t\t\t\t\t"};
 
-    private static boolean strcmp(String a, String b){
+    public static boolean strcmp(String a, String b){
         if(a.equalsIgnoreCase(b))
             return false;
         return true;
@@ -224,17 +224,13 @@ public class CodeConverter {
 
         switch (node.type) {
             case NODE_FUNCTION:
-                if ((!strcmp(node.svalue, "main")) || (!strcmp(node.svalue, "verify")))
-                    str = String.format("function %s() {\n", node.svalue); // function was uint32_t before
-                else
-                    str = String.format("function %s(verify_pow, target) {\n", node.svalue); // function was void before
+                str = String.format("function %s() {\n", node.svalue);
                 break;
             case NODE_CALL_FUNCTION:
-                // TODO: Fix This
-                 if (!strcmp(node.svalue, "verify"))
-                    return;
-
-                str = String.format("%s()", node.svalue);
+                if (!strcmp(node.svalue, "verify"))
+                    str = String.format("%s(verify_pow, target)", node.svalue);
+                else
+                    str = String.format("%s()", node.svalue);
                 break;
             case NODE_VERIFY_BTY:
                 str = String.format("bounty_found = (%s != 0 ? 1 : 0)", mylrstr.lstr);
@@ -380,11 +376,7 @@ public class CodeConverter {
             case NODE_BLOCK:
                 
                 if (node.parent.type == NODE_FUNCTION) {
-                    // Call Verify Function At End Of Main Function
-                    if (!strcmp(node.parent.svalue, "main"))
-                        str = String.format("\n\tverify(verify_pow, target);\n}\n");
-                    else
-                        str = String.format("}\n");
+                    str = String.format("}\n");
                 }
                 else
                     str = String.format("%s}\n", tab[state.tabs]);

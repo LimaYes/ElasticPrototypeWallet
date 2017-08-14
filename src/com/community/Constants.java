@@ -78,7 +78,7 @@ public class Constants {
                 new Primitives.EXP_TOKEN_LIST( "verify_bty",						10,	TOKEN_VERIFY_BTY,   EXP_STATEMENT,
                         1,	2,	DT_NONE ),
                 new Primitives.EXP_TOKEN_LIST( "verify_pow",						10,	TOKEN_VERIFY_POW,
-                        EXP_STATEMENT,
+                        EXP_FUNCTION,
                         4,	2,	DT_NONE ),
                 new Primitives.EXP_TOKEN_LIST( "i[",							2,	TOKEN_VAR_BEGIN,	EXP_EXPRESSION,	1,	4,	DT_INT ),
                 new Primitives.EXP_TOKEN_LIST( "u[",							2,	TOKEN_VAR_BEGIN,	EXP_EXPRESSION,	1,	4,	DT_UINT ),

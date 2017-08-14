@@ -2,24 +2,19 @@ array_uint   1000;
 storage_sz 32;
 storage_idx 0;
 
-
-function shit {
-    u[99]=8;
-}
-
 function main {
     u[1]=u[1]*132;
     u[2]=u[1]*54;
     s[0]=u[1]+u[2];
-    verify();
 }
 
-
+// The following one works in
 function verify {
     u[5]=0;
-    u[1]=2;
+    m[1]=-2;
     u[1]=m[1];
-    shit();
-    verify_bty (s[0]%1000==0);
+    if(u[1]>m[1])
+        u[5]=1;
+    verify_bty (s[0]+u[5]%1000==0);
     verify_pow (u[0],u[1],u[2],u[3]);
 }

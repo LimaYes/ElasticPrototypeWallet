@@ -229,4 +229,29 @@ public class ExecutionEngineTests {
         }
         Assert.assertTrue(threw_exception);
     }
+
+    @Test
+    public void testFailUnsignedSignedConversio1(){
+        String code = null;
+        boolean threw_exception = false;
+        try {
+            code = readFile("test/testfiles/signed_unsigned_failure_1.epl", Charset.defaultCharset());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            String epl = Executor.checkCodeAndReturnVerify(code);
+            System.out.println(epl);
+
+            int[] s = new int[]{9000,4,3,1,4,5,5,5,5};
+            Executor.CODE_RESULT cd = Executor.executeCode(epl, s, true, new int[]{0,0});
+            Assert.assertFalse(cd.error);
+            Assert.assertFalse(cd.bty);
+            System.out.println("Result:\nbty\t" + cd.bty);
+            System.out.println("pow\t" + cd.pow);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.assertTrue(false);
+        }
+    }
 }

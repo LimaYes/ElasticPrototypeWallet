@@ -3,6 +3,7 @@ import com.community.Primitives.AST;
 
 import java.util.Stack;
 
+import static com.community.CodeConverter.strcmp;
 import static com.community.Constants.*;
 import static com.community.Primitives.DATA_TYPE.*;
 import static com.community.Primitives.EPL_TOKEN_TYPE.*;
@@ -821,14 +822,13 @@ public class ASTBuilder {
 
             // Validate Function Only Contains Valid Statements
 
-            // todo: to be fixed
-            /*exp = state.stack_exp.get(i);
+            exp = state.stack_exp.get(i);
             while (exp.right != null) {
                 if (exp.right.left != null && !exp.right.left.end_stmnt) {
                     throw new Exceptions.SyntaxErrorException("Syntax Error: Line: " +  exp.line_num + " - Invalid Statement");
                 }
                 exp = exp.right;
-            }*/
+            }
         }
 
         // Validate That "Main" Function Exists
@@ -842,7 +842,10 @@ public class ASTBuilder {
         }
 
         // Check For Recursive Calls To Functions
-        validate_function_calls(state);
+        validate_function_calls(state, state.ast_main_idx);
+        validate_function_calls(state, state.ast_verify_idx);
+
+
     }
 
     private static void validate_inputs(Primitives.STATE state, Primitives.SOURCE_TOKEN token, int token_num, Primitives.NODE_TYPE node_type) throws Exceptions.SyntaxErrorException {
@@ -1036,7 +1039,7 @@ public class ASTBuilder {
             case NODE_FUNCTION: // todo: is -2 correct here`
                 // todo: i dont understand this
                 if ((state.stack_exp.get(state.stack_exp.size()-2).type == NODE_CONSTANT) || (state.stack_exp.get
-                        (state.stack_exp.size()-2).type == NODE_FUNCTION))
+                        (state.stack_exp.size()-1).type == NODE_FUNCTION))
                 return;
             break;
 
@@ -1085,7 +1088,6 @@ public class ASTBuilder {
             break;
 
             // Expressions w/ 1 Number (Right Operand)
-            case NODE_VERIFY_BTY:
             case NODE_NOT:
                 if ((top_exp(state).token_num > token_num) && (top_exp(state).data_type != DT_NONE))
                 return;
@@ -1216,6 +1218,12 @@ public class ASTBuilder {
                 			return;
             	break;
 
+
+            // Verify Bounty Call
+            case NODE_VERIFY_BTY:
+                if ((state.stack_exp.get(state.stack_exp.size()-1).token_num > token_num) && (state.stack_exp.get(state.stack_exp.size()-1).data_type != DT_NONE))
+                    return;
+            	break;
 
 
             // Built-in Functions w/ 1 Number
@@ -1429,7 +1437,8 @@ public class ASTBuilder {
             }
     }
 
-    private static void validate_function_calls(Primitives.STATE state) throws Exceptions.SyntaxErrorException {
+    private static void validate_function_calls(Primitives.STATE state, int function_idx) throws Exceptions
+            .SyntaxErrorException {
         int i;
         boolean downward = true;
         AST root = null;
@@ -1437,8 +1446,8 @@ public class ASTBuilder {
         Stack<AST> call_stack = new Stack<>();
         Stack<AST> rpt_stack = new Stack<>();
 
-        // Set Root To Main Function
-        root = state.stack_exp.get(state.ast_main_idx);
+        // Set Root To Main / Verify Function
+        root = state.stack_exp.get(function_idx);
         call_stack.add(root);
 
         ast_ptr = root;
@@ -1499,9 +1508,21 @@ public class ASTBuilder {
                         throw new Exceptions.SyntaxErrorException("Syntax Error: Line: " + ast_ptr.line_num + " - Illegal function call");
                     }
 
+                    // Validate That "verify" Function Is Only Called From "main"
+                    if (ast_ptr.uvalue == state.ast_verify_idx) {
+                        if (ast_ptr.parent==null || ast_ptr.parent.parent == null || ast_ptr.parent.parent.svalue ==
+                                null
+                                ||
+                                strcmp(ast_ptr.parent.parent.svalue, "main")) {
+                            throw new Exceptions.SyntaxErrorException("Syntax Error: Line: " + ast_ptr.line_num + " -" +
+                                    " Illegal 'verify' function call");
+                        }
+                    }
+
                     // Validate That Functions Is Not Recursively Called
                     for (i = 0; i < call_stack.size(); i++) {
-                        if (ast_ptr.uvalue == call_stack.get(i).uvalue) {
+                        if (ast_ptr.svalue != null && call_stack.get(i).svalue != null && !strcmp(ast_ptr.svalue,
+                                call_stack.get(i).svalue)) {
                             throw new Exceptions.SyntaxErrorException("Syntax Error: Line: " + ast_ptr.line_num + " - Illegal recursive function call");
                         }
                     }
