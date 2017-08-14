@@ -149,6 +149,7 @@ public class ExecutionEngineTests {
         }
         try {
             String epl = Executor.checkCodeAndReturnVerify(code);
+            System.out.println(epl);
 
             int[] s = new int[]{9000,4,3,1,4,5,5,5,5};
             Assert.assertTrue(Executor.executeCode(epl, s));

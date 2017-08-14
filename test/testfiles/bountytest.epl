@@ -10,5 +10,6 @@ function main {
 
 
 function verify {
-    result (s[0]%1000==0);
+    verify_bty (s[0]%1000==0);
+    verify_pow (u[0],u[1],u[2],u[3]);
 }
