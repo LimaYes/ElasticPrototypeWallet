@@ -117,7 +117,7 @@ public final class PowAndBounty {
 
                 int cntr = 0;
                 String xxxx = Arrays.toString(w.getCombined_storage());
-                byte[] fullstorage = new byte[w.getBounty_limit_per_iteration()*w.getStorage_size()*4]; // todo: triplecheck size here
+                byte[] fullstorage = new byte[w.getBounty_limit_per_iteration()*w.getStorage_size()*4];
                 try(DbIterator<PowAndBounty> it = getLastBountiesRelevantForStorageGeneration(w.getId())){
                     while(it.hasNext()){
                         PowAndBounty n = it.next();

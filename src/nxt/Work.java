@@ -148,7 +148,6 @@ public final class Work {
         this.combined_storage = combined_storage;
     }
 
-    // todo: maximum iteration number (because otherwise storage grows too much)
     private Work(final ResultSet rs, final DbKey dbKey) throws SQLException {
 
         this.id = rs.getLong("id");
@@ -487,8 +486,6 @@ public final class Work {
 
         if(storage)
             response.put("combined_storage", Convert.toHexString(Convert.int2byte(work.combined_storage)));
-
-        // todo: source, we need to get this directly from the message @ chain, it is not store redundantly in the work table
 
         return response;
     }
