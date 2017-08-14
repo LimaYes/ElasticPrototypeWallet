@@ -112,11 +112,11 @@ public class ExecutionEngineTests {
     public void testLiveImplementation(){
         String code = "function verify() {\treturn ((s[1]) == (0) != 0 ? 1 : 0);}";
         int[] s = new int[]{9,0,3,1,4,5,5,5,5};
-        Assert.assertTrue(Executor.executeCode(code, s));
+        Assert.assertTrue(Executor.executeCode(code, s, true, new int[]{0,0}).bty);
 
         code = "function verify() {\treturn ((s[1]) == (0) != 0 ? 1 : 0);}";
         s = new int[]{9,4,3,1,4,5,5,5,5};
-        Assert.assertFalse(Executor.executeCode(code, s));
+        Assert.assertFalse(Executor.executeCode(code, s, true, new int[]{0,0}).bty);
     }
 
     @Test
@@ -152,10 +152,10 @@ public class ExecutionEngineTests {
             System.out.println(epl);
 
             int[] s = new int[]{9000,4,3,1,4,5,5,5,5};
-            Assert.assertTrue(Executor.executeCode(epl, s));
-
-
-            System.out.println(epl);
+            Executor.CODE_RESULT cd = Executor.executeCode(epl, s, true, new int[]{0,0});
+            Assert.assertTrue(cd.bty);
+            System.out.println("Result:\nbty\t" + cd.bty);
+            System.out.println("pow\t" + cd.pow);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.assertTrue(false);

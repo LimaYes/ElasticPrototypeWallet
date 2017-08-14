@@ -1,6 +1,13 @@
 package com.community;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
+import delight.rhinosandox.internal.RhinoEval;
+import nxt.computation.ComputationConstants;
+import org.mozilla.javascript.Context;
+import org.mozilla.javascript.FunctionObject;
+import org.mozilla.javascript.NativeArray;
+import org.mozilla.javascript.ScriptableObject;
+
+import javax.script.ScriptContext;
+import java.lang.reflect.Method;
 
 import static com.community.Constants.MAX_SOURCE_SIZE;
 
@@ -21,6 +28,10 @@ import static com.community.Constants.MAX_SOURCE_SIZE;
  ******************************************************************************/
 public class Executor {
 
+    public static ExposedToRhino exprin = new ExposedToRhino();
+    public static Context cx = Context.enter();
+    public static ScriptableObject scope = cx.initStandardObjects();
+    public static Object jsObj = Context.javaToJS(exprin, scope);
 
     public static String checkCodeAndReturnVerify(String elasticPL) throws Exception{
         if(elasticPL.length()>MAX_SOURCE_SIZE) throw new Exceptions.SyntaxErrorException("Code length exceeded");
@@ -48,23 +59,61 @@ public class Executor {
             result += t.state.stack_code.get(i);
         }
 
-        return result;
+        // Add global variables and functions
+        String pre_code = "var pow_found = 0;\nvar bounty_found = 0;\n";
+        // todo, make this better (and more correct)
+
+        return pre_code + "\n" + result;
     }
 
-    public static boolean executeCode(String verifyCode, int[] storage_array){
+
+
+    public static CODE_RESULT executeCode(String verifyCode, int[] storage_array, boolean verify_pow, int[]
+            target){
+        CODE_RESULT result = new CODE_RESULT();
+        result.bty = false;
+        result.pow = false;
         try {
             delight.rhinosandox.RhinoSandbox sandbox = delight.rhinosandox.RhinoSandboxes.create();
             sandbox.setInstructionLimit(Constants.INSTRUCTION_LIMIT);
             sandbox.setMaxDuration(Constants.SAFE_TIME_LIMIT);
+            sandbox.allow(ExposedToRhino.class);
             sandbox.inject("s", storage_array);
+            sandbox.inject("target", target);
+            sandbox.inject("verify_pow", verify_pow?1:0);
+
+            // Inject temp arrays
+            int[] u = new int[10000];
+            int[] i = new int[10000];
+            float[] f = new float[10000];
+            double[] d = new double[10000];
+            sandbox.inject("u", u);
+            sandbox.inject("i", i);
+            sandbox.inject("f", f);
+            sandbox.inject("d", d);
+
+
+            // Add native java object for Rhino exposed POW functions
+            sandbox.inject("ExposedToRhino", jsObj);
 
 
 
-            Object res = sandbox.eval("epl", verifyCode + " verify();");
-            return res.equals(new Double(1.0));
+            org.mozilla.javascript.NativeArray array = (NativeArray) sandbox.eval("epl", verifyCode + " verify(); function res(){ return [pow_found, " +
+                    "bounty_found]; } " +
+                    "res();");
+            double p = (double) array.get(0);
+            double b = (double) array.get(1);
+            System.out.println(p + ", " + b);
+
+            result.bty = b==1.0;
+            result.pow = p==1.0;
+
+            return result;
         }catch(Exception e){
             e.printStackTrace();
-            return false; // Failed execution (reason does not matter)
+            result.pow = false;
+            result.bty = false;
+            return result; // Failed execution (reason does not matter)
         }
     }
 
@@ -88,5 +137,10 @@ public class Executor {
                     .ABSOLUTELY_MAXIMUM_VERIFY_WCET + " exceeded: your script has a verify function WCET of " + wcet + ".");
         }
         return t.state.ast_storage_sz;
+    }
+
+    public static class CODE_RESULT {
+        public boolean pow;
+        public boolean bty;
     }
 }

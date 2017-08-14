@@ -114,13 +114,15 @@ public class CommandPowBty extends IComputationAttachment {
         return multiplier_or_storage;
     }
 
-    private boolean validatePow(){
-        return true;
+    private boolean validatePow(String vcode){
+        int[] storage_array = Convert.byte2int(this.getMultiplier_or_storage());
+        Executor.CODE_RESULT result = Executor.executeCode(vcode, storage_array, true, new int[]{0,0});
+        return result.pow;
     }
     private boolean validateBty(String vcode){
         int[] storage_array = Convert.byte2int(this.getMultiplier_or_storage());
-        boolean result = Executor.executeCode(vcode, storage_array);
-        return result;
+        Executor.CODE_RESULT result = Executor.executeCode(vcode, storage_array, false, new int[]{0,0});
+        return result.bty;
     }
 
     @Override
@@ -152,7 +154,7 @@ public class CommandPowBty extends IComputationAttachment {
 
 
         // Validate code-level
-        if (this.is_proof_of_work && !validatePow()) {
+        if (this.is_proof_of_work && !validatePow(w.getVerifyFunction())) {
             return false;
         }
         if (!this.is_proof_of_work && !validateBty(w.getVerifyFunction())) {
