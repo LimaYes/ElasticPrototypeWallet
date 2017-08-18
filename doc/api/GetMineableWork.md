@@ -28,6 +28,7 @@
     [
         {
         "id ": 34745854848, # work id
+        "work_at_height": 73753, # the height of the blockchain (since work parameters are always height relevant) 
         "block_id": 532675485778, # block id in which work was included
         "xel_per_pow": 177484, # reward per proof of work in NQT denomination
         "iterations": 5, # how many iterations are planned (see documentation)

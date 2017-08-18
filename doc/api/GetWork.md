@@ -32,6 +32,7 @@
     [
         {
         "id ": 34745854848, # work id
+        "work_at_height": 73753, # the height of the blockchain (since work parameters are always height relevant) 
         "block_id": 532675485778, # block id in which work was included
         "xel_per_pow": 177484, # reward per proof of work in NQT denomination
         "iterations": 5, # how many iterations are planned (see documentation)
@@ -50,7 +51,6 @@
         "sender_account_id": 1825723527253, # who created that job?
         "storage_size": 1000, # how many uints are stored per bounty per iteration? (check documentation)
         "source_code": "...elastic PL code as string...", # source code only if requested and only if filtered by work id
-        "storage_height": 73753, # the height of the blockchain (snce storage is always height relevant) only if requested and only if filtered by work id
         "storage_id": 1, # storage slot index only if requested and only if filtered by work id
         "storage": "deadbeef" # storage slot content only if requested and only if filtered by work id
         }, ...

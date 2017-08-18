@@ -454,6 +454,7 @@ public final class Work {
     public static JSONObject toJson(Work work) {
         final JSONObject response = new JSONObject();
         response.put("id", Long.toUnsignedString(work.id));
+        response.put("work_at_height",Nxt.getBlockchain().getHeight());
         response.put("block_id", Long.toUnsignedString(work.block_id));
         response.put("xel_per_pow", work.xel_per_pow);
         response.put("iterations", work.iterations);
@@ -489,7 +490,6 @@ public final class Work {
             for(int i=0;i<work.storage_size;++i){
                 storage_area[i] = work.combined_storage[storage_slot*work.storage_size + i];
             }
-            response.put("storage_height",Nxt.getBlockchain().getHeight());
             response.put("storage_id", storage_slot);
             response.put("storage", Convert.toHexString(Convert.int2byte(storage_area)));
         }
