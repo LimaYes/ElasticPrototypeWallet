@@ -55,7 +55,7 @@
 
   ```javascript
     $.ajax({
-      url: "/users/1",
+      url: "http://url/nxt?requestType=getMineableWork&n=10",
       dataType: "json",
       type : "GET",
       success : function(r) {
