@@ -27,7 +27,7 @@ public final class GetMineableWork extends APIServlet.APIRequestHandler {
 		try (DbIterator<? extends Work> iterator = Work.getActiveWork(0, n)) {
 			while (iterator.hasNext()) {
 				final Work transaction = iterator.next();
-				work_packages.add(Work.toJsonWithSource(transaction));
+				work_packages.add(Work.toJson(transaction));
 			}
 		}
 
