@@ -59,6 +59,16 @@ public final class GetWork extends APIServlet.APIRequestHandler {
             wid_filter = 0;
         }
 
+        long storage_slot;
+        try {
+            final String readParam = ParameterParser.getParameterMultipart(req, "storage_id");
+            final BigInteger b = new BigInteger(readParam);
+            storage_slot = b.longValue();
+        } catch (final Exception e) {
+            storage_slot = -1;
+        }
+
+
         boolean include_finished = false;
         try {
             final String readParam = ParameterParser.getParameterMultipart(req, "with_finished");
@@ -80,7 +90,12 @@ public final class GetWork extends APIServlet.APIRequestHandler {
         if(wid_filter == 0)
             work_packages = work.stream().map(Work::toJson).collect(Collectors.toCollection(JSONArray::new));
         else
-            work_packages = work.stream().map(Work::toJsonWithAll).collect(Collectors.toCollection(JSONArray::new));
+            if(storage_slot == -1)
+                work_packages = work.stream().map(Work::toJsonWithSource).collect(Collectors.toCollection(JSONArray::new));
+            else {
+                int finalStorage_slot = (int) storage_slot;
+                work_packages = work.stream().map((Work work1) -> Work.toJsonWithStorage(work1, finalStorage_slot)).collect(Collectors.toCollection(JSONArray::new));
+            }
 
         final JSONObject response = new JSONObject();
         response.put("work_packages", work_packages);

@@ -480,17 +480,18 @@ public final class Work {
         return response;
     }
 
-    public static JSONObject toJson(Work work, boolean storage, boolean source) {
+    public static JSONObject toJsonWithStorage(Work work, int storage_slot) {
         final JSONObject response = toJson(work);
 
-        if(storage)
-            response.put("combined_storage", Convert.toHexString(Convert.int2byte(work.combined_storage)));
+        if (storage_slot>=0 && storage_slot < work.bounty_limit_per_iteration) {
+            int[] storage_area = new int[work.storage_size];
+            for(int i=0;i<work.storage_size;++i){
+                storage_area[i] = work.combined_storage[storage_slot*work.storage_size + i];
+            }
 
+            response.put("combined_storage", Convert.toHexString(Convert.int2byte(storage_area)));
+        }
         return response;
-    }
-
-    public static JSONObject toJsonWithAll(Work work) {
-        return toJson(work, true, true);
     }
 
     public enum Event {
