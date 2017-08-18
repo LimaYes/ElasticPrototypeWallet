@@ -471,7 +471,6 @@ public final class Work {
         response.put("cap_number_pow", work.cap_number_pow);
         response.put("sender_account_id", Long.toUnsignedString(work.sender_account_id));
         response.put("storage_size", work.storage_size);
-        response.put("verify_function", work.verifyFunction);
         return response;
     }
 
