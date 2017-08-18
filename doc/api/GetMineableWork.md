@@ -24,9 +24,11 @@
 
   * **Code:** 200 <br />
     **Content:** 
-    `[
+    ```json
+    [
         { id : 12, name : "Michael Bloom" }
-    ]`
+    ]
+    ```
 
 
 * **Sample Call:**
