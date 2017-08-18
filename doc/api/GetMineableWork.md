@@ -45,7 +45,6 @@
         "cap_number_pow": 10000, # close (no timeout no cancellation) job after limit of pows is reached
         "sender_account_id": 1825723527253, # who created that job?
         "storage_size": 1000, # how many uints are stored per bounty per iteration? (check documentation)
-        "source_code": "...elastic PL code as string..." # source code 
         }, ...
     ]
     ```
