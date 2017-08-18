@@ -50,7 +50,7 @@
         "sender_account_id": 1825723527253, # who created that job?
         "storage_size": 1000, # how many uints are stored per bounty per iteration? (check documentation)
         "source_code": "...elastic PL code as string...", # source code only if requested and only if filtered by work id
-        "storage_slot": 1, # storage slot index only if requested and only if filtered by work id
+        "storage_id": 1, # storage slot index only if requested and only if filtered by work id
         "storage": "deadbeef" # storage slot content only if requested and only if filtered by work id
         }, ...
     ]
