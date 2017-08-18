@@ -16,7 +16,7 @@
  
    `account=[long]`: specify the account number to filter work by owner<br />
    `work_id=[long]`: specify the work id to get only one specific work package<br />
-   `storage_id=[int]`: specify the index of the storage slot (max slots are = bounty_limit_per_iteration), this argument only works if work_id has been specified as well<br />
+   `storage_id=[int]`: specify the index of the storage slot (max slots are = bounty_limit_per_iteration), this argument only works if work_id has been specified as well. If the provided value is out of range, it will be ignored<br />
    `with_finished=[0,1]`: specify 1 if you want to receive past closed work entries as well<br />
    `with_source=[0,1]`: specify 1 if you want to receive the source code as well, this argument only works if work_id has been specified as well
 
