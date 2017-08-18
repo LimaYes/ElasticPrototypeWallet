@@ -78,7 +78,19 @@ public final class GetWork extends APIServlet.APIRequestHandler {
                 include_finished = true;
             }
         } catch (final Exception e) {
-            wid_filter = 0;
+            include_finished = false;
+        }
+
+        boolean with_source = false;
+        try {
+            final String readParam = ParameterParser.getParameterMultipart(req, "with_source");
+            final BigInteger b = new BigInteger(readParam);
+            int res = b.intValue();
+            if(res!=0){
+                with_source = true;
+            }
+        } catch (final Exception e) {
+            with_source = false;
         }
 
         final int firstIndex = ParameterParser.getFirstIndex(req);
@@ -90,11 +102,14 @@ public final class GetWork extends APIServlet.APIRequestHandler {
         if(wid_filter == 0)
             work_packages = work.stream().map(Work::toJson).collect(Collectors.toCollection(JSONArray::new));
         else
-            if(storage_slot == -1)
-                work_packages = work.stream().map(Work::toJsonWithSource).collect(Collectors.toCollection(JSONArray::new));
+            if(storage_slot == -1) {
+                boolean finalWith_source = with_source;
+                work_packages = work.stream().map((Work work2) -> Work.toJsonWithSource(work2, finalWith_source)).collect(Collectors.toCollection(JSONArray::new));
+            }
             else {
                 int finalStorage_slot = (int) storage_slot;
-                work_packages = work.stream().map((Work work1) -> Work.toJsonWithStorage(work1, finalStorage_slot)).collect(Collectors.toCollection(JSONArray::new));
+                boolean finalWith_source1 = with_source;
+                work_packages = work.stream().map((Work work1) -> Work.toJsonWithStorage(work1, finalStorage_slot, finalWith_source1)).collect(Collectors.toCollection(JSONArray::new));
             }
 
         final JSONObject response = new JSONObject();

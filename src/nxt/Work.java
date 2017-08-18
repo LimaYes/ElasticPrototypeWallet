@@ -474,14 +474,15 @@ public final class Work {
         return response;
     }
 
-    public static JSONObject toJsonWithSource(Work work) {
+    public static JSONObject toJsonWithSource(Work work, boolean with_source) {
         final JSONObject response = toJson(work);
-        response.put("source", work.source_code);
+        if(with_source)
+            response.put("source", work.source_code);
         return response;
     }
 
-    public static JSONObject toJsonWithStorage(Work work, int storage_slot) {
-        final JSONObject response = toJson(work);
+    public static JSONObject toJsonWithStorage(Work work, int storage_slot, boolean with_source) {
+        final JSONObject response = toJsonWithSource(work,with_source);
 
         if (storage_slot>=0 && storage_slot < work.bounty_limit_per_iteration) {
             int[] storage_area = new int[work.storage_size];
@@ -489,7 +490,7 @@ public final class Work {
                 storage_area[i] = work.combined_storage[storage_slot*work.storage_size + i];
             }
 
-            response.put("combined_storage", Convert.toHexString(Convert.int2byte(storage_area)));
+            response.put("storage_slot", Convert.toHexString(Convert.int2byte(storage_area)));
         }
         return response;
     }
