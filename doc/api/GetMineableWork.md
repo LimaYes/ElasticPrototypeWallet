@@ -14,7 +14,7 @@
 
    **Optional:**
  
-   `n=[integer]`
+   `n=[integer]`: Limit number of results sorted, items are sorted decdencing by `blocks_remaining` and `height`, and cut off to `n` items
 
 * **Data Params**
 
@@ -27,7 +27,7 @@
     ```json
     [
         {
-        "id ": 34745854848, // work id
+        "id ": 34745854848, # work id
         "block_id": 532675485778, # block id in which work was included
         "xel_per_pow": 177484, # reward per proof of work in NQT denomination
         "iterations": 5, # how many iterations are planned (see documentation)
