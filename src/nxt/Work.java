@@ -489,8 +489,8 @@ public final class Work {
             for(int i=0;i<work.storage_size;++i){
                 storage_area[i] = work.combined_storage[storage_slot*work.storage_size + i];
             }
-
-            response.put("storage_slot", Convert.toHexString(Convert.int2byte(storage_area)));
+            response.put("storage_slot", storage_slot);
+            response.put("storage", Convert.toHexString(Convert.int2byte(storage_area)));
         }
         return response;
     }

@@ -14,10 +14,10 @@
 
    **Optional:**
  
-   `account=[long]`: specify the account number to filter work by owner
-   `work_id=[long]`: specify the work id to get only one specific work package
-   `storage_id=[int]`: specify the index of the storage slot (max slots are = bounty_limit_per_iteration), this argument only works if work_id has been specified as well
-   `with_finished=[0,1]`: specify 1 if you want to receive past closed work entries as well
+   `account=[long]`: specify the account number to filter work by owner<br />
+   `work_id=[long]`: specify the work id to get only one specific work package<br />
+   `storage_id=[int]`: specify the index of the storage slot (max slots are = bounty_limit_per_iteration), this argument only works if work_id has been specified as well<br />
+   `with_finished=[0,1]`: specify 1 if you want to receive past closed work entries as well<br />
    `with_source=[0,1]`: specify 1 if you want to receive the source code as well, this argument only works if work_id has been specified as well
 
 * **Data Params**
@@ -50,7 +50,8 @@
         "sender_account_id": 1825723527253, # who created that job?
         "storage_size": 1000, # how many uints are stored per bounty per iteration? (check documentation)
         "source_code": "...elastic PL code as string...", # source code only if requested and only if filtered by work id
-        "storage_slot": "deadbeef" # storage slot only if requested and only if filtered by work id
+        "storage_slot": 1, # storage slot index only if requested and only if filtered by work id
+        "storage": "deadbeef" # storage slot content only if requested and only if filtered by work id
         }, ...
     ]
     ```
