@@ -1,6 +1,6 @@
-**Get Mineable Work**
+**Get Work**
 ----
-  Returns all open jobs which a miner (worker) can work on.
+  Returns work packages filtered by numerous options
 
 * **URL**
 
