@@ -5,6 +5,11 @@ storage_idx 0;
 
 function shit {
     u[99]=8;
+    bolocks();
+}
+
+function bolocks {
+    shit();
 }
 
 function main {
