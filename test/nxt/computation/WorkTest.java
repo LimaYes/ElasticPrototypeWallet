@@ -154,11 +154,12 @@ public class WorkTest extends AbstractForgingTest {
         // Test work db table
         Assert.assertEquals(1, Work.getCount());
         Assert.assertEquals(1, Work.getActiveCount());
-
-        byte[] testarray = new byte[32];
+        byte[] m = new byte[32*4];
+        byte[] v = new byte[]{};
+        byte[] testarray = new byte[0];
         for(int i=0;i<25; ++i) {
-            testarray[0]=(byte)(testarray[0]+1);
-            CommandPowBty pow = new CommandPowBty(id, true, testarray);
+            m[0]=(byte)(m[0]+1);
+            CommandPowBty pow = new CommandPowBty(id, true, m, testarray, v);
             MessageEncoder.push(pow, AbstractForgingTest.testForgingSecretPhrase);
             // Mine a bit so the work times out
             AbstractBlockchainTest.forgeNumberOfBlocks(1, AbstractForgingTest.testForgingSecretPhrase);
@@ -198,9 +199,11 @@ public class WorkTest extends AbstractForgingTest {
         Assert.assertEquals(1, Work.getActiveCount());
 
         {
+            int[] m = new int[32];
+            int[] v = new int[]{};
             int[] testarray = new int[w.getStorage_size()];
             testarray[0] = 6000;
-            CommandPowBty pow = new CommandPowBty(id, false, Convert.int2byte(testarray));
+            CommandPowBty pow = new CommandPowBty(id, false, Convert.int2byte(m), Convert.int2byte(testarray), Convert.int2byte(v));
             MessageEncoder.push(pow, AbstractForgingTest.testForgingSecretPhrase);
             AbstractBlockchainTest.forgeNumberOfBlocks(5, AbstractForgingTest.testForgingSecretPhrase);
         }
@@ -214,9 +217,11 @@ public class WorkTest extends AbstractForgingTest {
         Assert.assertEquals(1, Work.getWorkById(id).getReceived_bounties()); // Did the bounty count correctly???
 
         {
+            int[] m = new int[32];
+            int[] v = new int[]{};
             int[] testarray = new int[w.getStorage_size()];
-            testarray[0] = 6002;
-            CommandPowBty pow = new CommandPowBty(id, false, Convert.int2byte(testarray));
+            testarray[0] = 6000;
+            CommandPowBty pow = new CommandPowBty(id, false, Convert.int2byte(m), Convert.int2byte(testarray), Convert.int2byte(v));
             MessageEncoder.push(pow, AbstractForgingTest.testForgingSecretPhrase);
             AbstractBlockchainTest.forgeNumberOfBlocks(5, AbstractForgingTest.testForgingSecretPhrase);
         }
@@ -224,9 +229,11 @@ public class WorkTest extends AbstractForgingTest {
         Assert.assertEquals(1, Work.getWorkById(id).getReceived_bounties()); // Last one didnt work, still only got 1 valid bty
 
         {
+            int[] m = new int[32];
+            int[] v = new int[]{};
             int[] testarray = new int[w.getStorage_size()];
             testarray[0] = 3000;
-            CommandPowBty pow = new CommandPowBty(id, false, Convert.int2byte(testarray));
+            CommandPowBty pow = new CommandPowBty(id, false, Convert.int2byte(m), Convert.int2byte(testarray), Convert.int2byte(v));
             MessageEncoder.push(pow, AbstractForgingTest.testForgingSecretPhrase);
             AbstractBlockchainTest.forgeNumberOfBlocks(5, AbstractForgingTest.testForgingSecretPhrase);
         }
@@ -237,23 +244,29 @@ public class WorkTest extends AbstractForgingTest {
         Assert.assertEquals(2, Work.getWorkById(id).getReceived_bounties()); // This one must have worked
 
         {
+            int[] m = new int[32];
+            int[] v = new int[]{};
             int[] testarray = new int[w.getStorage_size()];
-            testarray[0] = 10000;
-            CommandPowBty pow = new CommandPowBty(id, false, Convert.int2byte(testarray));
+            testarray[0] = 26000;
+            CommandPowBty pow = new CommandPowBty(id, false, Convert.int2byte(m), Convert.int2byte(testarray), Convert.int2byte(v));
             MessageEncoder.push(pow, AbstractForgingTest.testForgingSecretPhrase);
         }
         {
+            int[] m = new int[32];
+            int[] v = new int[]{};
             int[] testarray = new int[w.getStorage_size()];
-            testarray[0] = 5000;
-            CommandPowBty pow = new CommandPowBty(id, false, Convert.int2byte(testarray));
+            testarray[0] = 46000;
+            CommandPowBty pow = new CommandPowBty(id, false, Convert.int2byte(m), Convert.int2byte(testarray), Convert.int2byte(v));
             MessageEncoder.push(pow, AbstractForgingTest.testForgingSecretPhrase);
         }
 
         // Also do some other good ones in the same block (see if the cut off mechanism works)
         {
+            int[] m = new int[32];
+            int[] v = new int[]{};
             int[] testarray = new int[w.getStorage_size()];
-            testarray[0] = 65000;
-            CommandPowBty pow = new CommandPowBty(id, false, Convert.int2byte(testarray));
+            testarray[0] = 76000;
+            CommandPowBty pow = new CommandPowBty(id, false, Convert.int2byte(m), Convert.int2byte(testarray), Convert.int2byte(v));
             MessageEncoder.push(pow, AbstractForgingTest.testForgingSecretPhrase);
         }
 

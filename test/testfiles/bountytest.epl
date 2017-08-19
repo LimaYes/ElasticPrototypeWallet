@@ -5,18 +5,13 @@ storage_idx 0;
 
 function shit {
     u[99]=8;
-    bolocks();
 }
 
-function bolocks {
-    shit();
-}
 
 function main {
     u[1]=u[1]*132;
     u[2]=u[1]*54;
     verify();
-
 }
 
 function verify {

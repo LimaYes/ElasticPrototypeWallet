@@ -37,6 +37,8 @@ import nxt.util.Logger;
 
 public final class PowAndBounty {
 
+
+
     public enum Event {
         POW_SUBMITTED, BOUNTY_SUBMITTED
     }
@@ -121,7 +123,7 @@ public final class PowAndBounty {
                 try(DbIterator<PowAndBounty> it = getLastBountiesRelevantForStorageGeneration(w.getId())){
                     while(it.hasNext()){
                         PowAndBounty n = it.next();
-                        byte[] storage = n.multiplier_or_storage;
+                        byte[] storage = n.storage;
                         for(int i=0;i<storage.length;++i){
                             fullstorage[cntr*w.getStorage_size()*4+i] = storage[i];
                         }
@@ -202,9 +204,14 @@ public final class PowAndBounty {
 
 
     // storage hash linked to wid only
-    public static boolean hasStorageHash(long workId, byte[] hash) {
+    public static boolean hasVerificatorHash(long workId, byte[] hash) {
         return PowAndBounty.powAndBountyTable
-                .getCount(new DbClause.BytesClause("storage_hash", hash).and(new DbClause.LongClause("work_id",workId))) > 0;
+                .getCount(new DbClause.BytesClause("verificator_hash", hash).and(new DbClause.LongClause("work_id",workId))) > 0;
+    }
+
+    public static boolean hasMultiplier(long workId, byte[] multiplier) {
+        return PowAndBounty.powAndBountyTable
+                .getCount(new DbClause.BytesClause("multiplier", multiplier).and(new DbClause.LongClause("work_id",workId))) > 0;
     }
 
 
@@ -222,8 +229,10 @@ public final class PowAndBounty {
     private final long accountId;
     private final DbKey dbKey;
     private final byte[] hash;
-    private final byte[] storage_hash;
-    private final byte[] multiplier_or_storage;
+    private final byte[] verificator_hash;
+    private final byte[] multiplier;
+    private final byte[] storage;
+    private final byte[] validator;
 
 
     public long getWork_id() {
@@ -242,8 +251,10 @@ public final class PowAndBounty {
         this.dbKey = dbKey;
         this.too_late = rs.getBoolean("too_late");
         this.hash = rs.getBytes("hash");
-        this.storage_hash = rs.getBytes("hash");
-        this.multiplier_or_storage = rs.getBytes("multiplier_or_storage");
+        this.verificator_hash = rs.getBytes("hash");
+        this.multiplier = rs.getBytes("multiplier");
+        this.storage = rs.getBytes("storage");
+        this.validator = rs.getBytes("validator");
     }
 
     private PowAndBounty(final Transaction transaction, final CommandPowBty attachment) {
@@ -253,8 +264,10 @@ public final class PowAndBounty {
         this.dbKey = PowAndBounty.powAndBountyDbKeyFactory.newKey(this.id);
         this.is_pow = attachment.isIs_proof_of_work();
         this.hash = attachment.getHash();
-        this.storage_hash = attachment.getStorageHash();
-        this.multiplier_or_storage = attachment.getMultiplier_or_storage();
+        this.verificator_hash = attachment.getVerificatorHash();
+        this.multiplier = attachment.getMultiplier();
+        this.storage = attachment.getStorage();
+        this.validator = attachment.getVerificator();
         this.too_late = false;
     }
 
@@ -265,17 +278,19 @@ public final class PowAndBounty {
 
     private void save(final Connection con) throws SQLException {
         try (PreparedStatement pstmt = con.prepareStatement(
-                "MERGE INTO pow_and_bounty (id, too_late, work_id, hash, multiplier_or_storage, account_id, is_pow, storage_hash, "
-                        + " height, latest) " + "KEY (id, height) " + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, TRUE)")) {
+                "MERGE INTO pow_and_bounty (id, too_late, work_id, hash, multiplier, storage, validator, account_id, is_pow, verificator_hash, "
+                        + " height, latest) " + "KEY (id, height) " + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, TRUE)")) {
             int i = 0;
             pstmt.setLong(++i, this.id);
             pstmt.setBoolean(++i, this.too_late);
             pstmt.setLong(++i, this.work_id);
             DbUtils.setBytes(pstmt, ++i, this.hash);
-            DbUtils.setBytes(pstmt, ++i, this.multiplier_or_storage);
+            DbUtils.setBytes(pstmt, ++i, this.multiplier);
+            DbUtils.setBytes(pstmt, ++i, this.storage);
+            DbUtils.setBytes(pstmt, ++i, this.validator);
             pstmt.setLong(++i, this.accountId);
             pstmt.setBoolean(++i, this.is_pow);
-            DbUtils.setBytes(pstmt, ++i, this.storage_hash);
+            DbUtils.setBytes(pstmt, ++i, this.verificator_hash);
             pstmt.setInt(++i, Nxt.getBlockchain().getHeight());
             pstmt.executeUpdate();
         }

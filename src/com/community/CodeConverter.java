@@ -372,8 +372,8 @@ public class CodeConverter {
                 break;
             case NODE_REPEAT:
                 
-                if (state.tabs < 1) state.tabs = 1;
-                str = String.format("%sint loop%d;\n%sfor (loop%d = 0; loop%d < (%s); loop%d++) {\n%s\tif (loop%d >= %lld) break;\n%s\tu[%lld] = loop%d;\n", tab[state.tabs - 1], node.token_num, tab[state.tabs - 1], node.token_num, node.token_num, mylrstr.lstr, node.token_num, tab[state.tabs - 1], node.token_num, node.ivalue, tab[state.tabs - 1], node.uvalue, node.token_num);
+                if (state.tabs < 1) state.tabs = 1; // todo: not, i chaged u[%lld] t u[%d] ... check for problems please
+                str = String.format("%svar loop%d = 0;\n%sfor (loop%d = 0; loop%d < (%s); loop%d++) {\n%s\tif (loop%d >= %d) break;\n%s\tu[%d] = loop%d;\n", tab[state.tabs - 1], node.token_num, tab[state.tabs - 1], node.token_num, node.token_num, mylrstr.lstr, node.token_num, tab[state.tabs - 1], node.token_num, node.ivalue, tab[state.tabs - 1], node.uvalue, node.token_num);
                 break;
             case NODE_BLOCK:
                 

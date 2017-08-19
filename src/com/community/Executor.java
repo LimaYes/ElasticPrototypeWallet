@@ -59,6 +59,14 @@ public class Executor {
 
         // Add global variables and functions
         String pre_code = "var pow_found = 0;\nvar bounty_found = 0;\n";
+        pre_code += "function rotr32(word, shift) {\n" +
+                "  return word << 32 - shift | word >>> shift;\n" +
+                "}\n";
+
+        pre_code += "function rotl32(word, shift) {\n" +
+                "  return word << shift | word >>> 32 - shift;\n" +
+                "}\n";
+
         // todo, make this better (and more correct)
 
         return pre_code + "\n" + result;
@@ -66,7 +74,7 @@ public class Executor {
 
 
 
-    public static CODE_RESULT executeCode(String verifyCode, int[] storage_array, boolean verify_pow, int[]
+    public static CODE_RESULT executeCode(String verifyCode, int[] multiplier, int[] storage, int[] validator, boolean verify_pow, int[]
             target){
         CODE_RESULT result = new CODE_RESULT();
         result.bty = false;
@@ -77,7 +85,7 @@ public class Executor {
             sandbox.setInstructionLimit(Constants.INSTRUCTION_LIMIT);
             sandbox.setMaxDuration(Constants.SAFE_TIME_LIMIT);
             sandbox.allow(ExposedToRhino.class);
-            sandbox.inject("s", storage_array);
+            sandbox.inject("s", storage); // todo, add extra elements to S[] as coralreefer proposed
             sandbox.inject("target", target);
             sandbox.inject("verify_pow", verify_pow?1:0);
 
@@ -95,11 +103,12 @@ public class Executor {
             // Add native java object for Rhino exposed POW functions
             sandbox.inject("ExposedToRhino", jsObj);
 
-
-
-            org.mozilla.javascript.NativeArray array = (NativeArray) sandbox.eval("epl", verifyCode + " verify(); function res(){ return [pow_found, " +
+            String vcode = verifyCode + " verify(); function res(){ return [pow_found, " +
                     "bounty_found]; } " +
-                    "res();");
+                    "res();";
+            System.out.println(vcode);
+
+            org.mozilla.javascript.NativeArray array = (NativeArray) sandbox.eval("epl", vcode);
             double p = (double) array.get(0);
             double b = (double) array.get(1);
             System.out.println(p + ", " + b);
@@ -109,7 +118,7 @@ public class Executor {
 
             return result;
         }catch(Exception e){
-            e.printStackTrace();
+            e.printStackTrace(); // todo, remove for production
             result.pow = false;
             result.bty = false;
             result.error = true;

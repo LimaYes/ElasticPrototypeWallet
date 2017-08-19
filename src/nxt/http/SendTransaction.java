@@ -51,6 +51,7 @@ import java.util.Collections;
  * <p>
  * Prunable appendages are classes implementing the {@link nxt.Appendix.Prunable} interface.
  */
+
 public final class SendTransaction extends APIServlet.APIRequestHandler {
 
     static final SendTransaction instance = new SendTransaction();
@@ -77,7 +78,6 @@ public final class SendTransaction extends APIServlet.APIRequestHandler {
             JSONData.putException(response, e, "Failed to broadcast transaction");
         }
         return response;
-
     }
 
     @Override

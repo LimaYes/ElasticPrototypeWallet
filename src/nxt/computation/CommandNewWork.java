@@ -252,6 +252,7 @@ public class CommandNewWork extends IComputationAttachment {
             this.verify_function = Executor.checkCodeAndReturnVerify(new String(this.sourceCode));
             validated = true;
         }catch(Exception e){
+            e.printStackTrace(); // todo: remove for production
             return false;
         }
 
