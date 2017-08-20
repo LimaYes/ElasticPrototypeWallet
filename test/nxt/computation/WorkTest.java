@@ -227,7 +227,7 @@ public class WorkTest extends AbstractForgingTest {
             AbstractBlockchainTest.forgeNumberOfBlocks(5, AbstractForgingTest.testForgingSecretPhrase);
         }
 
-        Assert.assertEquals(1, Work.getWorkById(id).getReceived_bounties()); // Last one didnt work, still only got 1 valid bty
+        Assert.assertEquals(2, Work.getWorkById(id).getReceived_bounties()); // Last one didnt work, still only got 1 valid bty
 
         {
             int[] m = new int[32];
@@ -243,7 +243,7 @@ public class WorkTest extends AbstractForgingTest {
         // Work still open
         Assert.assertEquals(1, Work.getActiveCount());
 
-        Assert.assertEquals(2, Work.getWorkById(id).getReceived_bounties()); // This one must have worked
+        Assert.assertEquals(3, Work.getWorkById(id).getReceived_bounties()); // This one must have worked
 
         {
             int[] m = new int[32];
@@ -270,7 +270,7 @@ public class WorkTest extends AbstractForgingTest {
             int[] v = new int[w.getStorage_size()];
             m[0]=44;
             int[] testarray = new int[w.getStorage_size()];
-            testarray[0] = 76000;
+            testarray[0] = 76003;
             CommandPowBty pow = new CommandPowBty(id, false, Convert.int2byte(m), Convert.int2byte(testarray), Convert.int2byte(v));
             MessageEncoder.push(pow, AbstractForgingTest.testForgingSecretPhrase);
         }
@@ -278,9 +278,8 @@ public class WorkTest extends AbstractForgingTest {
         // Forge two at the same time, should work as well! Check the order carefully during testing!
         AbstractBlockchainTest.forgeNumberOfBlocks(5, AbstractForgingTest.testForgingSecretPhrase);
 
-
+        // ATTENTION: 4, because after 4 btys the job is closed, the 5th one is just ignored!
         Assert.assertEquals(4, Work.getWorkById(id).getReceived_bounties()); // This one must have worked
-
         Assert.assertEquals(0, Work.getActiveCount());
 
 
