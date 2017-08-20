@@ -164,12 +164,12 @@ public class WorkTest extends AbstractForgingTest {
             // Mine a bit so the work times out
             AbstractBlockchainTest.forgeNumberOfBlocks(1, AbstractForgingTest.testForgingSecretPhrase);
         }
+        AbstractBlockchainTest.forgeNumberOfBlocks(6, AbstractForgingTest.testForgingSecretPhrase);
 
         // After getting enough Pow work must be closed
         // Test work db table
         Assert.assertEquals(1, Work.getCount());
         Assert.assertEquals(0, Work.getActiveCount());
-
     }
 
     @Test
@@ -219,6 +219,7 @@ public class WorkTest extends AbstractForgingTest {
         {
             int[] m = new int[32];
             int[] v = new int[]{};
+            m[0]=1;
             int[] testarray = new int[w.getStorage_size()];
             testarray[0] = 6000;
             CommandPowBty pow = new CommandPowBty(id, false, Convert.int2byte(m), Convert.int2byte(testarray), Convert.int2byte(v));
@@ -231,6 +232,7 @@ public class WorkTest extends AbstractForgingTest {
         {
             int[] m = new int[32];
             int[] v = new int[]{};
+            m[0]=194;
             int[] testarray = new int[w.getStorage_size()];
             testarray[0] = 3000;
             CommandPowBty pow = new CommandPowBty(id, false, Convert.int2byte(m), Convert.int2byte(testarray), Convert.int2byte(v));
@@ -245,6 +247,7 @@ public class WorkTest extends AbstractForgingTest {
 
         {
             int[] m = new int[32];
+            m[0]=19435;
             int[] v = new int[]{};
             int[] testarray = new int[w.getStorage_size()];
             testarray[0] = 26000;
@@ -254,6 +257,7 @@ public class WorkTest extends AbstractForgingTest {
         {
             int[] m = new int[32];
             int[] v = new int[]{};
+            m[0]=17;
             int[] testarray = new int[w.getStorage_size()];
             testarray[0] = 46000;
             CommandPowBty pow = new CommandPowBty(id, false, Convert.int2byte(m), Convert.int2byte(testarray), Convert.int2byte(v));
@@ -264,6 +268,7 @@ public class WorkTest extends AbstractForgingTest {
         {
             int[] m = new int[32];
             int[] v = new int[]{};
+            m[0]=44;
             int[] testarray = new int[w.getStorage_size()];
             testarray[0] = 76000;
             CommandPowBty pow = new CommandPowBty(id, false, Convert.int2byte(m), Convert.int2byte(testarray), Convert.int2byte(v));

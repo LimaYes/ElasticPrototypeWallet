@@ -55,6 +55,12 @@ public class CommandPowBty extends IComputationAttachment {
     CommandPowBty(ByteBuffer buffer) {
         super(buffer);
         try {
+
+            /* you will notice, that here only "upper bounds" are checked, not the exact correct storate/m/submit length.
+            The reason for this is, that we not yet know the work id nor do we want any db access for Work retrieval here.
+            The correct lengths will later be checked in verify, for now just stop some memory exhaustion attacks using simple upper bounds checks
+             */
+
             this.work_id = buffer.getLong();
             this.is_proof_of_work = (buffer.get() == (byte) 0x01) ? true : false;
 
@@ -82,8 +88,11 @@ public class CommandPowBty extends IComputationAttachment {
             if (readsize > ComputationConstants.VERIFICATOR_INTS * 4) {
                 throw new NxtException.NotValidException("Wrong Parameters");
             }
+
             verificator = new byte[readsize];
             buffer.get(verificator);
+
+
         } catch (Exception e) {
             e.printStackTrace(); // todo: remove for production
             // pass through any error
@@ -186,30 +195,23 @@ public class CommandPowBty extends IComputationAttachment {
             return false;
 
 
+        // checking multiplicator length requirements
         if (multiplier.length != ComputationConstants.MULTIPLIER_LENGTH * 4) {
             return false;
         }
-        if (!this.is_proof_of_work && storage.length > ComputationConstants.BOUNTY_STORAGE_INTS * 4) {
+
+        // checking storage length requirements
+        if (!this.is_proof_of_work && storage.length/4 != w.getStorage_size()) {
             return false;
         }
         if (this.is_proof_of_work && storage.length != 0) {
             return false;
         }
 
-        // TODO: fix the following
-        /*
-        if (!this.is_proof_of_work && storage.length/4 != w.getStorage_size()) {
-            return false;
-        }*/
-
-        if (verificator.length > ComputationConstants.VERIFICATOR_INTS * 4) {
+        // todo: this must be adjusted later on to differentiate between storage size and verificator / submit size. For now it is the same
+        if (verificator.length/4 != w.getStorage_size()) {
             return false;
         }
-
-        // TODO: Fix the following one
-        /*if (verificator.length/4 != w.getVerificatorSize()) {
-            return false;
-        }*/
 
         // Validate code-level
         if (this.is_proof_of_work && !validatePow(w.getVerifyFunction())) {

@@ -106,7 +106,7 @@ public class Executor {
             String vcode = verifyCode + " verify(); function res(){ return [pow_found, " +
                     "bounty_found]; } " +
                     "res();";
-            System.out.println(vcode);
+            //System.out.println(vcode); // todo, comment in to see what code is being executed
 
             org.mozilla.javascript.NativeArray array = (NativeArray) sandbox.eval("epl", vcode);
             double p = (double) array.get(0);

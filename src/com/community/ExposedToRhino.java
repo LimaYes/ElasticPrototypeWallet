@@ -17,6 +17,6 @@ package com.community;
  ******************************************************************************/
 public class ExposedToRhino {
     public double check_pow(int v0,int v1,int v2,int v3,int[] target){
-        return 0.0;
+        return 1.0;
     }
 }
