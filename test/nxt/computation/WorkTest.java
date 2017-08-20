@@ -200,7 +200,7 @@ public class WorkTest extends AbstractForgingTest {
 
         {
             int[] m = new int[32];
-            int[] v = new int[]{};
+            int[] v = new int[w.getStorage_size()];
             int[] testarray = new int[w.getStorage_size()];
             testarray[0] = 6000;
             CommandPowBty pow = new CommandPowBty(id, false, Convert.int2byte(m), Convert.int2byte(testarray), Convert.int2byte(v));
@@ -218,7 +218,7 @@ public class WorkTest extends AbstractForgingTest {
 
         {
             int[] m = new int[32];
-            int[] v = new int[]{};
+            int[] v = new int[w.getStorage_size()];
             m[0]=1;
             int[] testarray = new int[w.getStorage_size()];
             testarray[0] = 6000;
@@ -231,7 +231,7 @@ public class WorkTest extends AbstractForgingTest {
 
         {
             int[] m = new int[32];
-            int[] v = new int[]{};
+            int[] v = new int[w.getStorage_size()];
             m[0]=194;
             int[] testarray = new int[w.getStorage_size()];
             testarray[0] = 3000;
@@ -248,7 +248,7 @@ public class WorkTest extends AbstractForgingTest {
         {
             int[] m = new int[32];
             m[0]=19435;
-            int[] v = new int[]{};
+            int[] v = new int[w.getStorage_size()];
             int[] testarray = new int[w.getStorage_size()];
             testarray[0] = 26000;
             CommandPowBty pow = new CommandPowBty(id, false, Convert.int2byte(m), Convert.int2byte(testarray), Convert.int2byte(v));
@@ -256,7 +256,7 @@ public class WorkTest extends AbstractForgingTest {
         }
         {
             int[] m = new int[32];
-            int[] v = new int[]{};
+            int[] v = new int[w.getStorage_size()];
             m[0]=17;
             int[] testarray = new int[w.getStorage_size()];
             testarray[0] = 46000;
@@ -267,7 +267,7 @@ public class WorkTest extends AbstractForgingTest {
         // Also do some other good ones in the same block (see if the cut off mechanism works)
         {
             int[] m = new int[32];
-            int[] v = new int[]{};
+            int[] v = new int[w.getStorage_size()];
             m[0]=44;
             int[] testarray = new int[w.getStorage_size()];
             testarray[0] = 76000;
@@ -281,7 +281,6 @@ public class WorkTest extends AbstractForgingTest {
 
         Assert.assertEquals(4, Work.getWorkById(id).getReceived_bounties()); // This one must have worked
 
-        // We have received 2 bounties, right now the work should be closed automatically!!
         Assert.assertEquals(0, Work.getActiveCount());
 
 
