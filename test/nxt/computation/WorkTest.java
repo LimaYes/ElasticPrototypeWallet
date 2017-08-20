@@ -155,7 +155,7 @@ public class WorkTest extends AbstractForgingTest {
         Assert.assertEquals(1, Work.getCount());
         Assert.assertEquals(1, Work.getActiveCount());
         byte[] m = new byte[32*4];
-        byte[] v = new byte[]{};
+        byte[] v = new byte[work.getStorageSize()];
         byte[] testarray = new byte[0];
         for(int i=0;i<25; ++i) {
             m[0]=(byte)(m[0]+1);

@@ -185,10 +185,13 @@ public class CommandPowBty extends IComputationAttachment {
         if (w == null) return false;
         if (w.isClosed() == true) return false;
 
-        // Now check for duplicate entry (I guess storage hash is enough, isn't it?)
+        // todo, check if double spending prevention has to rely on verificator hash as well? But if yes ... what do we do with same hashes (hash len = 0 is always the same)
+        /*
+        // Now check for duplicate entry (I guess verificator hash is enough, isn't it?)
         byte[] myHash = this.getVerificatorHash();
         if(PowAndBounty.hasVerificatorHash(w.getId(), myHash))
             return false;
+        */
 
         byte[] myMultiplier = this.getMultiplier();
         if(PowAndBounty.hasMultiplier(w.getId(), myMultiplier))
@@ -239,7 +242,7 @@ public class CommandPowBty extends IComputationAttachment {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         final DataOutputStream dos = new DataOutputStream(baos);
         try {
-            dos.write(this.storage);
+            dos.write(this.verificator);
             dos.close();
         } catch (final IOException ignored) {
 
