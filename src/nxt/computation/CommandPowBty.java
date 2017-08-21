@@ -66,7 +66,7 @@ public class CommandPowBty extends IComputationAttachment {
 
             // First read in the multiplicator
             short readsize = buffer.getShort();
-            if (readsize != ComputationConstants.MULTIPLIER_LENGTH * 4) {
+            if (readsize != ComputationConstants.MULTIPLIER_LENGTH) {
                 throw new NxtException.NotValidException("Wrong Parameters");
             }
             multiplier = new byte[readsize];
@@ -157,20 +157,20 @@ public class CommandPowBty extends IComputationAttachment {
         return verificator;
     }
 
-    private boolean validatePow(String vcode){
+    private boolean validatePow(byte[] pubkey, long blockid, long workId, String vcode){
         int[] storage_array = Convert.byte2int(this.getStorage());
-        int[] multiplier_array = Convert.byte2int(this.getStorage());
-        int[] verificator_array = Convert.byte2int(this.getStorage());
+        byte[] multiplier_array = this.getMultiplier();
+        int[] verificator_array = Convert.byte2int(this.getVerificator());
 
-        Executor.CODE_RESULT result = Executor.executeCode(vcode, multiplier_array, storage_array, verificator_array, true, new int[]{0,0});
+        Executor.CODE_RESULT result = Executor.executeCode(pubkey, blockid, workId, vcode, multiplier_array, storage_array, verificator_array, true, new int[]{0,0});
         return result.pow;
     }
-    private boolean validateBty(String vcode){
+    private boolean validateBty(byte[] pubkey, long blockid, long workId, String vcode){
         int[] storage_array = Convert.byte2int(this.getStorage());
-        int[] multiplier_array = Convert.byte2int(this.getStorage());
-        int[] verificator_array = Convert.byte2int(this.getStorage());
+        byte[] multiplier_array = this.getMultiplier();
+        int[] verificator_array = Convert.byte2int(this.getVerificator());
 
-        Executor.CODE_RESULT result = Executor.executeCode(vcode, multiplier_array, storage_array, verificator_array, false, new int[]{0,0});
+        Executor.CODE_RESULT result = Executor.executeCode(pubkey, blockid, workId, vcode, multiplier_array, storage_array, verificator_array, false, new int[]{0,0});
         return result.bty;
     }
 
@@ -199,7 +199,7 @@ public class CommandPowBty extends IComputationAttachment {
 
 
         // checking multiplicator length requirements
-        if (multiplier.length != ComputationConstants.MULTIPLIER_LENGTH * 4) {
+        if (multiplier.length != ComputationConstants.MULTIPLIER_LENGTH) {
             return false;
         }
 
@@ -217,10 +217,10 @@ public class CommandPowBty extends IComputationAttachment {
         }
 
         // Validate code-level
-        if (this.is_proof_of_work && !validatePow(w.getVerifyFunction())) {
+        if (this.is_proof_of_work && !validatePow(transaction.getSenderPublicKey(), transaction.getBlockId(), work_id, w.getVerifyFunction())) {
             return false;
         }
-        if (!this.is_proof_of_work && !validateBty(w.getVerifyFunction())) {
+        if (!this.is_proof_of_work && !validateBty(transaction.getSenderPublicKey(), transaction.getBlockId(), work_id, w.getVerifyFunction())) {
             return false;
         }
 

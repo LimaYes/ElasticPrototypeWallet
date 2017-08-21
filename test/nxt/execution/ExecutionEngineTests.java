@@ -135,10 +135,15 @@ public class ExecutionEngineTests {
         try {
             String epl = Executor.checkCodeAndReturnVerify(code);
             System.out.println(epl);
-            int[] m = new int[]{};
+
+            byte[] pubkey = new byte[32];
+            long blockid = 4821857325L;
+            long workid = 875385923335L;
+
+            byte[] m = new byte[32];
             int[] v = new int[]{};
             int[] s = new int[]{9000,4,3,1,4,5,5,5,5};
-            Executor.CODE_RESULT cd = Executor.executeCode(epl, m, s, v, true, new int[]{0,0});
+            Executor.CODE_RESULT cd = Executor.executeCode(pubkey, blockid, workid, epl, m, s, v, true, new int[]{0,0});
             Assert.assertFalse(cd.error);
 
             System.out.println("Result:\nbty\t" + cd.bty);
@@ -161,10 +166,14 @@ public class ExecutionEngineTests {
         try {
             String epl = Executor.checkCodeAndReturnVerify(code);
             System.out.println(epl);
-            int[] m = new int[]{};
+            byte[] pubkey = new byte[32];
+            long blockid = 4821857325L;
+            long workid = 875385923335L;
+
+            byte[] m = new byte[32];
             int[] v = new int[]{};
             int[] s = new int[]{9000,4,3,1,4,5,5,5,5};
-            Executor.CODE_RESULT cd = Executor.executeCode(epl, m, s, v, true, new int[]{0,0});
+            Executor.CODE_RESULT cd = Executor.executeCode(pubkey, blockid, workid, epl, m, s, v, true, new int[]{0,0});
             Assert.assertTrue(cd.bty);
             Assert.assertFalse(cd.error);
             System.out.println("Result:\nbty\t" + cd.bty);
@@ -244,10 +253,14 @@ public class ExecutionEngineTests {
         try {
             String epl = Executor.checkCodeAndReturnVerify(code);
             System.out.println(epl);
-            int[] m = new int[]{};
+            byte[] pubkey = new byte[32];
+            long blockid = 4821857325L;
+            long workid = 875385923335L;
+
+            byte[] m = new byte[32];
             int[] v = new int[]{};
             int[] s = new int[]{9000,4,3,1,4,5,5,5,5};
-            Executor.CODE_RESULT cd = Executor.executeCode(epl, m, s, v, true, new int[]{0,0});
+            Executor.CODE_RESULT cd = Executor.executeCode(pubkey, blockid, workid, epl, m, s, v, true, new int[]{0,0});
             Assert.assertFalse(cd.error);
             Assert.assertFalse(cd.bty);
             System.out.println("Result:\nbty\t" + cd.bty);

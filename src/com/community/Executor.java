@@ -1,7 +1,14 @@
 package com.community;
+import nxt.Appendix;
+import nxt.crypto.Crypto;
+import nxt.util.Convert;
 import org.mozilla.javascript.NativeArray;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 import static com.community.Constants.MAX_SOURCE_SIZE;
+import static java.security.MessageDigest.getInstance;
 
 /******************************************************************************
  * Copyright © 2017 The XEL Core Developers.                                  *
@@ -22,6 +29,17 @@ public class Executor {
 
 
     public static Object jsObj = new ExposedToRhino();
+    public static MessageDigest dig = null;
+
+    static {
+        try {
+            dig = getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            // Should always work
+            e.printStackTrace();
+            System.exit(1);
+        }
+    }
 
     public static String checkCodeAndReturnVerify(String elasticPL) throws Exception{
         if(elasticPL.length()>MAX_SOURCE_SIZE) throw new Exceptions.SyntaxErrorException("Code length exceeded");
@@ -63,10 +81,50 @@ public class Executor {
 
         return pre_code + "\n" + result;
     }
+    public static int toInt(final byte[] bytes, final int offset) {
+        int ret = 0;
+        for (int i = 0; (i < 4) && ((i + offset) < bytes.length); i++) {
+            ret <<= 8;
+            ret |= bytes[i + offset] & 0xFF;
+        }
+        return ret;
+    }
+
+    public static int[] personalizedIntStream(final byte[] publicKey, final long blockId, final byte[] multiplicator, final long workId) {
+        final int[] stream = new int[12];
+
+        dig.reset();
+        dig.update(multiplicator);
+        dig.update(publicKey);
+
+        final byte[] b1 = new byte[16];
+        for (int i = 0; i < 8; ++i) b1[i] = (byte) (workId >> ((8 - i - 1) << 3));
+
+        for (int i = 0; i < 8; ++i) b1[i + 8] = (byte) (blockId >> ((8 - i - 1) << 3));
+
+        dig.update(b1);
+
+        byte[] digest = dig.digest();
+        int ln = digest.length;
+        if (ln == 0) {
+            digest = new byte[4];
+            digest[0] = 0x01;
+            digest[1] = 0x01;
+            digest[2] = 0x01;
+            digest[3] = 0x01;
+            ln = 4;
+        }
+        for (int i = 0; i < 12; ++i) {
+            int got = toInt(digest, (i * 4) % ln);
+            if (i > 4) got = got ^ stream[i - 3];
+            stream[i] = got;
+
+        }
+        return stream;
+    }
 
 
-
-    public static CODE_RESULT executeCode(String verifyCode, int[] multiplier, int[] storage, int[] validator, boolean verify_pow, int[]
+    public static CODE_RESULT executeCode(final byte[] publicKey, final long blockId, final long workId, String verifyCode, byte[] multiplier, int[] storage, int[] validator, boolean verify_pow, int[]
             target){
         CODE_RESULT result = new CODE_RESULT();
         result.bty = false;
@@ -82,6 +140,7 @@ public class Executor {
             sandbox.inject("verify_pow", verify_pow?1:0);
 
             // Inject temp arrays
+            int[] m = personalizedIntStream(publicKey, blockId, multiplier, workId);
             int[] u = new int[10000];
             int[] i = new int[10000];
             float[] f = new float[10000];

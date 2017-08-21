@@ -237,7 +237,7 @@ public class CodeConverter {
                 str = String.format("bounty_found = (%s != 0 ? 1 : 0)", mylrstr.lstr);
                 break;
             case NODE_VERIFY_POW:
-                str = String.format("if (verify_pow == 1)\n\t\tpow_found = ExposedToRhino.check_pow(%s, target);" +
+                str = String.format("if (verify_pow == 1)\n\t\tpow_found = ExposedToRhino.check_pow(%s, m, target);" +
                         "\n\telse\n\t\tpow_found = 0", mylrstr.lstr);
                 break;
             case NODE_CONSTANT:

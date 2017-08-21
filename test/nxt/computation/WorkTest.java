@@ -199,7 +199,7 @@ public class WorkTest extends AbstractForgingTest {
         Assert.assertEquals(1, Work.getActiveCount());
 
         {
-            int[] m = new int[32];
+            int[] m = new int[8];
             int[] v = new int[w.getStorage_size()];
             int[] testarray = new int[w.getStorage_size()];
             testarray[0] = 6000;
@@ -217,7 +217,7 @@ public class WorkTest extends AbstractForgingTest {
         Assert.assertEquals(1, Work.getWorkById(id).getReceived_bounties()); // Did the bounty count correctly???
 
         {
-            int[] m = new int[32];
+            int[] m = new int[8];
             int[] v = new int[w.getStorage_size()];
             m[0]=1;
             int[] testarray = new int[w.getStorage_size()];
@@ -230,7 +230,7 @@ public class WorkTest extends AbstractForgingTest {
         Assert.assertEquals(2, Work.getWorkById(id).getReceived_bounties()); // Last one didnt work, still only got 1 valid bty
 
         {
-            int[] m = new int[32];
+            int[] m = new int[8];
             int[] v = new int[w.getStorage_size()];
             m[0]=194;
             int[] testarray = new int[w.getStorage_size()];
@@ -246,7 +246,7 @@ public class WorkTest extends AbstractForgingTest {
         Assert.assertEquals(3, Work.getWorkById(id).getReceived_bounties()); // This one must have worked
 
         {
-            int[] m = new int[32];
+            int[] m = new int[8];
             m[0]=19435;
             int[] v = new int[w.getStorage_size()];
             int[] testarray = new int[w.getStorage_size()];
@@ -255,7 +255,7 @@ public class WorkTest extends AbstractForgingTest {
             MessageEncoder.push(pow, AbstractForgingTest.testForgingSecretPhrase);
         }
         {
-            int[] m = new int[32];
+            int[] m = new int[8];
             int[] v = new int[w.getStorage_size()];
             m[0]=17;
             int[] testarray = new int[w.getStorage_size()];
@@ -266,7 +266,7 @@ public class WorkTest extends AbstractForgingTest {
 
         // Also do some other good ones in the same block (see if the cut off mechanism works)
         {
-            int[] m = new int[32];
+            int[] m = new int[8];
             int[] v = new int[w.getStorage_size()];
             m[0]=44;
             int[] testarray = new int[w.getStorage_size()];
