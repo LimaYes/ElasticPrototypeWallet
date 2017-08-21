@@ -1,6 +1,5 @@
 package com.community;
 
-import static com.community.Constants.CODE_STACK_SIZE;
 import static com.community.Constants.VM_M_ARRAY_SIZE;
 import static com.community.Primitives.NODE_TYPE.*;
 
@@ -313,10 +312,10 @@ public class CodeConverter {
                         }
                         else if (node.is_vm_storage) {
                             if (var_exp_flg)
-                                str = String.format("if((%s) < %d)\n\t%ss[%s]", mylrstr.lstr, state.ast_storage_sz, tab[state
+                                str = String.format("if((%s) < %d)\n\t%ss[%s]", mylrstr.lstr, state.ast_submit_sz, tab[state
                                         .tabs], mylrstr.lstr);
                             else
-                                str = String.format("s[(((%s) < %d) ? %s : 0)]", mylrstr.lstr, state.ast_storage_sz, mylrstr.lstr);
+                                str = String.format("s[(((%s) < %d) ? %s : 0)]", mylrstr.lstr, state.ast_submit_sz, mylrstr.lstr);
                         }
                         else {
                             if (var_exp_flg)

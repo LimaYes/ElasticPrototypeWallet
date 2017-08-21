@@ -1,6 +1,6 @@
 array_uint   1000;
-storage_sz 32;
-storage_idx 0;
+submit_sz 32;
+submit_idx 0;
 
 
 function shit {

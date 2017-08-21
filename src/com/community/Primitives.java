@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-import static com.community.Constants.CODE_STACK_SIZE;
-
 /******************************************************************************
  * Copyright © 2017 The XEL Core Developers.                                  *
  *                                                                            *
@@ -106,8 +104,8 @@ public class Primitives {
                 NODE_ARRAY_ULONG,
                 NODE_ARRAY_FLOAT,
                 NODE_ARRAY_DOUBLE,
-                NODE_STORAGE_SZ,
-                NODE_STORAGE_IDX,
+        NODE_SUBMIT_SZ,
+        NODE_SUBMIT_IDX,
                 NODE_FUNCTION,
                 NODE_CALL_FUNCTION,
                 NODE_VERIFY_BTY,
@@ -200,8 +198,8 @@ public class Primitives {
                 TOKEN_ARRAY_ULONG,
                 TOKEN_ARRAY_FLOAT,
                 TOKEN_ARRAY_DOUBLE,
-                TOKEN_STORAGE_SZ,
-                TOKEN_STORAGE_IDX,
+        TOKEN_SUBMIT_SZ,
+        TOKEN_SUBMIT_IDX,
                 TOKEN_FUNCTION,
                 TOKEN_CALL_FUNCTION,
                 TOKEN_VERIFY_BTY,
@@ -306,8 +304,8 @@ public class Primitives {
         int ast_vm_doubles;
 
         // Number Of Unsigned Ints To Store Per Interation / Import & Export Index
-        int ast_storage_sz;
-        int ast_storage_idx;
+        int ast_submit_sz;
+        int ast_submit_idx;
 
         // Index Value Of Main & Verify Functions In AST Array
         int ast_func_idx;
@@ -347,8 +345,8 @@ public class Primitives {
             ast_vm_doubles = 0;
 
             // Reset Storage Variables
-            ast_storage_sz = 0;
-            ast_storage_idx = 0;
+            ast_submit_sz = 0;
+            ast_submit_idx = 0;
 
             // Statistics about WCET
             calculated_wcet = 0;

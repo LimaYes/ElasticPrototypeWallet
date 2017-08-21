@@ -1,13 +1,5 @@
 package com.community;
-import delight.rhinosandox.internal.RhinoEval;
-import nxt.computation.ComputationConstants;
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.FunctionObject;
 import org.mozilla.javascript.NativeArray;
-import org.mozilla.javascript.ScriptableObject;
-
-import javax.script.ScriptContext;
-import java.lang.reflect.Method;
 
 import static com.community.Constants.MAX_SOURCE_SIZE;
 
@@ -145,7 +137,7 @@ public class Executor {
             throw new Exceptions.SyntaxErrorException("Absolutely maximum verify function WCET of " + Constants
                     .ABSOLUTELY_MAXIMUM_VERIFY_WCET + " exceeded: your script has a verify function WCET of " + wcet + ".");
         }
-        return t.state.ast_storage_sz;
+        return t.state.ast_submit_sz;
     }
 
     public static class CODE_RESULT {

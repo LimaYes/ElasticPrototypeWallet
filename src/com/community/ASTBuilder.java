@@ -246,8 +246,8 @@ public class ASTBuilder {
             case TOKEN_ARRAY_ULONG:		node_type = NODE_ARRAY_ULONG; 	break;
             case TOKEN_ARRAY_FLOAT:		node_type = NODE_ARRAY_FLOAT; 	break;
             case TOKEN_ARRAY_DOUBLE:	node_type = NODE_ARRAY_DOUBLE; 	break;
-            case TOKEN_STORAGE_SZ:		node_type = NODE_STORAGE_SZ; 	break;
-            case TOKEN_STORAGE_IDX:		node_type = NODE_STORAGE_IDX; 	break;
+            case TOKEN_SUBMIT_SZ:		node_type = NODE_SUBMIT_SZ; 	break;
+            case TOKEN_SUBMIT_IDX:		node_type = NODE_SUBMIT_IDX; 	break;
             case TOKEN_FUNCTION:		node_type = NODE_FUNCTION;		break;
             case TOKEN_CALL_FUNCTION:	node_type = NODE_CALL_FUNCTION;	break;
             case TOKEN_VERIFY_BTY:		node_type = NODE_VERIFY_BTY;	break;
@@ -731,7 +731,7 @@ public class ASTBuilder {
     }
 
     private static void validate_ast(Primitives.STATE state) throws Exceptions.SyntaxErrorException {
-        int i, storage_sz_idx = 0, storage_idx_idx = 0;
+        int i, submit_sz_idx = 0, submit_idx_idx = 0;
 
         state.ast_func_idx = 0;
 
@@ -741,7 +741,7 @@ public class ASTBuilder {
 
         // Get Index Of First Function
         for (i = 0; i < state.stack_exp.size(); i++) {
-            if ((state.stack_exp.get(i).type != NODE_ARRAY_INT) && (state.stack_exp.get(i).type != NODE_ARRAY_UINT) && (state.stack_exp.get(i).type != NODE_ARRAY_LONG) && (state.stack_exp.get(i).type != NODE_ARRAY_ULONG) && (state.stack_exp.get(i).type != NODE_ARRAY_FLOAT) && (state.stack_exp.get(i).type != NODE_ARRAY_DOUBLE) && (state.stack_exp.get(i).type != NODE_STORAGE_SZ) && (state.stack_exp.get(i).type != NODE_STORAGE_IDX)) {
+            if ((state.stack_exp.get(i).type != NODE_ARRAY_INT) && (state.stack_exp.get(i).type != NODE_ARRAY_UINT) && (state.stack_exp.get(i).type != NODE_ARRAY_LONG) && (state.stack_exp.get(i).type != NODE_ARRAY_ULONG) && (state.stack_exp.get(i).type != NODE_ARRAY_FLOAT) && (state.stack_exp.get(i).type != NODE_ARRAY_DOUBLE) && (state.stack_exp.get(i).type != NODE_SUBMIT_SZ) && (state.stack_exp.get(i).type != NODE_SUBMIT_IDX)) {
                 break;
             }
             state.ast_func_idx++;
@@ -753,28 +753,28 @@ public class ASTBuilder {
 
         // Get Index Of Storage Declarations
         for (i = 0; i < state.stack_exp.size(); i++) {
-            if (state.stack_exp.get(i).type == NODE_STORAGE_SZ) {
-                if (storage_sz_idx > 0) {
-                    throw new Exceptions.SyntaxErrorException("Syntax Error: Line: " + state.stack_exp.get(i).line_num + " - Storage declaration 'storage_sz' can only be declared once");
+            if (state.stack_exp.get(i).type == NODE_SUBMIT_SZ) {
+                if (submit_sz_idx > 0) {
+                    throw new Exceptions.SyntaxErrorException("Syntax Error: Line: " + state.stack_exp.get(i).line_num + " - Storage declaration 'submit_sz' can only be declared once");
                 }
-                storage_sz_idx = i;
+                submit_sz_idx = i;
             }
-		else if (state.stack_exp.get(i).type == NODE_STORAGE_IDX) {
-                if (storage_idx_idx > 0) {
+		else if (state.stack_exp.get(i).type == NODE_SUBMIT_IDX) {
+                if (submit_idx_idx > 0) {
                     throw new Exceptions.SyntaxErrorException("Syntax Error: Line: " + state.stack_exp.get(i).line_num + " - Storage declaration 'storage_import_idx' can only be declared once");
                 }
-                storage_idx_idx = i;
+                submit_idx_idx = i;
             }
         }
 
         // todo: check if storage import index needs to be checked not to overlap the end?
         // If Storage Is Declared, Ensure Both Count & Index Are There
-        if (storage_sz_idx>0 || storage_idx_idx>0) {
-            if (storage_sz_idx == 0 || state.ast_storage_sz == 0) {
-                throw new Exceptions.SyntaxErrorException("Syntax Error: 'storage_sz' must be declared and greater than zero");
+        if (submit_sz_idx>0 || submit_idx_idx>0) {
+            if (submit_sz_idx == 0 || state.ast_submit_sz == 0) {
+                throw new Exceptions.SyntaxErrorException("Syntax Error: 'submit_sz' must be declared and greater than zero");
             }
-            else if (storage_idx_idx==0) {
-                throw new Exceptions.SyntaxErrorException("Syntax Error: Missing 'storage_idx' declaration");
+            else if (submit_idx_idx==0) {
+                throw new Exceptions.SyntaxErrorException("Syntax Error: Missing 'submit_idx' declaration");
             }
         }
 
@@ -980,8 +980,8 @@ public class ASTBuilder {
             break;
 
             // VM Storage Declarations
-            case NODE_STORAGE_SZ:
-            case NODE_STORAGE_IDX:
+            case NODE_SUBMIT_SZ:
+            case NODE_SUBMIT_IDX:
                 if ((state.stack_exp.size() > 1) &&
                         (top_exp(state).token_num > token_num) &&
                 (top_exp(state).type == NODE_CONSTANT) &&
@@ -993,14 +993,14 @@ public class ASTBuilder {
                 }
 
                 // Save Storage Value
-                if (node_type == NODE_STORAGE_SZ)
-                    state.ast_storage_sz = ((Long)top_exp(state).uvalue).intValue();
-			    else if (node_type == NODE_STORAGE_IDX)
-                    state.ast_storage_idx = ((Long)top_exp(state).uvalue).intValue();
+                if (node_type == NODE_SUBMIT_SZ)
+                    state.ast_submit_sz = ((Long)top_exp(state).uvalue).intValue();
+			    else if (node_type == NODE_SUBMIT_IDX)
+                    state.ast_submit_idx = ((Long)top_exp(state).uvalue).intValue();
 
                 // Check That Storage Indexes Are Within Unsigned Int Array
-                if (state.ast_vm_uints < (state.ast_storage_sz + state.ast_storage_idx)) {
-                    throw new Exceptions.SyntaxErrorException("Syntax Error: Line: " + token.line_num + " - 'storage_sz' + 'storage_idx' must be within Unsigned Int array range");
+                if (state.ast_vm_uints < (state.ast_submit_sz + state.ast_submit_idx)) {
+                    throw new Exceptions.SyntaxErrorException("Syntax Error: Line: " + token.line_num + " - 'submit_sz' + 'submit_idx' must be within Unsigned Int array range");
                 }
                 return;
             }
@@ -1073,7 +1073,7 @@ public class ASTBuilder {
                     }
                     break;
                     case DT_UINT_S: // s[]
-                        if ((node_type == NODE_VAR_CONST) && (top_exp(state).uvalue >= state.ast_storage_sz)) {
+                        if ((node_type == NODE_VAR_CONST) && (top_exp(state).uvalue >= state.ast_submit_sz)) {
                         throw new Exceptions.SyntaxErrorException("Syntax Error: Line: " + token.line_num + " - Array index out of bounds");
                     }
                     break;
@@ -1327,10 +1327,10 @@ public class ASTBuilder {
                     return "array_float";
                 case NODE_ARRAY_DOUBLE:
                     return "array_double";
-                case NODE_STORAGE_SZ:
-                    return "storage_sz";
-                case NODE_STORAGE_IDX:
-                    return "storage_idx";
+                case NODE_SUBMIT_SZ:
+                    return "submit_sz";
+                case NODE_SUBMIT_IDX:
+                    return "submit_idx";
                 case NODE_CONSTANT:
                     return "(const)";
                 case NODE_VAR_CONST:
