@@ -123,7 +123,7 @@ public final class PowAndBounty {
                 try(DbIterator<PowAndBounty> it = getLastBountiesRelevantForStorageGeneration(w.getId())){
                     while(it.hasNext()){
                         PowAndBounty n = it.next();
-                        byte[] storage = n.storage;
+                        byte[] storage = n.validator;
                         for(int i=0;i<storage.length;++i){
                             fullstorage[cntr*w.getStorage_size()*4+i] = storage[i];
                         }
@@ -231,7 +231,8 @@ public final class PowAndBounty {
     private final byte[] hash;
     private final byte[] verificator_hash;
     private final byte[] multiplier;
-    private final byte[] storage;
+    // private final byte[] storage;
+    private final int storage_bucket;
     private final byte[] validator;
 
 
@@ -253,8 +254,9 @@ public final class PowAndBounty {
         this.hash = rs.getBytes("hash");
         this.verificator_hash = rs.getBytes("hash");
         this.multiplier = rs.getBytes("multiplier");
-        this.storage = rs.getBytes("storage");
+        // this.storage = rs.getBytes("storage");
         this.validator = rs.getBytes("validator");
+        this.storage_bucket = rs.getInt("storage_bucket");
     }
 
     private PowAndBounty(final Transaction transaction, final CommandPowBty attachment) {
@@ -266,9 +268,10 @@ public final class PowAndBounty {
         this.hash = attachment.getHash();
         this.verificator_hash = attachment.getVerificatorHash();
         this.multiplier = attachment.getMultiplier();
-        this.storage = attachment.getStorage();
+        // this.storage = attachment.getStorage();
         this.validator = attachment.getVerificator();
         this.too_late = false;
+        this.storage_bucket = attachment.getStorage_bucket();
     }
 
     public long getAccountId() {
@@ -277,8 +280,10 @@ public final class PowAndBounty {
 
 
     private void save(final Connection con) throws SQLException {
-        try (PreparedStatement pstmt = con.prepareStatement(
-                "MERGE INTO pow_and_bounty (id, too_late, work_id, hash, multiplier, storage, validator, account_id, is_pow, verificator_hash, "
+        try (PreparedStatement pstmt = con.prepareStatement( /* removed storage between multiplier and validator in
+        next line */
+                "MERGE INTO pow_and_bounty (id, too_late, work_id, hash, multiplier, storage_bucket, validator, " +
+                        "account_id, is_pow, verificator_hash, "
                         + " height, latest) " + "KEY (id, height) " + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, TRUE)")) {
             int i = 0;
             pstmt.setLong(++i, this.id);
@@ -286,7 +291,8 @@ public final class PowAndBounty {
             pstmt.setLong(++i, this.work_id);
             DbUtils.setBytes(pstmt, ++i, this.hash);
             DbUtils.setBytes(pstmt, ++i, this.multiplier);
-            DbUtils.setBytes(pstmt, ++i, this.storage);
+            // DbUtils.setBytes(pstmt, ++i, this.storage);
+            pstmt.setInt(++i, this.storage_bucket);
             DbUtils.setBytes(pstmt, ++i, this.validator);
             pstmt.setLong(++i, this.accountId);
             pstmt.setBoolean(++i, this.is_pow);

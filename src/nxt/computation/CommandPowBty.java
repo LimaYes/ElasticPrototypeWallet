@@ -42,14 +42,16 @@ public class CommandPowBty extends IComputationAttachment {
     private byte[] verificator;
     private boolean validated = false;
     private boolean isValid = false;
+    private int storage_bucket;
 
     public CommandPowBty(long work_id, boolean is_proof_of_work, byte[] multiplier, /*byte[] storage, */ byte[]
-            verificator) {
+            verificator, int storage_bucket) {
         super();
         this.work_id = work_id;
         this.is_proof_of_work = is_proof_of_work;
         this.multiplier = multiplier;
         //this.storage = storage;
+        this.storage_bucket = storage_bucket;
         this.verificator = verificator;
     }
 
@@ -89,6 +91,8 @@ public class CommandPowBty extends IComputationAttachment {
 
             */
 
+           this.storage_bucket = buffer.getInt();
+
             // And finally, read the verificator
             readsize = buffer.getShort();
             if (readsize > ComputationConstants.VERIFICATOR_INTS * 4) {
@@ -107,6 +111,7 @@ public class CommandPowBty extends IComputationAttachment {
             this.multiplier = new byte[0];
             this.verificator = new byte[0];
             // this.storage = new byte[0];
+            this.storage_bucket = 0;
         }
     }
 
@@ -125,7 +130,8 @@ public class CommandPowBty extends IComputationAttachment {
 
     @Override
     int getMySize() {
-        return 8 + 1 + 2 + 2 /* + 2 */ + this.multiplier.length + this.verificator.length /* + this.storage.length */;
+        return 8 + 1 + 2 + 2 /* + 2 */ + this.multiplier.length + this.verificator.length /* + this.storage.length */
+                + 4 /*storage bucket in t */;
     }
 
     @Override
@@ -147,6 +153,7 @@ public class CommandPowBty extends IComputationAttachment {
         buffer.put(this.multiplier);
         // buffer.putShort((short)this.storage.length);
         // buffer.put(this.storage);
+        buffer.putInt(this.storage_bucket);
         buffer.putShort((short)this.verificator.length);
         buffer.put(this.verificator);
     }
@@ -160,6 +167,10 @@ public class CommandPowBty extends IComputationAttachment {
         return storage;
     }*/
 
+    public int getStorage_bucket() {
+        return storage_bucket;
+    }
+
     public byte[] getVerificator() {
         return verificator;
     }
@@ -169,6 +180,8 @@ public class CommandPowBty extends IComputationAttachment {
         byte[] multiplier_array = this.getMultiplier();
         int[] verificator_array = Convert.byte2int(this.getVerificator());
 
+        int[] storage_array = Work.getStorage(Work.getWorkById(workId), this.storage_bucket);
+
         Executor.CODE_RESULT result = Executor.executeCode(pubkey, blockid, workId, vcode, multiplier_array,
                  storage_array, verificator_array, true, target);
         return result.pow;
@@ -177,6 +190,8 @@ public class CommandPowBty extends IComputationAttachment {
         // int[] storage_array = Convert.byte2int(this.getStorage());
         byte[] multiplier_array = this.getMultiplier();
         int[] verificator_array = Convert.byte2int(this.getVerificator());
+
+        int[] storage_array = Work.getStorage(Work.getWorkById(workId), this.storage_bucket);
 
         Executor.CODE_RESULT result = Executor.executeCode(pubkey, blockid, workId, vcode, multiplier_array,
                 storage_array, verificator_array, false, target);
@@ -223,8 +238,10 @@ public class CommandPowBty extends IComputationAttachment {
         if (this.is_proof_of_work && storage.length != 0) {
             return false;
         }
-
         */
+
+        if(this.storage_bucket > w.getBounty_limit_per_iteration() || this.storage_bucket < 0)
+            return false;
 
         if (verificator.length/4 != w.getStorage_size()) {
             return false;
