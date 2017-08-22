@@ -44,9 +44,10 @@ public class ExposedToRhino {
 
             int[] hash32 = Convert.byte2int(ret);
             for (int i = 0; i < 4; i++) {
-                if (hash32[i] > target[i])
+                int res = Integer.compareUnsigned(hash32[i], target[i]);
+                if (res > 0)
                     return 0;
-                else if (hash32[i] < target[i])
+                else if (res < 0)
                     return 1;    // POW Solution Found
             }
         }
