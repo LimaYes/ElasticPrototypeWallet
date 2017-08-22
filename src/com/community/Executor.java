@@ -124,7 +124,8 @@ public class Executor {
     }
 
 
-    public static CODE_RESULT executeCode(final byte[] publicKey, final long blockId, final long workId, String verifyCode, byte[] multiplier, int[] storage, int[] validator, boolean verify_pow, int[]
+    public static CODE_RESULT executeCode(final byte[] publicKey, final long blockId, final long workId, String
+            verifyCode, byte[] multiplier, int[] storage, int[] validator, boolean verify_pow, int[]
             target){
         CODE_RESULT result = new CODE_RESULT();
         result.bty = false;

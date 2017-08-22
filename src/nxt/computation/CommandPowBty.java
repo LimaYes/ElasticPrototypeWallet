@@ -38,17 +38,18 @@ public class CommandPowBty extends IComputationAttachment {
     private long work_id;
     private boolean is_proof_of_work;
     private byte[] multiplier;
-    private byte[] storage;
+    //private byte[] storage;
     private byte[] verificator;
     private boolean validated = false;
     private boolean isValid = false;
 
-    public CommandPowBty(long work_id, boolean is_proof_of_work, byte[] multiplier, byte[] storage, byte[] verificator) {
+    public CommandPowBty(long work_id, boolean is_proof_of_work, byte[] multiplier, /*byte[] storage, */ byte[]
+            verificator) {
         super();
         this.work_id = work_id;
         this.is_proof_of_work = is_proof_of_work;
         this.multiplier = multiplier;
-        this.storage = storage;
+        //this.storage = storage;
         this.verificator = verificator;
     }
 
@@ -73,6 +74,8 @@ public class CommandPowBty extends IComputationAttachment {
             multiplier = new byte[readsize];
             buffer.get(multiplier);
 
+            /*
+
             // Then, read the storage ints
             readsize = buffer.getShort();
             if (!this.is_proof_of_work && readsize > ComputationConstants.BOUNTY_STORAGE_INTS * 4) {
@@ -83,6 +86,8 @@ public class CommandPowBty extends IComputationAttachment {
             }
             storage = new byte[readsize];
             buffer.get(storage);
+
+            */
 
             // And finally, read the verificator
             readsize = buffer.getShort();
@@ -101,7 +106,7 @@ public class CommandPowBty extends IComputationAttachment {
             this.is_proof_of_work = false;
             this.multiplier = new byte[0];
             this.verificator = new byte[0];
-            this.storage = new byte[0];
+            // this.storage = new byte[0];
         }
     }
 
@@ -120,7 +125,7 @@ public class CommandPowBty extends IComputationAttachment {
 
     @Override
     int getMySize() {
-        return 8 + 1 + 2 + 2 + 2 + this.multiplier.length + this.verificator.length + this.storage.length;
+        return 8 + 1 + 2 + 2 /* + 2 */ + this.multiplier.length + this.verificator.length /* + this.storage.length */;
     }
 
     @Override
@@ -140,8 +145,8 @@ public class CommandPowBty extends IComputationAttachment {
         // Now put the "triade"
         buffer.putShort((short)this.multiplier.length);
         buffer.put(this.multiplier);
-        buffer.putShort((short)this.storage.length);
-        buffer.put(this.storage);
+        // buffer.putShort((short)this.storage.length);
+        // buffer.put(this.storage);
         buffer.putShort((short)this.verificator.length);
         buffer.put(this.verificator);
     }
@@ -150,25 +155,26 @@ public class CommandPowBty extends IComputationAttachment {
         return multiplier;
     }
 
+    /*
     public byte[] getStorage() {
         return storage;
-    }
+    }*/
 
     public byte[] getVerificator() {
         return verificator;
     }
 
     private boolean validatePow(byte[] pubkey, long blockid, long workId, String vcode, int[] target){
-        int[] storage_array = Convert.byte2int(this.getStorage());
+        // int[] storage_array = Convert.byte2int(this.getStorage());
         byte[] multiplier_array = this.getMultiplier();
         int[] verificator_array = Convert.byte2int(this.getVerificator());
 
         Executor.CODE_RESULT result = Executor.executeCode(pubkey, blockid, workId, vcode, multiplier_array,
-                storage_array, verificator_array, true, target);
+                 storage_array, verificator_array, true, target);
         return result.pow;
     }
     private boolean validateBty(byte[] pubkey, long blockid, long workId, String vcode, int[] target){
-        int[] storage_array = Convert.byte2int(this.getStorage());
+        // int[] storage_array = Convert.byte2int(this.getStorage());
         byte[] multiplier_array = this.getMultiplier();
         int[] verificator_array = Convert.byte2int(this.getVerificator());
 
@@ -206,6 +212,10 @@ public class CommandPowBty extends IComputationAttachment {
             return false;
         }
 
+
+        /*
+
+
         // checking storage length requirements
         if (!this.is_proof_of_work && storage.length/4 != w.getStorage_size()) {
             return false;
@@ -214,7 +224,8 @@ public class CommandPowBty extends IComputationAttachment {
             return false;
         }
 
-        // todo: this must be adjusted later on to differentiate between storage size and verificator / submit size. For now it is the same
+        */
+
         if (verificator.length/4 != w.getStorage_size()) {
             return false;
         }
