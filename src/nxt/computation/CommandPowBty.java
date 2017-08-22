@@ -158,20 +158,22 @@ public class CommandPowBty extends IComputationAttachment {
         return verificator;
     }
 
-    private boolean validatePow(byte[] pubkey, long blockid, long workId, String vcode){
+    private boolean validatePow(byte[] pubkey, long blockid, long workId, String vcode, int[] target){
         int[] storage_array = Convert.byte2int(this.getStorage());
         byte[] multiplier_array = this.getMultiplier();
         int[] verificator_array = Convert.byte2int(this.getVerificator());
 
-        Executor.CODE_RESULT result = Executor.executeCode(pubkey, blockid, workId, vcode, multiplier_array, storage_array, verificator_array, true, new int[]{0,0});
+        Executor.CODE_RESULT result = Executor.executeCode(pubkey, blockid, workId, vcode, multiplier_array,
+                storage_array, verificator_array, true, target);
         return result.pow;
     }
-    private boolean validateBty(byte[] pubkey, long blockid, long workId, String vcode){
+    private boolean validateBty(byte[] pubkey, long blockid, long workId, String vcode, int[] target){
         int[] storage_array = Convert.byte2int(this.getStorage());
         byte[] multiplier_array = this.getMultiplier();
         int[] verificator_array = Convert.byte2int(this.getVerificator());
 
-        Executor.CODE_RESULT result = Executor.executeCode(pubkey, blockid, workId, vcode, multiplier_array, storage_array, verificator_array, false, new int[]{0,0});
+        Executor.CODE_RESULT result = Executor.executeCode(pubkey, blockid, workId, vcode, multiplier_array,
+                storage_array, verificator_array, false, target);
         return result.bty;
     }
 
@@ -217,11 +219,15 @@ public class CommandPowBty extends IComputationAttachment {
             return false;
         }
 
+        int[] target = new int[]{-1,-1,-1,-1};
+
         // Validate code-level
-        if (this.is_proof_of_work && !validatePow(transaction.getSenderPublicKey(), transaction.getBlockId(), work_id, w.getVerifyFunction())) {
+        if (this.is_proof_of_work && !validatePow(transaction.getSenderPublicKey(), transaction.getBlockId(),
+                work_id, w.getVerifyFunction(), target)) {
             return false;
         }
-        if (!this.is_proof_of_work && !validateBty(transaction.getSenderPublicKey(), transaction.getBlockId(), work_id, w.getVerifyFunction())) {
+        if (!this.is_proof_of_work && !validateBty(transaction.getSenderPublicKey(), transaction.getBlockId(),
+                work_id, w.getVerifyFunction(), target)) {
             return false;
         }
 
