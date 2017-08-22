@@ -67,7 +67,8 @@ public class CommandPowBty extends IComputationAttachment {
             // First read in the multiplicator
             short readsize = buffer.getShort();
             if (readsize != ComputationConstants.MULTIPLIER_LENGTH) {
-                throw new NxtException.NotValidException("Wrong Parameters");
+                throw new NxtException.NotValidException("Wrong Parameters, your multiplier was " + readsize + " but " +
+                        "should be " + ComputationConstants.MULTIPLIER_LENGTH);
             }
             multiplier = new byte[readsize];
             buffer.get(multiplier);
