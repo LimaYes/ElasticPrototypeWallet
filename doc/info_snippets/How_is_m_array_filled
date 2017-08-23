@@ -1,0 +1,48 @@
+Every program gets a certain degree of entropy (random data) fed into the virtual memory before the program gets executed.
+This random data is put into the so-called m[] array. But not only random data gets included, also information about the current run number and the iteration number is encoded.
+
+So this is the content of m[]
+
+m[0]    Random 32 bit Unsigned Int
+.
+.
+.
+m[9]    Random 32 bit Unsigned Int
+m[10]   Run Number (Internal run number which comes from the XEL miner program, can be set arbitrarily)
+m[11]   Iteration Number (ElasticPL programs run through multiple iterations, a new iteration begins when a total of "# BTY per iteration" BTYs have been collected in the last iteration
+
+
+The m array is filled pseudo-randomly according to this logic. Note, run and iteration are encoded on the "multiplicator" bit string in raw form:
+
+public static int[] personalizedIntStream(final byte[] publicKey, final long blockId, final byte[] multiplicator, final long workId) throws Exception {
+        final int[] stream = new int[12];
+
+        dig.reset();
+        dig.update(multiplicator);
+        dig.update(publicKey);
+
+        final byte[] b1 = new byte[16];
+        for (int i = 0; i < 8; ++i) b1[i] = (byte) (workId >> ((8 - i - 1) << 3));
+        for (int i = 0; i < 8; ++i) b1[i + 8] = (byte) (blockId >> ((8 - i - 1) << 3));
+
+        dig.update(b1);
+
+        byte[] digest = dig.digest();
+        int ln = digest.length;
+        if (ln == 0) {
+            throw new Exception("Bad digest calculation");
+        }
+
+        int[] multi32 = Convert.byte2int(multiplicator);
+
+        for (int i = 0; i < 10; ++i) {
+            int got = toInt(digest, (i * 4) % ln);
+            if (i > 4) got = got ^ stream[i - 3];
+            stream[i] = got;
+
+        }
+        stream[10] = multi32[1];
+        stream[11] = multi32[2];
+
+        return stream;
+    }
