@@ -110,15 +110,16 @@ public class Executor {
         }
 
         int[] multi32 = Convert.byte2int(multiplicator);
-        for (int i = 0; i < 4; ++i) {
-            stream[i] = multi32[i];
-        }
-        for (int i = 4; i < 12; ++i) {
+
+        for (int i = 0; i < 10; ++i) {
             int got = toInt(digest, (i * 4) % ln);
             if (i > 4) got = got ^ stream[i - 3];
             stream[i] = got;
 
         }
+        stream[10] = multi32[1];
+        stream[11] = multi32[2];
+
         return stream;
     }
 
