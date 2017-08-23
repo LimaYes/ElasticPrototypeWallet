@@ -90,7 +90,7 @@ public class Executor {
         return ret;
     }
 
-    public static int[] personalizedIntStream(final byte[] publicKey, final long blockId, final byte[] multiplicator, final long workId) {
+    public static int[] personalizedIntStream(final byte[] publicKey, final long blockId, final byte[] multiplicator, final long workId) throws Exception {
         final int[] stream = new int[12];
 
         dig.reset();
@@ -99,7 +99,6 @@ public class Executor {
 
         final byte[] b1 = new byte[16];
         for (int i = 0; i < 8; ++i) b1[i] = (byte) (workId >> ((8 - i - 1) << 3));
-
         for (int i = 0; i < 8; ++i) b1[i + 8] = (byte) (blockId >> ((8 - i - 1) << 3));
 
         dig.update(b1);
@@ -107,14 +106,14 @@ public class Executor {
         byte[] digest = dig.digest();
         int ln = digest.length;
         if (ln == 0) {
-            digest = new byte[4];
-            digest[0] = 0x01;
-            digest[1] = 0x01;
-            digest[2] = 0x01;
-            digest[3] = 0x01;
-            ln = 4;
+            throw new Exception("Bad digest calculation");
         }
-        for (int i = 0; i < 12; ++i) {
+
+        int[] multi32 = Convert.byte2int(multiplicator);
+        for (int i = 0; i < 4; ++i) {
+            stream[i] = multi32[i];
+        }
+        for (int i = 4; i < 12; ++i) {
             int got = toInt(digest, (i * 4) % ln);
             if (i > 4) got = got ^ stream[i - 3];
             stream[i] = got;
