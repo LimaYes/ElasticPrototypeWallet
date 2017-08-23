@@ -1,0 +1,10 @@
+TODO:
+
+if (req->req_type == SUBMIT_BOUNTY) {
+            sprintf(url, "%s?requestType=submitSolution", rpc_url);
+            sprintf(data, "deadline=3&feeNQT=0&amountNQT=0&work_id=%s&data=%s&multiplicator=%s&storage_id=%d&is_pow=false&secretPhrase=%s", req->work_str, submit_data_hex, req->mult, req->storage_id, passphrase);
+        }
+        else {
+            sprintf(url, "%s?requestType=submitSolution", rpc_url);
+            sprintf(data, "deadline=3&feeNQT=0&amountNQT=0&work_id=%s&data=%s&multiplicator=%s&storage_id=%d&is_pow=true&secretPhrase=%s", req->work_str, submit_data_hex, req->mult, req->storage_id, passphrase);
+        }
