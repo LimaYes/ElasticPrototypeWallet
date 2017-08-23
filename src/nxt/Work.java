@@ -482,14 +482,20 @@ public final class Work {
         return response;
     }
 
+    public static int[] getStorage(Work work, int storage_slot){
+        int[] storage_area = new int[work.storage_size];
+        if (storage_slot>=0 && storage_slot < work.bounty_limit_per_iteration) {
+            for (int i = 0; i < work.storage_size; ++i) {
+                storage_area[i] = work.combined_storage[storage_slot * work.storage_size + i];
+            }
+        }
+        return storage_area;
+    }
     public static JSONObject toJsonWithStorage(Work work, int storage_slot, boolean with_source) {
         final JSONObject response = toJsonWithSource(work,with_source);
 
         if (storage_slot>=0 && storage_slot < work.bounty_limit_per_iteration) {
-            int[] storage_area = new int[work.storage_size];
-            for(int i=0;i<work.storage_size;++i){
-                storage_area[i] = work.combined_storage[storage_slot*work.storage_size + i];
-            }
+            int[] storage_area = getStorage(work, storage_slot);
             response.put("storage_id", storage_slot);
             response.put("storage", Convert.toHexString(Convert.int2byte(storage_area)));
         }

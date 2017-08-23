@@ -38,17 +38,20 @@ public class CommandPowBty extends IComputationAttachment {
     private long work_id;
     private boolean is_proof_of_work;
     private byte[] multiplier;
-    private byte[] storage;
+    //private byte[] storage;
     private byte[] verificator;
     private boolean validated = false;
     private boolean isValid = false;
+    private int storage_bucket;
 
-    public CommandPowBty(long work_id, boolean is_proof_of_work, byte[] multiplier, byte[] storage, byte[] verificator) {
+    public CommandPowBty(long work_id, boolean is_proof_of_work, byte[] multiplier, /*byte[] storage, */ byte[]
+            verificator, int storage_bucket) {
         super();
         this.work_id = work_id;
         this.is_proof_of_work = is_proof_of_work;
         this.multiplier = multiplier;
-        this.storage = storage;
+        //this.storage = storage;
+        this.storage_bucket = storage_bucket;
         this.verificator = verificator;
     }
 
@@ -67,10 +70,13 @@ public class CommandPowBty extends IComputationAttachment {
             // First read in the multiplicator
             short readsize = buffer.getShort();
             if (readsize != ComputationConstants.MULTIPLIER_LENGTH) {
-                throw new NxtException.NotValidException("Wrong Parameters");
+                throw new NxtException.NotValidException("Wrong Parameters, your multiplier was " + readsize + " but " +
+                        "should be " + ComputationConstants.MULTIPLIER_LENGTH);
             }
             multiplier = new byte[readsize];
             buffer.get(multiplier);
+
+            /*
 
             // Then, read the storage ints
             readsize = buffer.getShort();
@@ -82,6 +88,10 @@ public class CommandPowBty extends IComputationAttachment {
             }
             storage = new byte[readsize];
             buffer.get(storage);
+
+            */
+
+           this.storage_bucket = buffer.getInt();
 
             // And finally, read the verificator
             readsize = buffer.getShort();
@@ -100,7 +110,8 @@ public class CommandPowBty extends IComputationAttachment {
             this.is_proof_of_work = false;
             this.multiplier = new byte[0];
             this.verificator = new byte[0];
-            this.storage = new byte[0];
+            // this.storage = new byte[0];
+            this.storage_bucket = 0;
         }
     }
 
@@ -119,7 +130,8 @@ public class CommandPowBty extends IComputationAttachment {
 
     @Override
     int getMySize() {
-        return 8 + 1 + 2 + 2 + 2 + this.multiplier.length + this.verificator.length + this.storage.length;
+        return 8 + 1 + 2 + 2 /* + 2 */ + this.multiplier.length + this.verificator.length /* + this.storage.length */
+                + 4 /*storage bucket in t */;
     }
 
     @Override
@@ -139,8 +151,9 @@ public class CommandPowBty extends IComputationAttachment {
         // Now put the "triade"
         buffer.putShort((short)this.multiplier.length);
         buffer.put(this.multiplier);
-        buffer.putShort((short)this.storage.length);
-        buffer.put(this.storage);
+        // buffer.putShort((short)this.storage.length);
+        // buffer.put(this.storage);
+        buffer.putInt(this.storage_bucket);
         buffer.putShort((short)this.verificator.length);
         buffer.put(this.verificator);
     }
@@ -149,28 +162,39 @@ public class CommandPowBty extends IComputationAttachment {
         return multiplier;
     }
 
+    /*
     public byte[] getStorage() {
         return storage;
+    }*/
+
+    public int getStorage_bucket() {
+        return storage_bucket;
     }
 
     public byte[] getVerificator() {
         return verificator;
     }
 
-    private boolean validatePow(byte[] pubkey, long blockid, long workId, String vcode){
-        int[] storage_array = Convert.byte2int(this.getStorage());
+    private boolean validatePow(byte[] pubkey, long blockid, long workId, String vcode, int[] target){
+        // int[] storage_array = Convert.byte2int(this.getStorage());
         byte[] multiplier_array = this.getMultiplier();
         int[] verificator_array = Convert.byte2int(this.getVerificator());
 
-        Executor.CODE_RESULT result = Executor.executeCode(pubkey, blockid, workId, vcode, multiplier_array, storage_array, verificator_array, true, new int[]{0,0});
+        int[] storage_array = Work.getStorage(Work.getWorkById(workId), this.storage_bucket);
+
+        Executor.CODE_RESULT result = Executor.executeCode(pubkey, blockid, workId, vcode, multiplier_array,
+                 storage_array, verificator_array, true, target);
         return result.pow;
     }
-    private boolean validateBty(byte[] pubkey, long blockid, long workId, String vcode){
-        int[] storage_array = Convert.byte2int(this.getStorage());
+    private boolean validateBty(byte[] pubkey, long blockid, long workId, String vcode, int[] target){
+        // int[] storage_array = Convert.byte2int(this.getStorage());
         byte[] multiplier_array = this.getMultiplier();
         int[] verificator_array = Convert.byte2int(this.getVerificator());
 
-        Executor.CODE_RESULT result = Executor.executeCode(pubkey, blockid, workId, vcode, multiplier_array, storage_array, verificator_array, false, new int[]{0,0});
+        int[] storage_array = Work.getStorage(Work.getWorkById(workId), this.storage_bucket);
+
+        Executor.CODE_RESULT result = Executor.executeCode(pubkey, blockid, workId, vcode, multiplier_array,
+                storage_array, verificator_array, false, target);
         return result.bty;
     }
 
@@ -203,6 +227,10 @@ public class CommandPowBty extends IComputationAttachment {
             return false;
         }
 
+
+        /*
+
+
         // checking storage length requirements
         if (!this.is_proof_of_work && storage.length/4 != w.getStorage_size()) {
             return false;
@@ -210,17 +238,24 @@ public class CommandPowBty extends IComputationAttachment {
         if (this.is_proof_of_work && storage.length != 0) {
             return false;
         }
+        */
 
-        // todo: this must be adjusted later on to differentiate between storage size and verificator / submit size. For now it is the same
+        if(this.storage_bucket > w.getBounty_limit_per_iteration() || this.storage_bucket < 0)
+            return false;
+
         if (verificator.length/4 != w.getStorage_size()) {
             return false;
         }
 
+        int[] target = new int[]{-1,-1,-1,-1};
+
         // Validate code-level
-        if (this.is_proof_of_work && !validatePow(transaction.getSenderPublicKey(), transaction.getBlockId(), work_id, w.getVerifyFunction())) {
+        if (this.is_proof_of_work && !validatePow(transaction.getSenderPublicKey(), transaction.getBlockId(),
+                work_id, w.getVerifyFunction(), target)) {
             return false;
         }
-        if (!this.is_proof_of_work && !validateBty(transaction.getSenderPublicKey(), transaction.getBlockId(), work_id, w.getVerifyFunction())) {
+        if (!this.is_proof_of_work && !validateBty(transaction.getSenderPublicKey(), transaction.getBlockId(),
+                work_id, w.getVerifyFunction(), target)) {
             return false;
         }
 

@@ -28,6 +28,9 @@ public class ExposedToRhino {
     }
 
     public double check_pow(int v0,int v1,int v2,int v3, int[] m, int[] target){
+
+        if(target.length!=4) return 0.0; // Disallow crap here
+
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
@@ -43,10 +46,15 @@ public class ExposedToRhino {
             byte[] ret = MessageDigest.getInstance("MD5").digest(fullByteArray);
 
             int[] hash32 = Convert.byte2int(ret);
+
+            System.out.println("hash vs target:");
+            for (int i = 0; i < 4; i++)
+                System.out.println(hash32[i] + "\t" + target[i]);
             for (int i = 0; i < 4; i++) {
-                if (hash32[i] > target[i])
+                int res = Integer.compareUnsigned(hash32[i], target[i]);
+                if (res > 0)
                     return 0;
-                else if (hash32[i] < target[i])
+                else if (res < 0)
                     return 1;    // POW Solution Found
             }
         }
