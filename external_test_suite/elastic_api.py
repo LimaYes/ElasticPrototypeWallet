@@ -38,6 +38,20 @@ def getBalance(account_id):
 
 
 
+def startForging(ids):
+	postobj = {}
+	postobj["secretPhrase"] = basic_transport.PASS
+	tx_obj = issue_request_json("startForging", None, postobj)
+	return tx_obj
+
+
+def stopForging(ids):
+	postobj = {}
+	postobj["secretPhrase"] = basic_transport.PASS
+	tx_obj = issue_request_json("stopForging", None, postobj)
+	return tx_obj
+
+
 
 
 def cancelWork(ids):
