@@ -34,11 +34,14 @@ public class ExposedToRhino {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
+            // todo: check if it matches with xel_compiler.c:102 and if off + len are correct
             baos.write(intToByteArray(v0), 0, 4);
             baos.write(intToByteArray(v1), 0, 4);
             baos.write(intToByteArray(v2), 0, 4);
             baos.write(intToByteArray(v3), 0, 4);
-            for (int i = 0; i < 10; i++) {
+
+
+            for (int i = 0; i < 8; i++) {
                 baos.write(intToByteArray(m[i]), 0, 4);
             }
             byte[] fullByteArray = baos.toByteArray();
@@ -47,6 +50,7 @@ public class ExposedToRhino {
 
             int[] hash32 = Convert.byte2int(ret);
 
+            // todo: remove for production
             System.out.println("hash vs target:");
             for (int i = 0; i < 4; i++)
                 System.out.println(hash32[i] + "\t" + target[i]);
