@@ -1206,7 +1206,7 @@ class NxtDbVersion extends DbVersion {
                         "CREATE TABLE IF NOT EXISTS pow_and_bounty (db_id IDENTITY, id BIGINT NOT NULL,too_late " +
                                 "BOOLEAN NOT NULL DEFAULT FALSE, work_id BIGINT NOT NULL, hash BINARY(32), multiplier" +
                                 " VARBINARY, storage_bucket INT, validator VARBINARY, account_id BIGINT NOT NULL, " +
-                                "is_pow BOOLEAN NOT NULL DEFAULT TRUE, verificator_hash BINARY(32), height INT NOT NULL, latest BOOLEAN NOT NULL DEFAULT TRUE)");
+                                "is_pow BOOLEAN NOT NULL DEFAULT TRUE, verificator_hash BINARY(32), pow_hash BINARY(32), height INT NOT NULL, latest BOOLEAN NOT NULL DEFAULT TRUE)");
             case 495:
                 apply("CREATE INDEX IF NOT EXISTS pow_and_bountyA ON pow_and_bounty (id)");
             case 496:
