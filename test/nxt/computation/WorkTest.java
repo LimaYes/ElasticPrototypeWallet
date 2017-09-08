@@ -158,7 +158,7 @@ public class WorkTest extends AbstractForgingTest {
         byte[] testarray = new byte[0];
         for(int i=0;i<25; ++i) {
             m[0]=(byte)(m[0]+1);
-            CommandPowBty pow = new CommandPowBty(id, true, m, testarray, 0);
+            CommandPowBty pow = new CommandPowBty(id, true, m, new byte[32], testarray, 0);
             MessageEncoder.push(pow, AbstractForgingTest.testForgingSecretPhrase);
             // Mine a bit so the work times out
             AbstractBlockchainTest.forgeNumberOfBlocks(1, AbstractForgingTest.testForgingSecretPhrase);
@@ -201,7 +201,7 @@ public class WorkTest extends AbstractForgingTest {
             int[] m = new int[8];
             int[] testarray = new int[w.getStorage_size()];
             testarray[0] = 6000;
-            CommandPowBty pow = new CommandPowBty(id, false, Convert.int2byte(m), Convert.int2byte(testarray), 0);
+            CommandPowBty pow = new CommandPowBty(id, false, Convert.int2byte(m), new byte[32],  Convert.int2byte(testarray), 0);
             MessageEncoder.push(pow, AbstractForgingTest.testForgingSecretPhrase);
             AbstractBlockchainTest.forgeNumberOfBlocks(5, AbstractForgingTest.testForgingSecretPhrase);
         }
@@ -219,7 +219,7 @@ public class WorkTest extends AbstractForgingTest {
             m[0]=1;
             int[] testarray = new int[w.getStorage_size()];
             testarray[0] = 6000;
-            CommandPowBty pow = new CommandPowBty(id, false, Convert.int2byte(m), Convert.int2byte(testarray), 0);
+            CommandPowBty pow = new CommandPowBty(id, false, Convert.int2byte(m), new byte[32],  Convert.int2byte(testarray), 0);
             MessageEncoder.push(pow, AbstractForgingTest.testForgingSecretPhrase);
             AbstractBlockchainTest.forgeNumberOfBlocks(5, AbstractForgingTest.testForgingSecretPhrase);
         }
@@ -231,7 +231,7 @@ public class WorkTest extends AbstractForgingTest {
             m[0]=194;
             int[] testarray = new int[w.getStorage_size()];
             testarray[0] = 3000;
-            CommandPowBty pow = new CommandPowBty(id, false, Convert.int2byte(m), Convert.int2byte(testarray), 0);
+            CommandPowBty pow = new CommandPowBty(id, false, Convert.int2byte(m), new byte[32], Convert.int2byte(testarray), 0);
             MessageEncoder.push(pow, AbstractForgingTest.testForgingSecretPhrase);
             AbstractBlockchainTest.forgeNumberOfBlocks(5, AbstractForgingTest.testForgingSecretPhrase);
         }
@@ -246,7 +246,7 @@ public class WorkTest extends AbstractForgingTest {
             m[0]=19435;
             int[] testarray = new int[w.getStorage_size()];
             testarray[0] = 26000;
-            CommandPowBty pow = new CommandPowBty(id, false, Convert.int2byte(m), Convert.int2byte(testarray), 0);
+            CommandPowBty pow = new CommandPowBty(id, false, Convert.int2byte(m), new byte[32], Convert.int2byte(testarray), 0);
             MessageEncoder.push(pow, AbstractForgingTest.testForgingSecretPhrase);
         }
         {
@@ -254,7 +254,7 @@ public class WorkTest extends AbstractForgingTest {
             m[0]=17;
             int[] testarray = new int[w.getStorage_size()];
             testarray[0] = 46000;
-            CommandPowBty pow = new CommandPowBty(id, false, Convert.int2byte(m), Convert.int2byte(testarray), 0);
+            CommandPowBty pow = new CommandPowBty(id, false, Convert.int2byte(m), new byte[32], Convert.int2byte(testarray), 0);
             MessageEncoder.push(pow, AbstractForgingTest.testForgingSecretPhrase);
         }
 
@@ -264,7 +264,7 @@ public class WorkTest extends AbstractForgingTest {
             m[0]=44;
             int[] testarray = new int[w.getStorage_size()];
             testarray[0] = 76003;
-            CommandPowBty pow = new CommandPowBty(id, false, Convert.int2byte(m), Convert.int2byte(testarray), 0);
+            CommandPowBty pow = new CommandPowBty(id, false, Convert.int2byte(m), new byte[32], Convert.int2byte(testarray), 0);
             MessageEncoder.push(pow, AbstractForgingTest.testForgingSecretPhrase);
         }
 

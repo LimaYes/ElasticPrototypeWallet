@@ -16,20 +16,21 @@ package nxt.http;
  *                                                                            *
  ******************************************************************************/
 
-import javax.servlet.http.HttpServletRequest;
-
+import nxt.NxtException;
 import nxt.computation.CommandCancelWork;
+import nxt.computation.CommandPowBty;
 import nxt.computation.MessageEncoder;
 import org.json.simple.JSONStreamAware;
-import nxt.NxtException;
+import org.spongycastle.crypto.digests.SkeinEngine;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
-public final class CancelWork extends CreateTransaction {
+public final class SubmitSolution extends CreateTransaction {
 
-    static final CancelWork instance = new CancelWork();
+    static final SubmitSolution instance = new SubmitSolution();
 
-    private CancelWork() {
+    private SubmitSolution() {
         super(new APITag[] { APITag.CREATE_TRANSACTION }, "work_id");
     }
 
@@ -37,8 +38,14 @@ public final class CancelWork extends CreateTransaction {
     protected JSONStreamAware processRequest(final HttpServletRequest req) throws NxtException {
 
         final long workId = ParameterParser.getUnsignedLong(req, "work_id", true);
+        final byte[] data = ParameterParser.getBytes(req, "data", true);
+        final byte[] multiplicator = ParameterParser.getBytes(req, "multiplicator", true);
+        final int storageId = ParameterParser.getInt(req, "storage_id",0,Integer.MAX_VALUE, true);
+        final boolean is_pow = ParameterParser.getBooleanByString(req, "is_pow", true);
+        final byte[] hash = ParameterParser.getBytes(req, "hash", true);
 
-        CommandCancelWork work = new CommandCancelWork(workId);
+
+        CommandPowBty work = new CommandPowBty(workId, is_pow, multiplicator, hash, data, storageId);
 
         try {
             MessageEncoder.push(work, ParameterParser.getSecretPhrase(req, true));

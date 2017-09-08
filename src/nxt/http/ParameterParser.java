@@ -146,6 +146,22 @@ public final class ParameterParser {
         }
     }
 
+    public static boolean getBooleanByString(HttpServletRequest req, String name, boolean isMandatory) throws ParameterException {
+        String paramValue = Convert.emptyToNull(req.getParameter(name));
+        if (paramValue == null) {
+            if (isMandatory) {
+                throw new ParameterException(missing(name));
+            }
+            return false;
+        }
+        try {
+            if(paramValue.equalsIgnoreCase("true")) return true;
+            else return false;
+        } catch (RuntimeException e) {
+            throw new ParameterException(incorrect(name));
+        }
+    }
+
     public static long[] getUnsignedLongs(HttpServletRequest req, String name) throws ParameterException {
         String[] paramValues = req.getParameterValues(name);
         if (paramValues == null || paramValues.length == 0) {

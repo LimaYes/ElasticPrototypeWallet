@@ -123,10 +123,20 @@ public class Executor {
         return stream;
     }
 
+    public static CODE_RESULT executeCode(final byte[] publicKey, final long blockId, final long workId, String
+            verifyCode, byte[] multiplier, int[] storage, int[] validator, boolean verify_pow, int[]
+                                                  target){
+        // DUmmy function to skip POW Hash in testing
+        // TODO: Remove
+        return executeCode(publicKey, blockId, workId, verifyCode, multiplier, storage, validator, verify_pow, target, new byte[32]);
+
+    }
 
     public static CODE_RESULT executeCode(final byte[] publicKey, final long blockId, final long workId, String
             verifyCode, byte[] multiplier, int[] storage, int[] validator, boolean verify_pow, int[]
-            target){
+            target, byte[] pow_hash){
+
+        // TODO: IMPLEMENT POW_HASH CHECK
         CODE_RESULT result = new CODE_RESULT();
         result.bty = false;
         result.pow = false;

@@ -38,19 +38,19 @@ public class CommandPowBty extends IComputationAttachment {
     private long work_id;
     private boolean is_proof_of_work;
     private byte[] multiplier;
-    //private byte[] storage;
+    private byte[] hash;
     private byte[] verificator;
     private boolean validated = false;
     private boolean isValid = false;
     private int storage_bucket;
 
-    public CommandPowBty(long work_id, boolean is_proof_of_work, byte[] multiplier, /*byte[] storage, */ byte[]
+    public CommandPowBty(long work_id, boolean is_proof_of_work, byte[] multiplier, byte[] hash,  byte[]
             verificator, int storage_bucket) {
         super();
         this.work_id = work_id;
         this.is_proof_of_work = is_proof_of_work;
         this.multiplier = multiplier;
-        //this.storage = storage;
+        this.hash = hash;
         this.storage_bucket = storage_bucket;
         this.verificator = verificator;
     }
@@ -76,7 +76,6 @@ public class CommandPowBty extends IComputationAttachment {
             multiplier = new byte[readsize];
             buffer.get(multiplier);
 
-            /*
 
             // Then, read the storage ints
             readsize = buffer.getShort();
@@ -86,10 +85,9 @@ public class CommandPowBty extends IComputationAttachment {
             if (this.is_proof_of_work && readsize != 0) {
                 throw new NxtException.NotValidException("Wrong Parameters: PoW must not contain storage elements");
             }
-            storage = new byte[readsize];
-            buffer.get(storage);
+            hash = new byte[readsize];
+            buffer.get(hash);
 
-            */
 
            this.storage_bucket = buffer.getInt();
 
@@ -110,7 +108,7 @@ public class CommandPowBty extends IComputationAttachment {
             this.is_proof_of_work = false;
             this.multiplier = new byte[0];
             this.verificator = new byte[0];
-            // this.storage = new byte[0];
+            this.hash = new byte[0];
             this.storage_bucket = 0;
         }
     }
@@ -130,8 +128,7 @@ public class CommandPowBty extends IComputationAttachment {
 
     @Override
     int getMySize() {
-        return 8 + 1 + 2 + 2 /* + 2 */ + this.multiplier.length + this.verificator.length /* + this.storage.length */
-                + 4 /*storage bucket in t */;
+        return 8 + 1 + 2 + 2 + 2 + this.multiplier.length + this.verificator.length  + this.hash.length  + 4 /*storage bucket in t */;
     }
 
     @Override
@@ -151,8 +148,8 @@ public class CommandPowBty extends IComputationAttachment {
         // Now put the "triade"
         buffer.putShort((short)this.multiplier.length);
         buffer.put(this.multiplier);
-        // buffer.putShort((short)this.storage.length);
-        // buffer.put(this.storage);
+        buffer.putShort((short)this.hash.length);
+        buffer.put(this.hash);
         buffer.putInt(this.storage_bucket);
         buffer.putShort((short)this.verificator.length);
         buffer.put(this.verificator);
@@ -176,25 +173,25 @@ public class CommandPowBty extends IComputationAttachment {
     }
 
     private boolean validatePow(byte[] pubkey, long blockid, long workId, String vcode, int[] target){
-        // int[] storage_array = Convert.byte2int(this.getStorage());
+        byte[] hash_array = this.getPowHash();
         byte[] multiplier_array = this.getMultiplier();
         int[] verificator_array = Convert.byte2int(this.getVerificator());
 
         int[] storage_array = Work.getStorage(Work.getWorkById(workId), this.storage_bucket);
 
         Executor.CODE_RESULT result = Executor.executeCode(pubkey, blockid, workId, vcode, multiplier_array,
-                 storage_array, verificator_array, true, target);
+                 storage_array, verificator_array, true, target, hash_array);
         return result.pow;
     }
     private boolean validateBty(byte[] pubkey, long blockid, long workId, String vcode, int[] target){
-        // int[] storage_array = Convert.byte2int(this.getStorage());
+        byte[] hash_array = this.getPowHash();
         byte[] multiplier_array = this.getMultiplier();
         int[] verificator_array = Convert.byte2int(this.getVerificator());
 
         int[] storage_array = Work.getStorage(Work.getWorkById(workId), this.storage_bucket);
 
         Executor.CODE_RESULT result = Executor.executeCode(pubkey, blockid, workId, vcode, multiplier_array,
-                storage_array, verificator_array, false, target);
+                storage_array, verificator_array, false, target, hash_array);
         return result.bty;
     }
 
@@ -210,9 +207,9 @@ public class CommandPowBty extends IComputationAttachment {
         if (w.isClosed() == true) return false;
 
         // todo, check if double spending prevention has to rely on verificator hash as well? But if yes ... what do we do with same hashes (hash len = 0 is always the same)
-        /*
+
         // Now check for duplicate entry (I guess verificator hash is enough, isn't it?)
-        byte[] myHash = this.getVerificatorHash();
+        /*byte[] myHash = this.getVerificatorHash();
         if(PowAndBounty.hasVerificatorHash(w.getId(), myHash))
             return false;
         */
@@ -228,17 +225,17 @@ public class CommandPowBty extends IComputationAttachment {
         }
 
 
-        /*
+
 
 
         // checking storage length requirements
-        if (!this.is_proof_of_work && storage.length/4 != w.getStorage_size()) {
+        if (!this.is_proof_of_work && hash.length != 32) {
             return false;
         }
-        if (this.is_proof_of_work && storage.length != 0) {
+        if (this.is_proof_of_work && hash.length != 0) {
             return false;
         }
-        */
+
 
         if(this.storage_bucket > w.getBounty_limit_per_iteration() || this.storage_bucket < 0)
             return false;
@@ -288,6 +285,9 @@ public class CommandPowBty extends IComputationAttachment {
         return dig.digest();
     }
 
+    public byte[] getPowHash() {
+        return this.hash;
+    }
     public byte[] getHash() {
         final MessageDigest dig = Crypto.sha256();
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();

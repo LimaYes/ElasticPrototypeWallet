@@ -81,7 +81,6 @@ public class ExecutionEngineTests {
         try {
             int[] u = new int[]{4, 6};
             sandbox.inject("u", u);
-            sandbox.inject("u", u);
             Object res = sandbox.eval("epl", "function sum(a, b) { return a + b; } sum(u[0],u[1]);");
             System.out.println("injecting storage, did it work? " + res);
             Assert.assertEquals(res, new Double(10));
