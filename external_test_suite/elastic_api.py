@@ -40,6 +40,14 @@ def getBalance(account_id):
 
 
 
+def cancelWork(ids):
+	postobj = {}
+	postobj["work_id"] = int(ids)
+	postobj["secretPhrase"] = basic_transport.PASS
+	tx_obj = issue_request_json("cancelWork", None, postobj)
+	return tx_obj["errorDescription"]
+
+
 def createWork(title, source, amount, xel_per_pow, xel_per_bounty, bounties, iterations, deadline = 250, work_language="ElasticPL", broadcast = False, cap_pow = 250,):
 	postobj = {}
 	postobj["work_title"] = title

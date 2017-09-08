@@ -3,6 +3,7 @@ from requests_toolbelt.multipart.encoder import MultipartEncoder
 import json
 import time
 
+
 PORT = 19876
 PASS = ""
 
@@ -36,8 +37,9 @@ def issue_request(r_type, data_post, data_get):
 			fields[x]=data_post[x]
 
 	multipart_data = MultipartEncoder(fields)
-
-	response = requests.post('http://localhost:' + str(PORT) + '/nxt?' + query_string + "requestType=" + r_type + "&random=" + str(time.time()), data=multipart_data,
+	urlxx = 'http://localhost:' + str(PORT) + '/nxt?' + query_string + "requestType=" + r_type + "&random=" + str(time.time())
+	print urlxx
+	response = requests.post(urlxx, data=multipart_data,
 	                  headers={'Content-Type': multipart_data.content_type})
 	return response.text
 

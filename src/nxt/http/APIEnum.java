@@ -33,6 +33,7 @@ public enum APIEnum {
     GET_WORK("getWork", GetWork.instance),
     CREATE_WORK("createWork", CreateWork.instance),
     GET_MINEABLE_WORK("getMineableWork", GetMineableWork.instance),
+    CANCEL_WORK("cancelWork", CancelWork.instance),
     /* ELASTIC SPECIFIC END */
 
     APPROVE_TRANSACTION("approveTransaction", ApproveTransaction.instance),
