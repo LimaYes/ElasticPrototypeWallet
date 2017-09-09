@@ -38,14 +38,14 @@ def getBalance(account_id):
 
 
 
-def startForging(ids):
+def startForging():
 	postobj = {}
 	postobj["secretPhrase"] = basic_transport.PASS
 	tx_obj = issue_request_json("startForging", None, postobj)
 	return tx_obj
 
 
-def stopForging(ids):
+def stopForging():
 	postobj = {}
 	postobj["secretPhrase"] = basic_transport.PASS
 	tx_obj = issue_request_json("stopForging", None, postobj)
@@ -81,6 +81,20 @@ def createWork(title, source, amount, xel_per_pow, xel_per_bounty, bounties, ite
 	postobj["source_code"] = open(source).read()
 	tx_obj = issue_request_json("createWork", postobj, None)
 	return tx_obj
+
+def submitSolution(work_id, data, multiplicator, storage_id, is_pow, pow_hash):
+	postobj = {}
+	postobj["work_id"] = work_id
+	postobj["data"] = data
+	postobj["multiplicator"] = multiplicator
+	postobj["storage_id"] = storage_id
+	postobj["is_pow"] = is_pow
+	postobj["pow_hash"] = pow_hash
+
+	postobj["secretPhrase"] = basic_transport.PASS
+
+	tx_obj = issue_request_json("submitSolution", None, postobj)
+	return tx_obj["errorDescription"]
 
 
 

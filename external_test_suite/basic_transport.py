@@ -38,7 +38,7 @@ def issue_request(r_type, data_post, data_get):
 
 	multipart_data = MultipartEncoder(fields)
 	urlxx = 'http://localhost:' + str(PORT) + '/nxt?' + query_string + "requestType=" + r_type + "&random=" + str(time.time())
-	print urlxx
+	# print urlxx
 	response = requests.post(urlxx, data=multipart_data,
 	                  headers={'Content-Type': multipart_data.content_type})
 	return response.text
