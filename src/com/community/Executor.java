@@ -171,6 +171,7 @@ public class Executor {
                     "res();";
 
             // todo: here is a lot debug stuff
+            System.out.println("SZ: " + String.valueOf(storage.length) + ", VALIDATION_IDX: " + String.valueOf(validator_offset_index));
             System.out.println("M Personalized Int Stream:");
             System.out.println("--------------------------");
             System.out.println(Arrays.toString(m));
