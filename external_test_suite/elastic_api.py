@@ -89,7 +89,7 @@ def submitSolution(work_id, data, multiplicator, storage_id, is_pow, pow_hash):
 	postobj["multiplicator"] = multiplicator
 	postobj["storage_id"] = storage_id
 	postobj["is_pow"] = is_pow
-	postobj["pow_hash"] = pow_hash
+	postobj["hash"] = pow_hash
 
 	postobj["secretPhrase"] = basic_transport.PASS
 

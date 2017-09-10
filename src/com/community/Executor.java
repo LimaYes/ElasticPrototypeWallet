@@ -2,10 +2,12 @@ package com.community;
 import nxt.Appendix;
 import nxt.crypto.Crypto;
 import nxt.util.Convert;
+import nxt.util.Pair;
 import org.mozilla.javascript.NativeArray;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 
 import static com.community.Constants.MAX_SOURCE_SIZE;
 import static java.security.MessageDigest.getInstance;
@@ -123,17 +125,10 @@ public class Executor {
         return stream;
     }
 
-    public static CODE_RESULT executeCode(final byte[] publicKey, final long blockId, final long workId, String
-            verifyCode, byte[] multiplier, int[] storage, int[] validator, boolean verify_pow, int[]
-                                                  target){
-        // DUmmy function to skip POW Hash in testing
-        // TODO: Remove
-        return executeCode(publicKey, blockId, workId, verifyCode, multiplier, storage, validator, verify_pow, target, new byte[32]);
 
-    }
 
     public static CODE_RESULT executeCode(final byte[] publicKey, final long blockId, final long workId, String
-            verifyCode, byte[] multiplier, int[] storage, int[] validator, boolean verify_pow, int[]
+            verifyCode, byte[] multiplier, int[] storage, int[] validator, int validator_offset_index, boolean verify_pow, int[]
             target, byte[] pow_hash){
 
         // TODO: IMPLEMENT POW_HASH CHECK
@@ -153,6 +148,12 @@ public class Executor {
             // Inject temp arrays
             int[] m = personalizedIntStream(publicKey, blockId, multiplier, workId);
             int[] u = new int[10000];
+
+            // now, fill the validator uints! (also called "data" in xelminer)
+            for(int i=0;i<validator.length;++i){
+                u[validator_offset_index+i] = validator[i];
+            }
+
             int[] i = new int[10000];
             float[] f = new float[10000];
             double[] d = new double[10000];
@@ -168,7 +169,19 @@ public class Executor {
             String vcode = verifyCode + " verify(); function res(){ return [pow_found, " +
                     "bounty_found]; } " +
                     "res();";
-            //System.out.println(vcode); // todo, comment in to see what code is being executed
+
+            // todo: here is a lot debug stuff
+            System.out.println("M Personalized Int Stream:");
+            System.out.println("--------------------------");
+            System.out.println(Arrays.toString(m));
+            System.out.println("Storage Array (S Array):");
+            System.out.println("------------------------");
+            System.out.println(Arrays.toString(storage));
+            System.out.println("Validator/Data Array:");
+            System.out.println("---------------------");
+            System.out.println(Arrays.toString(validator));
+            System.out.println("\n\n");
+            System.out.println(vcode); // todo, comment in to see what code is being executed, remove for production
 
             org.mozilla.javascript.NativeArray array = (NativeArray) sandbox.eval("epl", vcode);
             double p = (double) array.get(0);
@@ -188,7 +201,7 @@ public class Executor {
         }
     }
 
-    public static int checkCodeAndReturnStorageSize(String elasticPL) throws Exceptions.SyntaxErrorException {
+    public static Pair<Integer, Integer> checkCodeAndReturnStorageSizeAndVERIIDX(String elasticPL) throws Exceptions.SyntaxErrorException {
         if(elasticPL.length()>MAX_SOURCE_SIZE) throw new Exceptions.SyntaxErrorException("Code length exceeded");
         TokenManager t = new TokenManager();
         t.build_token_list(elasticPL);
@@ -207,7 +220,7 @@ public class Executor {
             throw new Exceptions.SyntaxErrorException("Absolutely maximum verify function WCET of " + Constants
                     .ABSOLUTELY_MAXIMUM_VERIFY_WCET + " exceeded: your script has a verify function WCET of " + wcet + ".");
         }
-        return t.state.ast_submit_sz;
+        return new Pair<Integer, Integer>(t.state.ast_submit_sz, t.state.ast_submit_idx);
     }
 
     public static class CODE_RESULT {

@@ -177,10 +177,12 @@ public class CommandPowBty extends IComputationAttachment {
         byte[] multiplier_array = this.getMultiplier();
         int[] verificator_array = Convert.byte2int(this.getVerificator());
 
-        int[] storage_array = Work.getStorage(Work.getWorkById(workId), this.storage_bucket);
+        Work w = Work.getWorkById(workId);
+        int[] storage_array = Work.getStorage(w, this.storage_bucket);
+        int validation_offset = w.getVerification_idx();
 
         Executor.CODE_RESULT result = Executor.executeCode(pubkey, blockid, workId, vcode, multiplier_array,
-                 storage_array, verificator_array, true, target, hash_array);
+                 storage_array, verificator_array, validation_offset, true, target, hash_array);
         return result.pow;
     }
     private boolean validateBty(byte[] pubkey, long blockid, long workId, String vcode, int[] target){
@@ -188,10 +190,12 @@ public class CommandPowBty extends IComputationAttachment {
         byte[] multiplier_array = this.getMultiplier();
         int[] verificator_array = Convert.byte2int(this.getVerificator());
 
-        int[] storage_array = Work.getStorage(Work.getWorkById(workId), this.storage_bucket);
+        Work w = Work.getWorkById(workId);
+        int[] storage_array = Work.getStorage(w, this.storage_bucket);
+        int validation_offset = w.getVerification_idx();
 
         Executor.CODE_RESULT result = Executor.executeCode(pubkey, blockid, workId, vcode, multiplier_array,
-                storage_array, verificator_array, false, target, hash_array);
+                storage_array, verificator_array, validation_offset, false, target, hash_array);
         return result.bty;
     }
 

@@ -31,7 +31,7 @@ public final class SubmitSolution extends CreateTransaction {
     static final SubmitSolution instance = new SubmitSolution();
 
     private SubmitSolution() {
-        super(new APITag[] { APITag.CREATE_TRANSACTION }, "work_id");
+        super(new APITag[] { APITag.CREATE_TRANSACTION }, "work_id", "data","multiplicator","storage_id","is_pow","hash");
     }
 
     @Override

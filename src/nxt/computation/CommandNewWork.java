@@ -2,9 +2,8 @@ package nxt.computation;
 
 import com.community.Executor;
 import nxt.*;
-import nxt.util.Convert;
 import nxt.util.Logger;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import nxt.util.Pair;
 
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -73,6 +72,9 @@ public class CommandNewWork extends IComputationAttachment {
     boolean validated = false;
     private byte[] sourceCode;
     private byte[] sourceCodeCompressed;
+
+    private int storage_size = -1;
+    private int verification_idx = -1;
 
     public CommandNewWork(int cap_number_pow, short deadline, long xelPerPow, long xelPerBounty, int
             bountiesPerIteration, int numberOfIterations, byte[] sourceCode){
@@ -273,14 +275,36 @@ public class CommandNewWork extends IComputationAttachment {
     }
 
     public int getStorageSize() {
-        try{
-            return Executor.checkCodeAndReturnStorageSize(new String(this.sourceCode));
-        }catch(Exception e){
-            return -1;
+        if(storage_size==-1) {
+            try {
+                Pair<Integer, Integer> i = Executor.checkCodeAndReturnStorageSizeAndVERIIDX(new String(this.sourceCode));
+                this.storage_size = i.getFirst();
+                this.verification_idx = i.getSecond();
+                return storage_size;
+            } catch (Exception e) {
+                return -1;
+            }
+        }else{
+            return storage_size;
         }
     }
 
     public String getVerifyFunction() {
         return this.verify_function;
+    }
+
+    public int getVerificationIdx() {
+        if(verification_idx==-1) {
+            try {
+                Pair<Integer, Integer> i = Executor.checkCodeAndReturnStorageSizeAndVERIIDX(new String(this.sourceCode));
+                this.storage_size = i.getFirst();
+                this.verification_idx = i.getSecond();
+                return verification_idx;
+            } catch (Exception e) {
+                return -1;
+            }
+        }else{
+            return verification_idx;
+        }
     }
 }
