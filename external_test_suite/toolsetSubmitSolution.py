@@ -16,7 +16,7 @@ def submit_sl():
     log_info("multiplier",multiplicator)
     storage_id=0
     is_pow="false"
-    pow_hash="0000000000000000000000000000000000000000000000000000000000000000"
+    pow_hash="00000000000000000000000000000000"
     x = submitSolution(work_id, data, multiplicator, storage_id, is_pow, pow_hash)
     log_info("SubmitSolution to " + str(work_id), x)
 
