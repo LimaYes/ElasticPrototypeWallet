@@ -143,7 +143,7 @@ public class ExecutionEngineTests {
             int[] v = new int[]{};
             int[] s = new int[]{9000,4,3,1,4,5,5,5,5};
 
-            byte[] pow_hash = new byte[32];
+            byte[] pow_hash = new byte[16];
             int validator_index = 0;
 
             Executor.CODE_RESULT cd = Executor.executeCode(pubkey, blockid, workid, epl, m, s, v, validator_index, true, new int[]{0,0}, pow_hash);
@@ -176,7 +176,7 @@ public class ExecutionEngineTests {
             byte[] m = new byte[32];
             int[] v = new int[]{};
             int[] s = new int[]{9000,4,3,1,4,5,5,5,5};
-            byte[] pow_hash = new byte[32];
+            byte[] pow_hash = new byte[16];
             int validator_index = 0;
 
 
@@ -268,7 +268,7 @@ public class ExecutionEngineTests {
             int[] v = new int[]{};
             int[] s = new int[]{9000,4,3,1,4,5,5,5,5};
 
-            byte[] pow_hash = new byte[32];
+            byte[] pow_hash = new byte[16];
             int validator_index = 0;
 
             Executor.CODE_RESULT cd = Executor.executeCode(pubkey, blockid, workid, epl, m, s, v, validator_index, true, new int[]{0,0}, pow_hash);

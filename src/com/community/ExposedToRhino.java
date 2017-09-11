@@ -22,6 +22,8 @@ import java.security.MessageDigest;
  ******************************************************************************/
 public class ExposedToRhino {
 
+    public static byte[] lastCalculatedPowHash = null;
+
     public static final byte[] intToByteArray(int value)
     {
         return new byte[]  { (byte)(value >>> 24), (byte)(value >> 16 & 0xff), (byte)(value >> 8 & 0xff), (byte)(value & 0xff) };
@@ -47,6 +49,7 @@ public class ExposedToRhino {
             byte[] fullByteArray = baos.toByteArray();
 
             byte[] ret = MessageDigest.getInstance("MD5").digest(fullByteArray);
+            lastCalculatedPowHash = ret;
 
             int[] hash32 = Convert.byte2int(ret);
 

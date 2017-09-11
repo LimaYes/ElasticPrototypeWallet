@@ -170,8 +170,14 @@ public class Executor {
                     "bounty_found]; } " +
                     "res();";
 
+            org.mozilla.javascript.NativeArray array = (NativeArray) sandbox.eval("epl", vcode);
+
+
             // todo: here is a lot debug stuff
             System.out.println("SZ: " + String.valueOf(storage.length) + ", VALIDATION_IDX: " + String.valueOf(validator_offset_index));
+            System.out.println("Last POW Hash:");
+            System.out.println("--------------------------");
+            System.out.println(Convert.toHexString(ExposedToRhino.lastCalculatedPowHash));
             System.out.println("M Personalized Int Stream:");
             System.out.println("--------------------------");
             System.out.println(Arrays.toString(m));
@@ -184,7 +190,6 @@ public class Executor {
             System.out.println("\n\n");
             System.out.println(vcode); // todo, comment in to see what code is being executed, remove for production
 
-            org.mozilla.javascript.NativeArray array = (NativeArray) sandbox.eval("epl", vcode);
             double p = (double) array.get(0);
             double b = (double) array.get(1);
             System.out.println(p + ", " + b);

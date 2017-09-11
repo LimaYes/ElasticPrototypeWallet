@@ -77,13 +77,13 @@ public class CommandPowBty extends IComputationAttachment {
             buffer.get(multiplier);
 
 
-            // Then, read the storage ints
+            // Then, read the pow_hash, must be empty for POW and MD5LEN for BTY
             readsize = buffer.getShort();
-            if (!this.is_proof_of_work && readsize > ComputationConstants.BOUNTY_STORAGE_INTS * 4) {
-                throw new NxtException.NotValidException("Wrong Parameters: too many storage ints");
+            if (!this.is_proof_of_work && readsize != ComputationConstants.MD5LEN) {
+                throw new NxtException.NotValidException("Wrong Parameters: pow_hash must be MD5LEN size");
             }
             if (this.is_proof_of_work && readsize != 0) {
-                throw new NxtException.NotValidException("Wrong Parameters: PoW must not contain storage elements");
+                throw new NxtException.NotValidException("Wrong Parameters: pow_hash must be empty");
             }
             hash = new byte[readsize];
             buffer.get(hash);
@@ -94,7 +94,7 @@ public class CommandPowBty extends IComputationAttachment {
             // And finally, read the verificator
             readsize = buffer.getShort();
             if (readsize > ComputationConstants.VERIFICATOR_INTS * 4) {
-                throw new NxtException.NotValidException("Wrong Parameters");
+                throw new NxtException.NotValidException("Wrong Parameters: verificator/data length is too large");
             }
 
             verificator = new byte[readsize];
@@ -229,17 +229,13 @@ public class CommandPowBty extends IComputationAttachment {
         }
 
 
-
-
-
-        // checking storage length requirements
-        if (!this.is_proof_of_work && hash.length != 32) {
+        // checking pow_hash length requirements once again
+        if (!this.is_proof_of_work && hash.length != ComputationConstants.MD5LEN) {
             return false;
         }
         if (this.is_proof_of_work && hash.length != 0) {
             return false;
         }
-
 
         if(this.storage_bucket > w.getBounty_limit_per_iteration() || this.storage_bucket < 0)
             return false;
@@ -259,6 +255,12 @@ public class CommandPowBty extends IComputationAttachment {
                 work_id, w.getVerifyFunction(), target)) {
             return false;
         }
+
+        // At this point we have already called the "Exposed to Rhino function" which made sure t hat the POW hash is in the temporary static value. See if it matches
+        // in case of a bounty submission
+
+
+
 
         isValid = true;
         return true;
