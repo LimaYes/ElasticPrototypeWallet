@@ -284,6 +284,10 @@ public class CommandPowBty extends IComputationAttachment {
         }
 
 
+        if(this.is_proof_of_work)
+            Logger.logInfoMessage("Work " + String.valueOf(w.getId()) + " verification succeeded: pow submission passed all checks.");
+        else
+            Logger.logInfoMessage("Work " + String.valueOf(w.getId()) + " verification succeeded: bty submission passed all checks.");
 
 
         isValid = true;
