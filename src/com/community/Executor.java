@@ -132,6 +132,8 @@ public class Executor {
             target, byte[] pow_hash){
 
         // TODO: IMPLEMENT POW_HASH CHECK
+
+
         CODE_RESULT result = new CODE_RESULT();
         result.bty = false;
         result.pow = false;
