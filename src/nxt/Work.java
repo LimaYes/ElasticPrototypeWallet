@@ -227,13 +227,13 @@ public final class Work {
             if(accountId != 0)
                 pstmt = con.prepareStatement("SELECT work.* FROM work WHERE work.sender_account_id = ? "
                              + (includeFinished ? "" : "AND work.blocks_remaining IS NOT NULL ")
-                             + (onlyOneId == 0 ? "" : "AND work.work_id = ? ")
+                             + (onlyOneId == 0 ? "" : "AND work.id = ? ")
                              + "AND work.latest = TRUE ORDER BY closed, originating_height DESC "
                              + DbUtils.limitsClause(from, to));
             else
                 pstmt = con.prepareStatement("SELECT work.* FROM work WHERE work.sender_account_id != 0 "
                         + (includeFinished ? "" : "AND work.blocks_remaining IS NOT NULL ")
-                        + (onlyOneId == 0 ? "" : "AND work.work_id = ? ")
+                        + (onlyOneId == 0 ? "" : "AND work.id = ? ")
                         + "AND work.latest = TRUE ORDER BY closed, originating_height DESC "
                         + DbUtils.limitsClause(from, to));
             int i = 0;
