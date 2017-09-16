@@ -79,6 +79,9 @@ public final class Convert {
         if (hex == null) {
             return null;
         }
+
+        hex = hex.toLowerCase();
+
         byte[] bytes = new byte[hex.length() / 2];
         for (int i = 0; i < bytes.length; i++) {
             int char1 = hex.charAt(i * 2);
