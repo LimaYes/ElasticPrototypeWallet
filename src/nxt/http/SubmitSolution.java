@@ -42,8 +42,10 @@ public final class SubmitSolution extends CreateTransaction {
         final byte[] multiplicator = ParameterParser.getBytes(req, "multiplicator", true);
         final int storageId = ParameterParser.getInt(req, "storage_id",0,Integer.MAX_VALUE, true);
         final boolean is_pow = ParameterParser.getBooleanByString(req, "is_pow", true);
-        final byte[] hash = ParameterParser.getBytes(req, "hash", true);
+        byte[] hash = ParameterParser.getBytes(req, "hash", false);
 
+        if(is_pow == true)
+            hash = new byte[0];
 
         CommandPowBty work = new CommandPowBty(workId, is_pow, multiplicator, hash, data, storageId);
 
