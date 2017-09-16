@@ -20,6 +20,7 @@ import nxt.NxtException;
 import nxt.computation.CommandCancelWork;
 import nxt.computation.CommandPowBty;
 import nxt.computation.MessageEncoder;
+import nxt.util.Convert;
 import org.json.simple.JSONStreamAware;
 import org.spongycastle.crypto.digests.SkeinEngine;
 
@@ -45,7 +46,7 @@ public final class SubmitSolution extends CreateTransaction {
         byte[] hash = ParameterParser.getBytes(req, "hash", false);
 
         if(is_pow == true)
-            hash = new byte[0];
+            hash = Convert.EMPTY_BYTE;
 
         CommandPowBty work = new CommandPowBty(workId, is_pow, multiplicator, hash, data, storageId);
 
@@ -53,6 +54,7 @@ public final class SubmitSolution extends CreateTransaction {
             MessageEncoder.push(work, ParameterParser.getSecretPhrase(req, true));
             return JSONResponses.EVERYTHING_ALRIGHT;
         } catch (IOException e) {
+            e.printStackTrace();
             return JSONResponses.ERROR_INCORRECT_REQUEST;
         }
     }
