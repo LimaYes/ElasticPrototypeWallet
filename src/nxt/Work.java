@@ -17,6 +17,7 @@ import nxt.util.Convert;
 import nxt.util.Listener;
 import nxt.util.Listeners;
 import nxt.util.Logger;
+import org.bitcoinj.core.Base58;
 import org.json.simple.JSONObject;
 
 /******************************************************************************
@@ -488,7 +489,7 @@ public final class Work {
     public static JSONObject toJsonWithSource(Work work, boolean with_source) {
         final JSONObject response = toJson(work);
         if(with_source)
-            response.put("source", work.source_code);
+            response.put("source_code", Base58.encode(work.source_code.getBytes()));
         return response;
     }
 
