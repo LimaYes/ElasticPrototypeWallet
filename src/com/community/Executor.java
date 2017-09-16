@@ -189,6 +189,9 @@ public class Executor {
             System.out.println("Validator/Data Array:");
             System.out.println("---------------------");
             System.out.println(Arrays.toString(validator));
+            System.out.println("Raw Multiplicator Was::");
+            System.out.println("---------------------");
+            System.out.println(Convert.toHexString(multiplier));
             System.out.println("\n\n");
             System.out.println(vcode); // todo, comment in to see what code is being executed, remove for production
 
