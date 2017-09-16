@@ -37,18 +37,23 @@ public class ExposedToRhino {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
             // todo: check if it matches with xel_compiler.c:102 and if off + len are correct
-            baos.write(intToByteArray(v0), 0, 4);
-            baos.write(intToByteArray(v1), 0, 4);
-            baos.write(intToByteArray(v2), 0, 4);
-            baos.write(intToByteArray(v3), 0, 4);
+            baos.write(intToByteArray(v0));
+            baos.write(intToByteArray(v1));
+            baos.write(intToByteArray(v2));
+            baos.write(intToByteArray(v3));
 
 
             for (int i = 0; i < 8; i++) {
-                baos.write(intToByteArray(m[i]), 0, 4);
+                baos.write(intToByteArray(m[i]));
             }
             byte[] fullByteArray = baos.toByteArray();
 
             byte[] ret = MessageDigest.getInstance("MD5").digest(fullByteArray);
+
+            System.out.println("MD5 Debug:");
+            System.out.println("===================================");
+            System.out.println("Inp: " + Convert.toHexString(fullByteArray));
+            System.out.println("Out: " + Convert.toHexString(ret));
             lastCalculatedPowHash = ret;
 
             int[] hash32 = Convert.byte2int(ret);
