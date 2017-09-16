@@ -1,0 +1,19 @@
+2017-09-10 10:57:24 INFO: processing pow-or-bty for work: id=8822781917722694278
+2017-09-10 10:57:24 FINE: Consolidating storage for job 8822781917722694278 after 3 bounties. [processing cntr = 1]
+2017-09-10 10:57:24 FINE: Full Storage: before: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], after: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+2017-09-10 10:57:24 INFO: processing pow-or-bty for work: id=8822781917722694278
+0.0, 1.0
+2017-09-10 10:57:24 FINE: Consolidating storage for job 8822781917722694278 after 4 bounties. [processing cntr = 1]
+2017-09-10 10:57:24 FINE: Full Storage: before: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], after: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+0.0, 1.0
+2017-09-10 10:57:24 INFO: processing pow-or-bty for work: id=8822781917722694278
+2017-09-10 10:57:24 INFO: work closed by pow/bty handler: id=8822781917722694278
+2017-09-10 10:57:24 INFO: work closed by pow/bty handler: id=8822781917722694278
+2017-09-10 10:57:24 FINE: Consolidating storage for job 8822781917722694278 after 5 bounties. [processing cntr = 1]
+2017-09-10 10:57:24 FINE: Full Storage: before: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], after: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+2017-09-10 10:57:24 FINE: Account 12581142130059893988 generated block 15684743665960410484 at height 1740 timestamp 119739426 fee 1.0
+2017-09-10 10:57:25 FINE: Forger 12581142130059893988 deadline 58 hit 119739484
+
+
+
+Where the hell is the 5th Bounty coming from!?

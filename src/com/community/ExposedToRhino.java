@@ -22,6 +22,8 @@ import java.security.MessageDigest;
  ******************************************************************************/
 public class ExposedToRhino {
 
+    public static byte[] lastCalculatedPowHash = null;
+
     public static final byte[] intToByteArray(int value)
     {
         return new byte[]  { (byte)(value >>> 24), (byte)(value >> 16 & 0xff), (byte)(value >> 8 & 0xff), (byte)(value & 0xff) };
@@ -47,13 +49,17 @@ public class ExposedToRhino {
             byte[] fullByteArray = baos.toByteArray();
 
             byte[] ret = MessageDigest.getInstance("MD5").digest(fullByteArray);
+            lastCalculatedPowHash = ret;
 
             int[] hash32 = Convert.byte2int(ret);
 
             // todo: remove for production
-            System.out.println("hash vs target:");
+            System.out.println("Difficulty Checks (hash vs target):");
+            System.out.println("===================================");
             for (int i = 0; i < 4; i++)
-                System.out.println(hash32[i] + "\t" + target[i]);
+                System.out.println(Integer.toUnsignedString(hash32[i]) + "\t" + Integer.toUnsignedString(target[i]));
+            System.out.println("\n");
+
             for (int i = 0; i < 4; i++) {
                 int res = Integer.compareUnsigned(hash32[i], target[i]);
                 if (res > 0)

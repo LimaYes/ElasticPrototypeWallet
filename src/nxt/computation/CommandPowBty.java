@@ -1,6 +1,7 @@
 package nxt.computation;
 
 import com.community.Executor;
+import com.community.ExposedToRhino;
 import nxt.NxtException;
 import nxt.PowAndBounty;
 import nxt.Transaction;
@@ -14,6 +15,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
+import java.util.Arrays;
 
 // TODO: Check the entire file for unhandled exceptions
 
@@ -77,13 +79,13 @@ public class CommandPowBty extends IComputationAttachment {
             buffer.get(multiplier);
 
 
-            // Then, read the storage ints
+            // Then, read the pow_hash, must be empty for POW and MD5LEN for BTY
             readsize = buffer.getShort();
-            if (!this.is_proof_of_work && readsize > ComputationConstants.BOUNTY_STORAGE_INTS * 4) {
-                throw new NxtException.NotValidException("Wrong Parameters: too many storage ints");
+            if (!this.is_proof_of_work && readsize != ComputationConstants.MD5LEN) {
+                throw new NxtException.NotValidException("Wrong Parameters: pow_hash must be MD5LEN size");
             }
             if (this.is_proof_of_work && readsize != 0) {
-                throw new NxtException.NotValidException("Wrong Parameters: PoW must not contain storage elements");
+                throw new NxtException.NotValidException("Wrong Parameters: pow_hash must be empty");
             }
             hash = new byte[readsize];
             buffer.get(hash);
@@ -94,7 +96,7 @@ public class CommandPowBty extends IComputationAttachment {
             // And finally, read the verificator
             readsize = buffer.getShort();
             if (readsize > ComputationConstants.VERIFICATOR_INTS * 4) {
-                throw new NxtException.NotValidException("Wrong Parameters");
+                throw new NxtException.NotValidException("Wrong Parameters: verificator/data length is too large");
             }
 
             verificator = new byte[readsize];
@@ -177,10 +179,12 @@ public class CommandPowBty extends IComputationAttachment {
         byte[] multiplier_array = this.getMultiplier();
         int[] verificator_array = Convert.byte2int(this.getVerificator());
 
-        int[] storage_array = Work.getStorage(Work.getWorkById(workId), this.storage_bucket);
+        Work w = Work.getWorkById(workId);
+        int[] storage_array = Work.getStorage(w, this.storage_bucket);
+        int validation_offset = w.getVerification_idx();
 
         Executor.CODE_RESULT result = Executor.executeCode(pubkey, blockid, workId, vcode, multiplier_array,
-                 storage_array, verificator_array, true, target, hash_array);
+                 storage_array, verificator_array, validation_offset, true, target, hash_array);
         return result.pow;
     }
     private boolean validateBty(byte[] pubkey, long blockid, long workId, String vcode, int[] target){
@@ -188,10 +192,12 @@ public class CommandPowBty extends IComputationAttachment {
         byte[] multiplier_array = this.getMultiplier();
         int[] verificator_array = Convert.byte2int(this.getVerificator());
 
-        int[] storage_array = Work.getStorage(Work.getWorkById(workId), this.storage_bucket);
+        Work w = Work.getWorkById(workId);
+        int[] storage_array = Work.getStorage(w, this.storage_bucket);
+        int validation_offset = w.getVerification_idx();
 
         Executor.CODE_RESULT result = Executor.executeCode(pubkey, blockid, workId, vcode, multiplier_array,
-                storage_array, verificator_array, false, target, hash_array);
+                storage_array, verificator_array, validation_offset, false, target, hash_array);
         return result.bty;
     }
 
@@ -215,46 +221,74 @@ public class CommandPowBty extends IComputationAttachment {
         */
 
         byte[] myMultiplier = this.getMultiplier();
-        if(PowAndBounty.hasMultiplier(w.getId(), myMultiplier))
+        if(PowAndBounty.hasMultiplier(w.getId(), myMultiplier)) {
+            Logger.logInfoMessage("Work " + String.valueOf(w.getId()) + " verification failed: multiplier already in database.");
             return false;
+        }
 
 
         // checking multiplicator length requirements
         if (multiplier.length != ComputationConstants.MULTIPLIER_LENGTH) {
+            Logger.logInfoMessage("Work " + String.valueOf(w.getId()) + " verification failed: multiplier length is incorrect.");
             return false;
         }
 
 
-
-
-
-        // checking storage length requirements
-        if (!this.is_proof_of_work && hash.length != 32) {
+        // checking pow_hash length requirements once again
+        if (!this.is_proof_of_work && hash.length != ComputationConstants.MD5LEN) {
+            Logger.logInfoMessage("Work " + String.valueOf(w.getId()) + " verification failed: pow_hash length is incorrect");
             return false;
         }
         if (this.is_proof_of_work && hash.length != 0) {
+            Logger.logInfoMessage("Work " + String.valueOf(w.getId()) + " verification failed: pow_hash provided for a proof of work submission.");
             return false;
         }
 
-
-        if(this.storage_bucket > w.getBounty_limit_per_iteration() || this.storage_bucket < 0)
+        // todo: check if > or >= ... depending on whether bucket id 0 exists or not!
+        if(this.storage_bucket >= w.getBounty_limit_per_iteration() || this.storage_bucket < 0) {
+            Logger.logInfoMessage("Work " + String.valueOf(w.getId()) + " verification failed: storage_bucket index exceeds bounds.");
             return false;
+        }
 
         if (verificator.length/4 != w.getStorage_size()) {
+            Logger.logInfoMessage("Work " + String.valueOf(w.getId()) + " verification failed: the verificator / data length does not match the configured storage size (" + String.valueOf(verificator.length/4) + " != " + String.valueOf(w.getStorage_size()) + ").");
             return false;
         }
 
         int[] target = new int[]{-1,-1,-1,-1};
 
+        // reset last pow cache so we safely can detect a faulty execution / abortion
+        ExposedToRhino.lastCalculatedPowHash = null;
+
         // Validate code-level
         if (this.is_proof_of_work && !validatePow(transaction.getSenderPublicKey(), transaction.getBlockId(),
                 work_id, w.getVerifyFunction(), target)) {
+            Logger.logInfoMessage("Work " + String.valueOf(w.getId()) + " verification failed: proof of work checks in code execution failed.");
             return false;
         }
         if (!this.is_proof_of_work && !validateBty(transaction.getSenderPublicKey(), transaction.getBlockId(),
                 work_id, w.getVerifyFunction(), target)) {
+            Logger.logInfoMessage("Work " + String.valueOf(w.getId()) + " verification failed: bounty checks in code execution failed.");
             return false;
         }
+
+        // At this point we have already called the "Exposed to Rhino function" which made sure t hat the POW hash is in the temporary static value. See if it matches
+        // in case of a bounty submission
+        if(this.is_proof_of_work==false && ExposedToRhino.lastCalculatedPowHash == null){
+            Logger.logInfoMessage("Work " + String.valueOf(w.getId()) + " verification failed: the pow hash could not be calculated in the last code execution run.");
+            return false; // this should not happen at all!
+        }
+        if(this.is_proof_of_work==false && Arrays.equals(ExposedToRhino.lastCalculatedPowHash, this.hash) == false){
+            Logger.logInfoMessage("Work " + String.valueOf(w.getId()) + " verification failed: supplied pow hash does not match the real one (" + Convert.toHexString(this.hash) + " != " + Convert.toHexString(ExposedToRhino.lastCalculatedPowHash) + ").");
+            return false; // return false if the POW Hash does not match
+        }
+
+
+        if(this.is_proof_of_work)
+            Logger.logInfoMessage("Work " + String.valueOf(w.getId()) + " verification succeeded: pow submission passed all checks.");
+        else
+            Logger.logInfoMessage("Work " + String.valueOf(w.getId()) + " verification succeeded: bty submission passed all checks.");
+
 
         isValid = true;
         return true;
