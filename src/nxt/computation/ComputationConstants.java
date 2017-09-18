@@ -2,6 +2,8 @@ package nxt.computation;
 
 import nxt.Constants;
 
+import java.math.BigInteger;
+
 /******************************************************************************
  * Copyright © 2017 The XEL Core Developers.                                  *
  *                                                                            *
@@ -47,4 +49,6 @@ public class ComputationConstants {
     public static final int MAX_EXECUTION_TIME_IN_MS = 15 * 1000;
     public static final int VERIFICATOR_INTS = 500; // these are the submit_sz ints actually, not the storage but the verification "result" basically
     public static final short MD5LEN = 16 ;
+    public static final int TIME_PER_POW_TARGET_IN_SECONDS = 20;
+    public static final BigInteger MINIMAL_WORK_TARGET = BigInteger.ONE; // TODO, FIX THE VALUE
 }

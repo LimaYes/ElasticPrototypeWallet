@@ -1,5 +1,6 @@
 package nxt;
 
+import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -35,7 +36,7 @@ import nxt.util.Logger;
  ******************************************************************************/
 
 
-public final class PowAndBounty {
+public final class PowAndBounty implements IPowAndBounty {
 
 
 
@@ -300,5 +301,23 @@ public final class PowAndBounty {
             pstmt.setInt(++i, Nxt.getBlockchain().getHeight());
             pstmt.executeUpdate();
         }
+    }
+
+
+    // TODO: add functionality
+    public PowAndBounty getPreviousPow(){
+        return null;
+    }
+
+    public int getPowChainHeight(){
+        return 0;
+    }
+
+    public BigInteger myCurrentTarget(){
+        return BigInteger.ONE;
+    }
+
+    public int getTimestampReceived() {
+        return 0;
     }
 }
