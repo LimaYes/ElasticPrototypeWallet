@@ -99,17 +99,33 @@ public final class GetWork extends APIServlet.APIRequestHandler {
         final List<Work> work = Work.getWork(just_account, include_finished, firstIndex, lastIndex, wid_filter);
         JSONArray work_packages = null;
 
-        if(wid_filter == 0)
-            work_packages = work.stream().map(Work::toJson).collect(Collectors.toCollection(JSONArray::new));
+        if(wid_filter == 0) {
+            JSONArray jsonArray = new JSONArray();
+            for (Work work1 : work) {
+                JSONObject jsonObject = Work.toJson(work1);
+                jsonArray.add(jsonObject);
+            }
+            work_packages = jsonArray;
+        }
         else
             if(storage_slot == -1) {
                 boolean finalWith_source = with_source;
-                work_packages = work.stream().map((Work work2) -> Work.toJsonWithSource(work2, finalWith_source)).collect(Collectors.toCollection(JSONArray::new));
+                JSONArray jsonArray = new JSONArray();
+                for (Work work2 : work) {
+                    JSONObject jsonObject = Work.toJsonWithSource(work2, finalWith_source);
+                    jsonArray.add(jsonObject);
+                }
+                work_packages = jsonArray;
             }
             else {
                 int finalStorage_slot = (int) storage_slot;
                 boolean finalWith_source1 = with_source;
-                work_packages = work.stream().map((Work work1) -> Work.toJsonWithStorage(work1, finalStorage_slot, finalWith_source1)).collect(Collectors.toCollection(JSONArray::new));
+                JSONArray jsonArray = new JSONArray();
+                for (Work work1 : work) {
+                    JSONObject jsonObject = Work.toJsonWithStorage(work1, finalStorage_slot, finalWith_source1);
+                    jsonArray.add(jsonObject);
+                }
+                work_packages = jsonArray;
             }
 
         final JSONObject response = new JSONObject();
