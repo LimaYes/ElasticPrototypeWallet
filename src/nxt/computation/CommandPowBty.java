@@ -67,6 +67,7 @@ public class CommandPowBty extends IComputationAttachment {
              */
 
             this.work_id = buffer.getLong();
+
             this.is_proof_of_work = (buffer.get() == (byte) 0x01) ? true : false;
 
             // First read in the multiplicator
@@ -101,6 +102,7 @@ public class CommandPowBty extends IComputationAttachment {
 
             verificator = new byte[readsize];
             buffer.get(verificator);
+            System.out.println("POWBTY - About to decode " + this.storage_bucket);
 
 
         } catch (Exception e) {
@@ -155,6 +157,8 @@ public class CommandPowBty extends IComputationAttachment {
         buffer.putInt(this.storage_bucket);
         buffer.putShort((short)this.verificator.length);
         buffer.put(this.verificator);
+
+        System.out.println("POWBTY - About to encode " + this.storage_bucket);
     }
 
     public byte[] getMultiplier() {
@@ -180,7 +184,10 @@ public class CommandPowBty extends IComputationAttachment {
         int[] verificator_array = Convert.byte2int(this.getVerificator());
 
         Work w = Work.getWorkById(workId);
-        int[] storage_array = Work.getStorage(w, this.storage_bucket);
+        int[] storage_array = null;
+        if(this.storage_bucket != -1){
+            storage_array = Work.getStorage(w, this.storage_bucket);
+        }
         int validation_offset = w.getVerification_idx();
 
         Executor.CODE_RESULT result = Executor.executeCode(pubkey, blockid, workId, vcode, multiplier_array,
@@ -193,7 +200,10 @@ public class CommandPowBty extends IComputationAttachment {
         int[] verificator_array = Convert.byte2int(this.getVerificator());
 
         Work w = Work.getWorkById(workId);
-        int[] storage_array = Work.getStorage(w, this.storage_bucket);
+        int[] storage_array = null;
+        if(this.storage_bucket != -1){
+            storage_array = Work.getStorage(w, this.storage_bucket);
+        }
         int validation_offset = w.getVerification_idx();
 
         Executor.CODE_RESULT result = Executor.executeCode(pubkey, blockid, workId, vcode, multiplier_array,
@@ -245,10 +255,19 @@ public class CommandPowBty extends IComputationAttachment {
         }
 
         // todo: check if > or >= ... depending on whether bucket id 0 exists or not!
-        if(this.storage_bucket >= w.getBounty_limit_per_iteration() || this.storage_bucket < 0) {
-            Logger.logInfoMessage("Work " + String.valueOf(w.getId()) + " verification failed: storage_bucket index exceeds bounds.");
+
+        // !! if storage size is larger than 0 this indicates the presence of a storage. Therefore, storage bucket must be in a valid range
+        if((w.getStorage_size()>0) && (this.storage_bucket >= w.getBounty_limit_per_iteration() || this.storage_bucket < 0)) {
+            Logger.logInfoMessage("Work " + String.valueOf(w.getId()) + " verification failed: storage_bucket index exceeds bounds: got " + this.storage_bucket + " but limits were [0, " + w.getBounty_limit_per_iteration() + "].");
             return false;
         }
+
+        // !! otherwise, if storage_size == 0, then no storage is there and storage_bucket must be -1
+        if(w.getStorage_size()==0 && this.storage_bucket != -1) {
+            Logger.logInfoMessage("Work " + String.valueOf(w.getId()) + " verification failed: storage_bucket index must be -1 because there simply is no storage.");
+            return false;
+        }
+
 
         if (verificator.length/4 != w.getStorage_size()) {
             Logger.logInfoMessage("Work " + String.valueOf(w.getId()) + " verification failed: the verificator / data length does not match the configured storage size (" + String.valueOf(verificator.length/4) + " != " + String.valueOf(w.getStorage_size()) + ").");

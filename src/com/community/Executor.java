@@ -143,7 +143,11 @@ public class Executor {
             sandbox.setInstructionLimit(Constants.INSTRUCTION_LIMIT);
             sandbox.setMaxDuration(Constants.SAFE_TIME_LIMIT);
             sandbox.allow(ExposedToRhino.class);
-            sandbox.inject("s", storage); // todo, add extra elements to S[] as coralreefer proposed
+
+            if(storage != null) {
+                sandbox.inject("s", storage); // todo, add extra elements to S[] as coralreefer proposed
+            }
+
             sandbox.inject("target", target);
             sandbox.inject("verify_pow", verify_pow?1:0);
 
@@ -183,9 +187,13 @@ public class Executor {
             System.out.println("M Personalized Int Stream:");
             System.out.println("--------------------------");
             System.out.println(Arrays.toString(m));
-            System.out.println("Storage Array (S Array):");
-            System.out.println("------------------------");
-            System.out.println(Arrays.toString(storage));
+
+            if(storage != null) {
+                System.out.println("Storage Array (S Array):");
+                System.out.println("------------------------");
+                System.out.println(Arrays.toString(storage));
+            }
+
             System.out.println("Validator/Data Array:");
             System.out.println("---------------------");
             System.out.println(Arrays.toString(validator));
