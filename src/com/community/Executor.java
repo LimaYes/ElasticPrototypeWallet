@@ -160,6 +160,8 @@ public class Executor {
                 u[validator_offset_index+i] = validator[i];
             }
 
+            // TO CHECK; WE GIVE I ARRAY AS M-VARIABLE TO JS, BUT IT DOES NOT CONTAIN M IN ANY CASE! PLEASE ELABORATE ON THIS, THIS MIGHT BE THE ERROR! PUT I IN M AND YOURE POSSIBLY DONE
+
             int[] i = new int[10000];
             float[] f = new float[10000];
             double[] d = new double[10000];
