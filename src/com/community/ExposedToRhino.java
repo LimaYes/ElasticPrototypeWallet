@@ -48,6 +48,9 @@ public class ExposedToRhino {
             }
             byte[] fullByteArray = baos.toByteArray();
 
+            // TODO: SOMEHOW THIS ROUTINE ALLOWS MULTIPLE SUBMISSIONS WITH THE SAME POW HASH! THIS SHOULD BE AVOIDED AT ALL COSTS!!!
+
+
             byte[] ret = MessageDigest.getInstance("MD5").digest(fullByteArray);
 
             System.out.println("MD5 Debug:");
@@ -62,8 +65,10 @@ public class ExposedToRhino {
             System.out.println("Difficulty Checks (hash vs target):");
             System.out.println("===================================");
             for (int i = 0; i < 4; i++)
-                System.out.println(Integer.toUnsignedString(hash32[i]) + "\t" + Integer.toUnsignedString(target[i]));
+                System.out.println(Integer.toHexString(hash32[i]) + "\t" + Integer.toHexString(target[i]));
             System.out.println("\n");
+
+
 
             for (int i = 0; i < 4; i++) {
                 int res = Integer.compareUnsigned(hash32[i], target[i]);

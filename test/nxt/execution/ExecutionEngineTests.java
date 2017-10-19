@@ -75,6 +75,25 @@ public class ExecutionEngineTests {
         Assert.assertEquals(res, new Double(10));
     }
 
+
+    public int called_val = 0;
+    public double expose1(int v0){
+        System.out.println("Called from Exposed Function: " + v0);
+        called_val = v0;
+        return v0;
+    }
+    @Test
+    public void intArrayInjectionAndRhinoExposure() {
+        int[] u = new int[]{4, 6};
+        sandbox.allow(ExecutionEngineTests.class);
+        sandbox.inject("ExposedToRhino", this);
+        sandbox.inject("u", u);
+        Object res = sandbox.eval("epl", "function sum(a, b) { ExposedToRhino.expose1(a+b); return a + b; } sum(u[0],u[1]);");
+        System.out.println("injecting storage, did it work? " + res);
+        Assert.assertEquals(res, new Double(10));
+        Assert.assertEquals(new Integer(called_val), new Integer(10));
+    }
+
     @Test
     public void doubleInjectionFailure() {
         boolean aborted = false;
