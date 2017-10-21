@@ -31,8 +31,8 @@ public class ExposedToRhino {
 
     public double check_pow(int v0,int v1,int v2,int v3, int[] m, int[] target){
 
-        System.out.println("GOT ARGUMENTS TO CHECKPOW: " + v0 + ", " + v1 + ", " + v2 + ", " + v3 + ", " + ", ...");
-        System.out.println("FIRST M INTS: " + m[0] + ", " + m[1] + ", " + m[2] + ", " + m[3] + ", " + ", ...");
+        System.out.println("GOT ARGUMENTS TO CHECKPOW: " + Integer.toHexString(v0) + ", " + Integer.toHexString(v1) + ", " + Integer.toHexString(v2) + ", " + Integer.toHexString(v3) + ", " + ", ...");
+        System.out.println("FIRST M INTS: " + Integer.toHexString(m[0]) + ", " + Integer.toHexString(m[1]) + ", " + Integer.toHexString(m[2]) + ", " + Integer.toHexString(m[3]) + ", " + ", ...");
         System.out.println("FIRST TGT INTS: " + target[0] + ", " + target[1] + ", " + target[2] + ", " + target[3] + ", " + ", ...");
         if(target.length!=4) return 0.0; // Disallow crap here
 

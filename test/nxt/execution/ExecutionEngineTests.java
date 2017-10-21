@@ -75,6 +75,15 @@ public class ExecutionEngineTests {
         Assert.assertEquals(res, new Double(10));
     }
 
+    @Test
+    public void overriding_global_variables_in_functions() {
+        int[] u = new int[]{4, 6};
+        sandbox.inject("u", u);
+        Object res = sandbox.eval("epl", "function screw(){ u[0]=1; u[1]=1;} function sum(a, b) { screw(); return u[1] + u[0]; } sum();");
+        System.out.println("manipulating global storage, did it work? " + res);
+        Assert.assertEquals(res, new Double(2));
+    }
+
 
     public int called_val = 0;
     public double expose1(int v0){

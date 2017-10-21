@@ -3,6 +3,7 @@ import nxt.Appendix;
 import nxt.crypto.Crypto;
 import nxt.util.Convert;
 import nxt.util.Pair;
+import org.mozilla.javascript.ContextFactory;
 import org.mozilla.javascript.NativeArray;
 
 import java.security.MessageDigest;
@@ -163,6 +164,11 @@ public class Executor {
             // TO CHECK; WE GIVE I ARRAY AS M-VARIABLE TO JS, BUT IT DOES NOT CONTAIN M IN ANY CASE! PLEASE ELABORATE ON THIS, THIS MIGHT BE THE ERROR! PUT I IN M AND YOURE POSSIBLY DONE
 
             int[] i = new int[10000];
+            // fill beginning of i (or better say m array) with deterministic stuff
+            for(int pyx = 0; pyx < m.length; ++pyx)
+                i[pyx]=m[pyx];
+
+
             float[] f = new float[10000];
             double[] d = new double[10000];
             sandbox.inject("u", u);
