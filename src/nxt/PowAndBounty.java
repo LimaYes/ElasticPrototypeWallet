@@ -236,9 +236,10 @@ public final class PowAndBounty implements IPowAndBounty {
     private final int storage_bucket;
     private final byte[] validator;
 
-    private PowAndBounty prevPowAndBounty = null;
+    private long prevPowAndBounty = 0;
     private BigInteger powTarget = null;
-
+    private int powHeight = 0;
+    private int timestampReceived = 0;
 
     public long getWork_id() {
         return work_id;
@@ -261,13 +262,15 @@ public final class PowAndBounty implements IPowAndBounty {
         this.pow_hash = rs.getBytes("pow_hash");
         this.validator = rs.getBytes("validator");
         this.storage_bucket = rs.getInt("storage_bucket");
-
+        this.timestampReceived = rs.getInt("timestamp");
         long prBT = rs.getLong("prev_pow_id");
-        if(prBT==0)
-            this.prevPowAndBounty = null;
-        else
-            this.prevPowAndBounty = PowAndBounty.getPowOrBountyById(prBT);
+        if(prBT==0) {
+            this.prevPowAndBounty = 0;
 
+        }else {
+            this.prevPowAndBounty = prBT;
+        }
+        this.powHeight = rs.getInt("pow_height");
         this.powTarget = new BigInteger(rs.getBytes("pow_target"));
     }
 
@@ -284,12 +287,17 @@ public final class PowAndBounty implements IPowAndBounty {
         this.validator = attachment.getVerificator();
         this.too_late = false;
         this.storage_bucket = attachment.getStorage_bucket();
-
+        this.timestampReceived = transaction.getTimestamp();
         long prBT = attachment.getPrevious_powbty();
-        if(prBT==0)
-            this.prevPowAndBounty = null;
-        else
-            this.prevPowAndBounty = PowAndBounty.getPowOrBountyById(prBT);
+        if(prBT==0) {
+            this.prevPowAndBounty = 0;
+        }
+        else {
+            this.prevPowAndBounty = prBT;
+            PowAndBounty bt = PowAndBounty.getPowOrBountyById(prBT); // TODO, CHECK IF THIS IS OK OR IF WE NEED TO
+            // LOOK INTO MEMPOOL AS WELL
+            this.powHeight = bt.getPowChainHeight()+1;
+        }
 
         this.powTarget = attachment.getPow_target_command_level();
     }
@@ -303,8 +311,9 @@ public final class PowAndBounty implements IPowAndBounty {
         try (PreparedStatement pstmt = con.prepareStatement( /* removed storage between multiplier and validator in
         next line */
                 "MERGE INTO pow_and_bounty (id, too_late, work_id, hash, multiplier, storage_bucket, validator, " +
-                        "account_id, is_pow, verificator_hash, pow_hash, "
-                        + " height, latest) " + "KEY (id, height) " + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, TRUE)")) {
+                        "account_id, is_pow, verificator_hash, pow_hash, pow_height, timestamp, "
+                        + " height, latest) " + "KEY (id, height) " + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?," +
+                        " TRUE)")) {
             int i = 0;
             pstmt.setLong(++i, this.id);
             pstmt.setBoolean(++i, this.too_late);
@@ -318,6 +327,7 @@ public final class PowAndBounty implements IPowAndBounty {
             DbUtils.setBytes(pstmt, ++i, this.verificator_hash);
             DbUtils.setBytes(pstmt, ++i, this.pow_hash);
 
+
             // These two save retargeting relevant stuff
             if(this.getPreviousPow() != null)
                 pstmt.setLong(++i, this.getPreviousPow().getId());
@@ -325,6 +335,8 @@ public final class PowAndBounty implements IPowAndBounty {
                 pstmt.setLong(++i, 0);
 
             DbUtils.setBytes(pstmt, ++i, this.myCurrentTarget().toByteArray());
+            pstmt.setInt(++i, this.powHeight);
+            pstmt.setInt(++i, this.timestampReceived);
             pstmt.setInt(++i, Nxt.getBlockchain().getHeight());
             pstmt.executeUpdate();
         }
@@ -337,14 +349,14 @@ public final class PowAndBounty implements IPowAndBounty {
     }
 
     public int getPowChainHeight(){
-        return 0;
+        return this.powHeight;
     }
 
     public BigInteger myCurrentTarget(){
-        return BigInteger.ONE;
+        return this.powTarget;
     }
 
     public int getTimestampReceived() {
-        return 0;
+        return this.timestampReceived;
     }
 }

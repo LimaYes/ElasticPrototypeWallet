@@ -20,6 +20,10 @@ import java.math.BigInteger;
  *                                                                            *
  ******************************************************************************/
 public class FakePowAndBounty implements IPowAndBounty {
+
+    private IPowAndBounty previousPow = null;
+    public int height = 0;
+
     @Override
     public IPowAndBounty getPreviousPow() {
         return null;
