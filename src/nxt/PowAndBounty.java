@@ -236,6 +236,9 @@ public final class PowAndBounty implements IPowAndBounty {
     private final int storage_bucket;
     private final byte[] validator;
 
+    private PowAndBounty prevPowAndBounty = null;
+    private BigInteger powTarget = null;
+
 
     public long getWork_id() {
         return work_id;
@@ -258,6 +261,14 @@ public final class PowAndBounty implements IPowAndBounty {
         this.pow_hash = rs.getBytes("pow_hash");
         this.validator = rs.getBytes("validator");
         this.storage_bucket = rs.getInt("storage_bucket");
+
+        long prBT = rs.getLong("prev_pow_id");
+        if(prBT==0)
+            this.prevPowAndBounty = null;
+        else
+            this.prevPowAndBounty = PowAndBounty.getPowOrBountyById(prBT);
+
+        this.powTarget = new BigInteger(rs.getBytes("pow_target"));
     }
 
     private PowAndBounty(final Transaction transaction, final CommandPowBty attachment) {
@@ -273,6 +284,14 @@ public final class PowAndBounty implements IPowAndBounty {
         this.validator = attachment.getVerificator();
         this.too_late = false;
         this.storage_bucket = attachment.getStorage_bucket();
+
+        long prBT = attachment.getPrevious_powbty();
+        if(prBT==0)
+            this.prevPowAndBounty = null;
+        else
+            this.prevPowAndBounty = PowAndBounty.getPowOrBountyById(prBT);
+
+        this.powTarget = attachment.getPow_target_command_level();
     }
 
     public long getAccountId() {
@@ -298,6 +317,11 @@ public final class PowAndBounty implements IPowAndBounty {
             pstmt.setBoolean(++i, this.is_pow);
             DbUtils.setBytes(pstmt, ++i, this.verificator_hash);
             DbUtils.setBytes(pstmt, ++i, this.pow_hash);
+
+            // These two save retargeting relevant stuff
+            pstmt.setLong(++i, this.getPreviousPow().getId());
+            DbUtils.setBytes(pstmt, ++i, this.myCurrentTarget().toByteArray());
+
             pstmt.setInt(++i, Nxt.getBlockchain().getHeight());
             pstmt.executeUpdate();
         }

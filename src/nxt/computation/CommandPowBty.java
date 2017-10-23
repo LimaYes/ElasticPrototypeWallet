@@ -13,6 +13,7 @@ import nxt.util.Logger;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.util.Arrays;
@@ -38,6 +39,7 @@ import java.util.Arrays;
 public class CommandPowBty extends IComputationAttachment {
 
     private long work_id;
+    private long previous_powbty;
     private boolean is_proof_of_work;
     private byte[] multiplier;
     private byte[] hash;
@@ -50,11 +52,14 @@ public class CommandPowBty extends IComputationAttachment {
             verificator, int storage_bucket) {
         super();
         this.work_id = work_id;
+        this.previous_powbty = previous_powbty;
         this.is_proof_of_work = is_proof_of_work;
         this.multiplier = multiplier;
         this.hash = hash;
         this.storage_bucket = storage_bucket;
         this.verificator = verificator;
+
+        // TODO: CALCULATE TARGET
     }
 
     CommandPowBty(ByteBuffer buffer) {
@@ -67,6 +72,7 @@ public class CommandPowBty extends IComputationAttachment {
              */
 
             this.work_id = buffer.getLong();
+            this.previous_powbty = buffer.getLong();
 
             this.is_proof_of_work = (buffer.get() == (byte) 0x01) ? true : false;
 
@@ -109,12 +115,17 @@ public class CommandPowBty extends IComputationAttachment {
             e.printStackTrace(); // todo: remove for production
             // pass through any error
             this.work_id = 0;
+            this.previous_powbty = 0;
             this.is_proof_of_work = false;
             this.multiplier = new byte[0];
             this.verificator = new byte[0];
             this.hash = new byte[0];
             this.storage_bucket = 0;
         }
+    }
+
+    public long getPrevious_powbty() {
+        return previous_powbty;
     }
 
     public long getWork_id() {
@@ -148,6 +159,7 @@ public class CommandPowBty extends IComputationAttachment {
     @Override
     void putMyBytes(ByteBuffer buffer) {
         buffer.putLong(this.work_id);
+        buffer.putLong(this.previous_powbty);
         buffer.put((this.is_proof_of_work == true) ? (byte) 0x01 : (byte) 0x00);
         // Now put the "triade"
         buffer.putShort((short)this.multiplier.length);
@@ -213,6 +225,8 @@ public class CommandPowBty extends IComputationAttachment {
 
     @Override
     boolean validate(Transaction transaction) {
+
+        // TODO: validate whether prev powbty is correct
 
         // This construction avoids multiple code-evaluations which are not really required
         if(validated) return isValid;
