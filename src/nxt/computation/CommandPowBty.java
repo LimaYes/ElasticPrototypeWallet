@@ -62,7 +62,9 @@ public class CommandPowBty extends IComputationAttachment {
         this.storage_bucket = storage_bucket;
         this.verificator = verificator;
 
-        // TODO: CALCULATE TARGET
+        // TODO: CALCULATE TARGET (AND CHECK IF IT PERFORMS CORRECTLY)
+        this.powTarget = GravityWaveRetargeter.calculate(PowAndBounty.getPowOrBountyById(this.previous_powbty));
+        // TODO: Also important, check how the above gets his POWs from memory pool!
     }
 
     CommandPowBty(ByteBuffer buffer) {
@@ -229,7 +231,7 @@ public class CommandPowBty extends IComputationAttachment {
     @Override
     boolean validate(Transaction transaction) {
 
-        // TODO: validate whether prev powbty is correct
+        // TODO: validate whether prev powbty is correct and check targerts
 
         // This construction avoids multiple code-evaluations which are not really required
         if(validated) return isValid;
