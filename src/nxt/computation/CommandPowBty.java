@@ -48,7 +48,10 @@ public class CommandPowBty extends IComputationAttachment {
     private boolean isValid = false;
     private int storage_bucket;
 
-    public CommandPowBty(long work_id, boolean is_proof_of_work, byte[] multiplier, byte[] hash,  byte[]
+    private BigInteger powTarget = null; // TODO: CALCULATE
+
+    public CommandPowBty(long work_id, long previous_powbty, boolean is_proof_of_work, byte[] multiplier, byte[] hash,
+                         byte[]
             verificator, int storage_bucket) {
         super();
         this.work_id = work_id;
@@ -371,5 +374,9 @@ public class CommandPowBty extends IComputationAttachment {
         if (longBytes == null) longBytes = new byte[0];
         dig.update(longBytes);
         return dig.digest();
+    }
+
+    public BigInteger getPow_target_command_level() {
+        return powTarget;
     }
 }

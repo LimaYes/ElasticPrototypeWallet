@@ -319,9 +319,12 @@ public final class PowAndBounty implements IPowAndBounty {
             DbUtils.setBytes(pstmt, ++i, this.pow_hash);
 
             // These two save retargeting relevant stuff
-            pstmt.setLong(++i, this.getPreviousPow().getId());
-            DbUtils.setBytes(pstmt, ++i, this.myCurrentTarget().toByteArray());
+            if(this.getPreviousPow() != null)
+                pstmt.setLong(++i, this.getPreviousPow().getId());
+            else
+                pstmt.setLong(++i, 0);
 
+            DbUtils.setBytes(pstmt, ++i, this.myCurrentTarget().toByteArray());
             pstmt.setInt(++i, Nxt.getBlockchain().getHeight());
             pstmt.executeUpdate();
         }

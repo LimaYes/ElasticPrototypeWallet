@@ -98,7 +98,7 @@ public class MessageEncoder {
     }
 
 
-    public static void push(IComputationAttachment work, String secretPhrase) throws NxtException, IOException {
+    public static long push(IComputationAttachment work, String secretPhrase) throws NxtException, IOException {
         Appendix.PrunablePlainMessage[] messages = MessageEncoder.encodeAttachment(work);
         JSONStreamAware[] individual_txs = MessageEncoder.encodeTransactions(messages, secretPhrase);
         StringWriter sw = new StringWriter();
@@ -107,7 +107,7 @@ public class MessageEncoder {
             individual_txs[i].writeJSONString(pw);
         }
         StringBuffer sb = sw.getBuffer();
-        MessageEncoder.pushThemAll(individual_txs);
+        return MessageEncoder.pushThemAll(individual_txs);
     }
 
     public static Appendix.PrunablePlainMessage[] extractMessages(Transaction _t) throws NxtException.ValidationException {
@@ -170,9 +170,9 @@ public class MessageEncoder {
         return array_tx.toArray(new JSONStreamAware[msgs.length]);
     }
 
-    public static void pushThemAll(JSONStreamAware[] aw) throws NxtException.ValidationException, ParameterException {
+    public static long pushThemAll(JSONStreamAware[] aw) throws NxtException.ValidationException, ParameterException {
         List<Transaction> toPush = new ArrayList<>();
-
+        long lastPushed = 0;
         for(int i=0;i<aw.length;++i)
         {
             Transaction.Builder builder = ParameterParser.parseTransaction(aw[i].toString(), null, null);
@@ -183,7 +183,9 @@ public class MessageEncoder {
 
         for(Transaction t : toPush){
             Nxt.getTransactionProcessor().broadcast(t);
+            lastPushed = t.getId();
         }
+        return lastPushed;
     }
 
     public static Appendix.PrunablePlainMessage[] encodeAttachment(IComputationAttachment att){

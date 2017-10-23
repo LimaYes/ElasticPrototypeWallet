@@ -48,7 +48,9 @@ public final class SubmitSolution extends CreateTransaction {
         if(is_pow == true)
             hash = Convert.EMPTY_BYTE;
 
-        CommandPowBty work = new CommandPowBty(workId, is_pow, multiplicator, hash, data, storageId);
+        long prevId = 0; // TODO: GET CORRECT PREVID FROM CURRENT MEMPOOL OR LAST DB ENTRY
+
+        CommandPowBty work = new CommandPowBty(workId, prevId, is_pow, multiplicator, hash, data, storageId);
 
         try {
             MessageEncoder.push(work, ParameterParser.getSecretPhrase(req, true));
