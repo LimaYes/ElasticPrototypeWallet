@@ -11,7 +11,7 @@ public class BigIntegerComparison {
     public void testTargetBigint(){
         BigInteger f = new BigInteger("00000FFFFFFFFFFFFFFFFFFFFFFFFFFF", 16);
         int[] ints = Convert.bigintToInts(f);
-        System.out.println("ByteArrayInteger: " + Convert.toHexString(f.toByteArray()));
+        System.out.println("ByteArrayInteger: " + Convert.toHexString(Convert.toNoMatterSignedByteArray(f)));
         System.out.println("Integers in HEX format:");
         for(int i=0;i<ints.length;++i){
             System.out.println(Convert.toHexString(Convert.int2byte(new int[]{ints[i]})));
@@ -21,7 +21,7 @@ public class BigIntegerComparison {
 
         // With minlength
         ints = Convert.bigintToInts(f,5);
-        System.out.println("ByteArrayInteger: " + Convert.toHexString(f.toByteArray()));
+        System.out.println("ByteArrayInteger: " + Convert.toHexString(Convert.toNoMatterSignedByteArray(f)));
         System.out.println("Integers in HEX format:");
         for(int i=0;i<ints.length;++i){
             System.out.println(Convert.toHexString(Convert.int2byte(new int[]{ints[i]})));
@@ -29,6 +29,15 @@ public class BigIntegerComparison {
         Assert.assertTrue(ints[0]==0x00);
         Assert.assertTrue(ints[1]==0x00000fff);
         Assert.assertTrue(ints.length==5);
+
+        f = new BigInteger("FFFFFFFFFFFFFFFFFFFFFFFF", 16);
+        ints = Convert.bigintToInts(f);
+        System.out.println("ByteArrayInteger: " + Convert.toHexString(Convert.toNoMatterSignedByteArray(f)));
+        System.out.println("Integers in HEX format:");
+        for(int i=0;i<ints.length;++i){
+            System.out.println(Convert.toHexString(Convert.int2byte(new int[]{ints[i]})));
+        }
+        Assert.assertTrue(ints.length==3);
     }
 }
 

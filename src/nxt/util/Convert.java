@@ -354,9 +354,19 @@ public final class Convert {
         return o1.length - o2.length;
     };
 
+    public static byte[] toNoMatterSignedByteArray(BigInteger value) {
+        byte[] array = value.toByteArray();
+        if (array[0] == 0) {
+            byte[] tmp = new byte[array.length - 1];
+            System.arraycopy(array, 1, tmp, 0, tmp.length);
+            array = tmp;
+        }
+        return array;
+    }
+
     public static int[] bigintToInts(BigInteger f) {
         try {
-            byte[] byarr = f.toByteArray();
+            byte[] byarr = toNoMatterSignedByteArray(f);
             int numInts = (int) Math.ceil(1.0 * byarr.length / 4);
             int rest = byarr.length % 4;
             if (rest == 0) rest = 4;
