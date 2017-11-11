@@ -25,6 +25,11 @@ public class GravityWaveRetargeter {
 
     public static BigInteger calculate(IPowAndBounty prev) {
         /* original work done by evan duffield, modified for java and XEL POW packages */
+
+        // prev == null if there is no previous bounty. This means, give us some default value
+        if(prev==null){
+            return new BigInteger("00000FFFFFFFFFFFFFFFFFFFFFFFFFFF", 16); // TODO: Make better logic for initial difficulty
+        }
         
         IPowAndBounty previousBlock = prev;
         int blockTime = ComputationConstants.TIME_PER_POW_TARGET_IN_SECONDS; //

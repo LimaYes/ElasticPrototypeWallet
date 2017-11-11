@@ -35,6 +35,7 @@ public enum APIEnum {
     GET_MINEABLE_WORK("getMineableWork", GetMineableWork.instance),
     CANCEL_WORK("cancelWork", CancelWork.instance),
     SUBMIT_SOLUTION("submitSolution", SubmitSolution.instance),
+    LONGPOLL("longpoll",  Longpoll.instance),
     /* ELASTIC SPECIFIC END */
 
     APPROVE_TRANSACTION("approveTransaction", ApproveTransaction.instance),

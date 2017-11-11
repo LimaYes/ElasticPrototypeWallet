@@ -36,7 +36,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import static nxt.TransactionType.SUBTYPE_PAYMENT_REDEEM;
 import static nxt.TransactionType.TYPE_PAYMENT;
 
-final class TransactionProcessorImpl implements TransactionProcessor {
+public final class TransactionProcessorImpl implements TransactionProcessor {
 
     private static final boolean enableTransactionRebroadcasting = Nxt.getBooleanProperty("nxt.enableTransactionRebroadcasting");
     private static final boolean testUnconfirmedTransactions = Nxt.getBooleanProperty("nxt.testUnconfirmedTransactions");
@@ -48,7 +48,7 @@ final class TransactionProcessorImpl implements TransactionProcessor {
 
     private static final TransactionProcessorImpl instance = new TransactionProcessorImpl();
 
-    static TransactionProcessorImpl getInstance() {
+    public static TransactionProcessorImpl getInstance() {
         return instance;
     }
 

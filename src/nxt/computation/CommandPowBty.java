@@ -63,9 +63,13 @@ public class CommandPowBty extends IComputationAttachment {
         this.verificator = verificator;
 
 
-        this.powTarget = new BigInteger("00000FFFFFFFFFFFFFFFFFFFFFFFFFFF", 16);
-        // TODO: CALCULATE TARGET (AND CHECK IF IT PERFORMS CORRECTLY)
-       // this.powTarget = GravityWaveRetargeter.calculate(PowAndBounty.getPowOrBountyById(this.previous_powbty));
+        if(this.previous_powbty==0){
+            this.powTarget = GravityWaveRetargeter.calculate(null);
+
+        }else{
+            this.powTarget = GravityWaveRetargeter.calculate(PowAndBounty.getPowOrBountyById(this.previous_powbty));
+
+        }
         // TODO: Also important, check how the above gets his POWs from memory pool!
     }
 
@@ -81,7 +85,6 @@ public class CommandPowBty extends IComputationAttachment {
             this.work_id = buffer.getLong();
             this.previous_powbty = buffer.getLong();
 
-            this.powTarget = new BigInteger("00000FFFFFFFFFFFFFFFFFFFFFFFFFFF", 16); // TODO: GET FROM DB
 
             this.is_proof_of_work = (buffer.get() == (byte) 0x01) ? true : false;
 
@@ -119,6 +122,14 @@ public class CommandPowBty extends IComputationAttachment {
             buffer.get(verificator);
             System.out.println("POWBTY - About to decode " + this.storage_bucket);
 
+            if(this.previous_powbty==0){
+                this.powTarget = GravityWaveRetargeter.calculate(null);
+
+            }else{
+                this.powTarget = GravityWaveRetargeter.calculate(PowAndBounty.getPowOrBountyById(this.previous_powbty));
+
+            }
+
 
         } catch (Exception e) {
             e.printStackTrace(); // todo: remove for production
@@ -130,6 +141,7 @@ public class CommandPowBty extends IComputationAttachment {
             this.verificator = new byte[0];
             this.hash = new byte[0];
             this.storage_bucket = 0;
+            this.powTarget = null;
         }
     }
 
@@ -233,6 +245,9 @@ public class CommandPowBty extends IComputationAttachment {
 
     @Override
     boolean validate(Transaction transaction) {
+
+
+        // TODO: We need to fix CHAIN VALIDATION (prev bounty)
 
         // TODO: validate whether prev powbty is correct and check targerts
 
