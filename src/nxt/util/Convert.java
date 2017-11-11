@@ -354,4 +354,53 @@ public final class Convert {
         return o1.length - o2.length;
     };
 
+    public static int[] bigintToInts(BigInteger f) {
+        try {
+            byte[] byarr = f.toByteArray();
+            int numInts = (int) Math.ceil(1.0 * byarr.length / 4);
+            int rest = byarr.length % 4;
+            if (rest == 0) rest = 4;
+            int[] res = new int[numInts];
+            byte[] input = new byte[]{0,0,0,0};
+            for (int i = 0; i < numInts; ++i) {
+                if (i == 0) {
+                    // highest significant bits
+                    if(rest==1){
+                        input[3] = byarr[0];
+                    }else if(rest==2){
+                        input[2] = byarr[0];
+                        input[3] = byarr[1];
+                    }else if(rest==3){
+                        input[1] = byarr[0];
+                        input[2] = byarr[1];
+                        input[3] = byarr[2];
+                    }
+                } else {
+                    // regular case
+                    input[0] = byarr[byarr.length-4*(numInts-i)];
+                    input[1] = byarr[byarr.length-4*(numInts-i)+1];
+                    input[2] = byarr[byarr.length-4*(numInts-i)+2];
+                    input[3] = byarr[byarr.length-4*(numInts-i)+3];
+
+                }
+                res[i] = Convert.byte2int(input)[0];
+            }
+            return res;
+        }catch(Exception e){
+            e.printStackTrace();
+            return new int[]{0, 0, 0, 0, 0, 0, 0, 0}; // some fallback value, should not be triggered anyway if things are coded well
+        }
+    }
+    public static int[] bigintToInts(BigInteger f, int min_length) {
+            int[] interm = bigintToInts(f);
+            int[] stretched = new int[min_length];
+            if(stretched.length>=interm.length){
+                int cntr = 0;
+                for(int i=interm.length-1;i>=0;i--){
+                    stretched[stretched.length-1-cntr] = interm[i];
+                    cntr++;
+                }
+            }
+            return stretched;
+    }
 }

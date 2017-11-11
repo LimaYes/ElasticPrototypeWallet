@@ -81,6 +81,8 @@ public class CommandPowBty extends IComputationAttachment {
             this.work_id = buffer.getLong();
             this.previous_powbty = buffer.getLong();
 
+            this.powTarget = new BigInteger("00000FFFFFFFFFFFFFFFFFFFFFFFFFFF", 16); // TODO: GET FROM DB
+
             this.is_proof_of_work = (buffer.get() == (byte) 0x01) ? true : false;
 
             // First read in the multiplicator
@@ -294,7 +296,10 @@ public class CommandPowBty extends IComputationAttachment {
             return false;
         }
 
-        int[] target = new int[]{-1,-1,-1,-1};
+        BigInteger myTarget = this.getPow_target_command_level();
+        int[] target = Convert.bigintToInts(myTarget,4);
+        // safeguard
+        if(target.length!=4) target = new int[]{0,0,0,0};
 
         // reset last pow cache so we safely can detect a faulty execution / abortion
         ExposedToRhino.lastCalculatedPowHash = null;
