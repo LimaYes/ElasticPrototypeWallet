@@ -357,9 +357,7 @@ public final class Convert {
     public static byte[] toNoMatterSignedByteArray(BigInteger value) {
         byte[] array = value.toByteArray();
         if (array[0] == 0) {
-            byte[] tmp = new byte[array.length - 1];
-            System.arraycopy(array, 1, tmp, 0, tmp.length);
-            array = tmp;
+            array = Arrays.copyOfRange(array, 1, array.length);
         }
         return array;
     }
@@ -384,6 +382,11 @@ public final class Convert {
                         input[1] = byarr[0];
                         input[2] = byarr[1];
                         input[3] = byarr[2];
+                    }else if(rest==4){
+                        input[0] = byarr[0];
+                        input[1] = byarr[1];
+                        input[2] = byarr[2];
+                        input[3] = byarr[3];
                     }
                 } else {
                     // regular case

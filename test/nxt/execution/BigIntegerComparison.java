@@ -38,6 +38,8 @@ public class BigIntegerComparison {
             System.out.println(Convert.toHexString(Convert.int2byte(new int[]{ints[i]})));
         }
         Assert.assertTrue(ints.length==3);
+        Assert.assertTrue(ints[0]==0xFFFFFFFF);
+
     }
 }
 
