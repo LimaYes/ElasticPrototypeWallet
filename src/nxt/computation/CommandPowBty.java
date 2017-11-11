@@ -62,8 +62,10 @@ public class CommandPowBty extends IComputationAttachment {
         this.storage_bucket = storage_bucket;
         this.verificator = verificator;
 
+
+        this.powTarget = new BigInteger("00000FFFFFFFFFFFFFFFFFFFFFFFFFFF", 16);
         // TODO: CALCULATE TARGET (AND CHECK IF IT PERFORMS CORRECTLY)
-        this.powTarget = GravityWaveRetargeter.calculate(PowAndBounty.getPowOrBountyById(this.previous_powbty));
+       // this.powTarget = GravityWaveRetargeter.calculate(PowAndBounty.getPowOrBountyById(this.previous_powbty));
         // TODO: Also important, check how the above gets his POWs from memory pool!
     }
 
@@ -148,7 +150,7 @@ public class CommandPowBty extends IComputationAttachment {
 
     @Override
     int getMySize() {
-        return 8 + 1 + 2 + 2 + 2 + this.multiplier.length + this.verificator.length  + this.hash.length  + 4 /*storage bucket in t */;
+        return 8 + 8 + 1 + 2 + 2 + 2 + this.multiplier.length + this.verificator.length  + this.hash.length  + 4 /*storage bucket in t */;
     }
 
     @Override
@@ -175,7 +177,6 @@ public class CommandPowBty extends IComputationAttachment {
         buffer.putShort((short)this.verificator.length);
         buffer.put(this.verificator);
 
-        System.out.println("POWBTY - About to encode " + this.storage_bucket);
     }
 
     public byte[] getMultiplier() {
@@ -299,12 +300,12 @@ public class CommandPowBty extends IComputationAttachment {
         ExposedToRhino.lastCalculatedPowHash = null;
 
         // Validate code-level
-        if (this.is_proof_of_work && !validatePow(transaction.getSenderPublicKey(), transaction.getBlockId(),
+        if (this.is_proof_of_work && !validatePow(transaction.getSenderPublicKey(), w.getBlock_id(),
                 work_id, w.getVerifyFunction(), target)) {
             Logger.logInfoMessage("Work " + String.valueOf(w.getId()) + " verification failed: proof of work checks in code execution failed.");
             return false;
         }
-        if (!this.is_proof_of_work && !validateBty(transaction.getSenderPublicKey(), transaction.getBlockId(),
+        if (!this.is_proof_of_work && !validateBty(transaction.getSenderPublicKey(), w.getBlock_id(),
                 work_id, w.getVerifyFunction(), target)) {
             Logger.logInfoMessage("Work " + String.valueOf(w.getId()) + " verification failed: bounty checks in code execution failed.");
             return false;

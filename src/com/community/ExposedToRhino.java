@@ -26,13 +26,15 @@ public class ExposedToRhino {
 
     public static final byte[] intToByteArray(int value)
     {
-        return new byte[]  { (byte)(value >>> 24), (byte)(value >> 16 & 0xff), (byte)(value >> 8 & 0xff), (byte)(value & 0xff) };
+        return new byte[]  { (byte)(value&0xff), (byte)((value >> 8) & 0xff), (byte)((value >> 16) & 0xff), (byte)((value >>24) & 0xff) };
     }
 
     public double check_pow(int v0,int v1,int v2,int v3, int[] m, int[] target){
 
         System.out.println("GOT ARGUMENTS TO CHECKPOW: " + Integer.toHexString(v0) + ", " + Integer.toHexString(v1) + ", " + Integer.toHexString(v2) + ", " + Integer.toHexString(v3) + ", " + ", ...");
-        System.out.println("FIRST M INTS: " + Integer.toHexString(m[0]) + ", " + Integer.toHexString(m[1]) + ", " + Integer.toHexString(m[2]) + ", " + Integer.toHexString(m[3]) + ", " + ", ...");
+        System.out.println("FIRST M HEXS: " + Integer.toHexString(m[0]) + ", " + Integer.toHexString(m[1]) + ", " + Integer.toHexString(m[2]) + ", " + Integer.toHexString(m[3]) + ", " + ", ...");
+        System.out.println("FIRST M INTS: " + Integer.toString(m[0]) + ", " + Integer.toString(m[1]) + ", " + Integer.toString(m[2]) + ", " + Integer.toString(m[3]) + ", " + ", ...");
+
         System.out.println("FIRST TGT INTS: " + target[0] + ", " + target[1] + ", " + target[2] + ", " + target[3] + ", " + ", ...");
         if(target.length!=4) return 0.0; // Disallow crap here
 
@@ -52,7 +54,7 @@ public class ExposedToRhino {
             byte[] fullByteArray = baos.toByteArray();
 
             // TODO: SOMEHOW THIS ROUTINE ALLOWS MULTIPLE SUBMISSIONS WITH THE SAME POW HASH! THIS SHOULD BE AVOIDED AT ALL COSTS!!!
-
+            System.out.println("INPUT FOR HASH CALCULATION:");
 
             byte[] ret = MessageDigest.getInstance("MD5").digest(fullByteArray);
 
@@ -60,9 +62,14 @@ public class ExposedToRhino {
             System.out.println("===================================");
             System.out.println("Inp: " + Convert.toHexString(fullByteArray));
             System.out.println("Out: " + Convert.toHexString(ret));
+
             lastCalculatedPowHash = ret;
 
             int[] hash32 = Convert.byte2int(ret);
+            // We need to swap that to match xel_miner which uses some strange endianness swap on its pow_hash
+            for (int i = 0; i < 4; i++)
+                hash32[i] = Convert.swap(hash32[i]);
+
 
             // todo: remove for production
             System.out.println("Difficulty Checks (hash vs target):");
