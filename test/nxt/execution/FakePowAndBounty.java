@@ -35,10 +35,6 @@ public class FakePowAndBounty implements IPowAndBounty {
         int blkt = 0;
         double fct = 0;
 
-        if(this.height==33){
-            fct = 0; // Just a debug mark
-        }
-
         if(this.previousPow==null){
             this.powTarget = GravityWaveRetargeter.calculate(null);
             this.timestamp = (int)(System.currentTimeMillis() / 1000L);

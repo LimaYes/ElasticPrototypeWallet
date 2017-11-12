@@ -24,6 +24,10 @@ public class GravityWaveRetargeter {
     // Give the previous POW (which is the current POW prior adding a new POW) to get the target for the new pow!
 
     public static BigInteger calculate(IPowAndBounty prev) {
+
+        int blocksMin=2;
+        int blocksMax=4;
+
         /* original work done by evan duffield, modified for java and XEL POW packages */
 
         // prev == null if there is no previous bounty. This means, give us some default value
@@ -35,10 +39,11 @@ public class GravityWaveRetargeter {
         int blockTime = ComputationConstants.TIME_PER_POW_TARGET_IN_SECONDS; //
         int nActualTimespan = 0;
         int lastBlockTime = 0;
-        int blockCount = 0;
-        BigInteger sumTargets = BigInteger.ZERO;
+        int blockCount;
+        BigInteger PastDifficultyAverage = BigInteger.ZERO;
+        BigInteger PastDifficultyAveragePrev = BigInteger.ZERO;
 
-        if (previousBlock.getPowChainHeight() == 0 || previousBlock.getPowChainHeight() < 24) {
+        if (previousBlock.getPowChainHeight() == 0 || previousBlock.getPowChainHeight() < blocksMin) {
             // This is the first block or the height is < PastBlocksMin
             // Return minimal required work. (1e0ffff0)
             return ComputationConstants.MAXIMAL_WORK_TARGET;
@@ -46,17 +51,17 @@ public class GravityWaveRetargeter {
 
         IPowAndBounty currentBlock = previousBlock;
         // loop over the past n blocks, where n == PastBlocksMax
-        for (blockCount = 1; currentBlock != null && currentBlock.getPowChainHeight() > 0 && blockCount <= 24;
-             blockCount++) {
+        for (blockCount = 1; currentBlock != null && currentBlock.getPowChainHeight() > 0; blockCount++) {
+            if(blockCount > blocksMax) break;
+
             // Calculate average difficulty based on the blocks we iterate over in this for loop
-            if (blockCount <= 24) {
-                BigInteger currentTarget = currentBlock.myCurrentTarget();
+            if (blockCount <= blocksMin) {
                 if (blockCount == 1) {
-                    sumTargets = currentTarget;
-                    sumTargets = sumTargets.add(currentTarget);
+                    PastDifficultyAverage = currentBlock.myCurrentTarget();
                 } else {
-                    sumTargets = sumTargets.add(currentTarget);
+                    PastDifficultyAverage = PastDifficultyAveragePrev.divide(BigInteger.valueOf(blockCount+1)).multiply(BigInteger.valueOf((long)blockCount)).add(currentBlock.myCurrentTarget());
                 }
+                PastDifficultyAveragePrev = PastDifficultyAverage;
             }
 
             // If this is the second iteration (LastBlockTime was set)
@@ -73,10 +78,11 @@ public class GravityWaveRetargeter {
         }
 
         // darkTarget is the difficulty
-        BigInteger darkTarget = sumTargets.divide(BigInteger.valueOf(blockCount));
+        BigInteger darkTarget = PastDifficultyAverage;
+
 
         // nTargetTimespan is the time that the CountBlocks should have taken to be generated.
-        int nTargetTimespan = (blockCount - 1) * blockTime;
+        int nTargetTimespan = (blockCount) * blockTime;
 
         // Limit the re-adjustment to 3x or 0.33x
         // We don't want to increase/decrease diff too much.
@@ -86,9 +92,7 @@ public class GravityWaveRetargeter {
             nActualTimespan = (int) ((double) nTargetTimespan * 3.0);
 
         // Calculate the new difficulty based on actual and target timespan.
-        BigInteger wew = darkTarget.multiply(BigInteger.valueOf(nActualTimespan));
-        BigInteger aas = wew.divide(BigInteger.valueOf(nTargetTimespan));
-        darkTarget = darkTarget.multiply(BigInteger.valueOf(nActualTimespan)).divide(BigInteger.valueOf(nTargetTimespan));
+        darkTarget = (darkTarget.multiply(BigInteger.valueOf(nActualTimespan)).divide(BigInteger.valueOf(nTargetTimespan)));
 
         // Stay within the bounds
         if(darkTarget.compareTo(ComputationConstants.MAXIMAL_WORK_TARGET)==1)
