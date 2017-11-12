@@ -143,9 +143,6 @@ public final class Longpoll extends APIServlet.APIRequestHandler {
 	@Override
 	protected JSONStreamAware processRequest(final HttpServletRequest req) throws NxtException {
 
-
-
-
 		final JSONObject response = new JSONObject();
 		Logger.logDebugMessage("Longpoll request from: " + req.getRemoteAddr() + " (" + req.getRemoteHost() + ")");
 		if(req.getRemoteAddr().equalsIgnoreCase("127.0.0.1")==false){

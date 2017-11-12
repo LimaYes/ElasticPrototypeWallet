@@ -28,7 +28,7 @@ public class GravityWaveRetargeter {
 
         // prev == null if there is no previous bounty. This means, give us some default value
         if(prev==null){
-            return new BigInteger("00000FFFFFFFFFFFFFFFFFFFFFFFFFFF", 16); // TODO: Make better logic for initial difficulty
+            return ComputationConstants.MAXIMAL_WORK_TARGET; // TODO: Make better logic for initial difficulty
         }
         
         IPowAndBounty previousBlock = prev;
@@ -41,7 +41,7 @@ public class GravityWaveRetargeter {
         if (previousBlock.getPowChainHeight() == 0 || previousBlock.getPowChainHeight() < 24) {
             // This is the first block or the height is < PastBlocksMin
             // Return minimal required work. (1e0ffff0)
-            return ComputationConstants.MINIMAL_WORK_TARGET;
+            return ComputationConstants.MAXIMAL_WORK_TARGET;
         }
 
         IPowAndBounty currentBlock = previousBlock;
@@ -76,7 +76,7 @@ public class GravityWaveRetargeter {
         BigInteger darkTarget = sumTargets.divide(BigInteger.valueOf(blockCount));
 
         // nTargetTimespan is the time that the CountBlocks should have taken to be generated.
-        int nTargetTimespan = (blockCount - 1) * 60 * blockTime;
+        int nTargetTimespan = (blockCount - 1) * blockTime;
 
         // Limit the re-adjustment to 3x or 0.33x
         // We don't want to increase/decrease diff too much.
@@ -94,4 +94,5 @@ public class GravityWaveRetargeter {
         // Return the new diff.
         return darkTarget;
     }
+
 }

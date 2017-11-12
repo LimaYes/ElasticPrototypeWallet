@@ -51,4 +51,5 @@ public class ComputationConstants {
     public static final short MD5LEN = 16 ;
     public static final int TIME_PER_POW_TARGET_IN_SECONDS = 20;
     public static final BigInteger MINIMAL_WORK_TARGET = BigInteger.ONE; // TODO, FIX THE VALUE
+    public static final BigInteger MAXIMAL_WORK_TARGET = new BigInteger("00000FFFFFFFFFFFFFFFFFFFFFFFFFFF", 16);
 }

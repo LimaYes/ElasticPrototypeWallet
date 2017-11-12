@@ -1,6 +1,10 @@
-package nxt.computation;
+package nxt.execution;
 
 import nxt.*;
+import nxt.computation.CommandCancelWork;
+import nxt.computation.CommandNewWork;
+import nxt.computation.CommandPowBty;
+import nxt.computation.MessageEncoder;
 import nxt.db.DbIterator;
 import nxt.execution.ExecutionEngineTests;
 import nxt.helpers.RedeemFunctions;
