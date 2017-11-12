@@ -90,6 +90,11 @@ public class GravityWaveRetargeter {
         BigInteger aas = wew.divide(BigInteger.valueOf(nTargetTimespan));
         darkTarget = darkTarget.multiply(BigInteger.valueOf(nActualTimespan)).divide(BigInteger.valueOf(nTargetTimespan));
 
+        // Stay within the bounds
+        if(darkTarget.compareTo(ComputationConstants.MAXIMAL_WORK_TARGET)==1)
+            darkTarget = ComputationConstants.MAXIMAL_WORK_TARGET;
+        else if(darkTarget.compareTo(ComputationConstants.MINIMAL_WORK_TARGET)==-1)
+            darkTarget = ComputationConstants.MINIMAL_WORK_TARGET;
 
         // Return the new diff.
         return darkTarget;
