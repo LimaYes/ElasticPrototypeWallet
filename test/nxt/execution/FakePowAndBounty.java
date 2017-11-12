@@ -43,7 +43,7 @@ public class FakePowAndBounty implements IPowAndBounty {
             BigDecimal p = new BigDecimal(this.powTarget);
             //BigDecimal m = new BigDecimal(new BigInteger("0000000AFFFFFFFFFFFFFFFFFFFFFFFF", 16));
             BigDecimal m = new BigDecimal(ComputationConstants.MAXIMAL_WORK_TARGET.divide(BigInteger.ONE.add(BigInteger.ONE)));
-            double tgt = 20;
+            double tgt = ComputationConstants.TIME_PER_POW_TARGET_IN_SECONDS;
             BigDecimal factor = p.divide(m, 2, RoundingMode.HALF_UP);
             fct = factor.doubleValue();
             tgt = tgt / fct;
