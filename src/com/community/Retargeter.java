@@ -1,4 +1,6 @@
-package nxt;
+package com.community;
+
+import nxt.computation.ComputationConstants;
 
 import java.math.BigInteger;
 
@@ -17,9 +19,8 @@ import java.math.BigInteger;
  * Removal or modification of this copyright notice is prohibited.            *
  *                                                                            *
  ******************************************************************************/
-public interface IPowAndBounty {
-    IPowAndBounty getPreviousPow();
-    int getPowChainHeight();
-    BigInteger myCurrentTarget();
-    int getTimestampReceived();
+public class Retargeter {
+    public static BigInteger getPowTargetAtHeight(int height) {
+        return ComputationConstants.MAXIMAL_WORK_TARGET;
+    }
 }

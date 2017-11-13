@@ -2,10 +2,8 @@ package nxt.computation;
 
 import com.community.Executor;
 import com.community.ExposedToRhino;
-import nxt.NxtException;
-import nxt.PowAndBounty;
-import nxt.Transaction;
-import nxt.Work;
+import com.community.Retargeter;
+import nxt.*;
 import nxt.crypto.Crypto;
 import nxt.util.Convert;
 import nxt.util.Logger;
@@ -39,7 +37,6 @@ import java.util.Arrays;
 public class CommandPowBty extends IComputationAttachment {
 
     private long work_id;
-    private long previous_powbty;
     private boolean is_proof_of_work;
     private byte[] multiplier;
     private byte[] hash;
@@ -48,29 +45,16 @@ public class CommandPowBty extends IComputationAttachment {
     private boolean isValid = false;
     private int storage_bucket;
 
-    private BigInteger powTarget = null; // TODO: CALCULATE
-
     public CommandPowBty(long work_id, long previous_powbty, boolean is_proof_of_work, byte[] multiplier, byte[] hash,
                          byte[]
             verificator, int storage_bucket) {
         super();
         this.work_id = work_id;
-        this.previous_powbty = previous_powbty;
         this.is_proof_of_work = is_proof_of_work;
         this.multiplier = multiplier;
         this.hash = hash;
         this.storage_bucket = storage_bucket;
         this.verificator = verificator;
-
-
-        if(this.previous_powbty==0){
-            this.powTarget = GravityWaveRetargeter.calculate(null);
-
-        }else{
-            this.powTarget = GravityWaveRetargeter.calculate(PowAndBounty.getPowOrBountyById(this.previous_powbty));
-
-        }
-        // TODO: Also important, check how the above gets his POWs from memory pool!
     }
 
     CommandPowBty(ByteBuffer buffer) {
@@ -83,7 +67,6 @@ public class CommandPowBty extends IComputationAttachment {
              */
 
             this.work_id = buffer.getLong();
-            this.previous_powbty = buffer.getLong();
 
 
             this.is_proof_of_work = (buffer.get() == (byte) 0x01) ? true : false;
@@ -121,33 +104,18 @@ public class CommandPowBty extends IComputationAttachment {
             verificator = new byte[readsize];
             buffer.get(verificator);
             System.out.println("POWBTY - About to decode " + this.storage_bucket);
-
-            if(this.previous_powbty==0){
-                this.powTarget = GravityWaveRetargeter.calculate(null);
-
-            }else{
-                this.powTarget = GravityWaveRetargeter.calculate(PowAndBounty.getPowOrBountyById(this.previous_powbty));
-
-            }
-
-
         } catch (Exception e) {
             e.printStackTrace(); // todo: remove for production
             // pass through any error
             this.work_id = 0;
-            this.previous_powbty = 0;
             this.is_proof_of_work = false;
             this.multiplier = new byte[0];
             this.verificator = new byte[0];
             this.hash = new byte[0];
             this.storage_bucket = 0;
-            this.powTarget = null;
         }
     }
 
-    public long getPrevious_powbty() {
-        return previous_powbty;
-    }
 
     public long getWork_id() {
         return work_id;
@@ -164,7 +132,7 @@ public class CommandPowBty extends IComputationAttachment {
 
     @Override
     int getMySize() {
-        return 8 + 8 + 1 + 2 + 2 + 2 + this.multiplier.length + this.verificator.length  + this.hash.length  + 4 /*storage bucket in t */;
+        return 8 + 1 + 2 + 2 + 2 + this.multiplier.length + this.verificator.length  + this.hash.length  + 4 /*storage bucket in t */;
     }
 
     @Override
@@ -180,7 +148,6 @@ public class CommandPowBty extends IComputationAttachment {
     @Override
     void putMyBytes(ByteBuffer buffer) {
         buffer.putLong(this.work_id);
-        buffer.putLong(this.previous_powbty);
         buffer.put((this.is_proof_of_work == true) ? (byte) 0x01 : (byte) 0x00);
         // Now put the "triade"
         buffer.putShort((short)this.multiplier.length);
@@ -247,13 +214,10 @@ public class CommandPowBty extends IComputationAttachment {
     boolean validate(Transaction transaction) {
 
 
-        // TODO: We need to fix CHAIN VALIDATION (prev bounty)
-
-        // TODO: validate whether prev powbty is correct and check targerts
-
         // This construction avoids multiple code-evaluations which are not really required
         if(validated) return isValid;
         validated = true;
+
         if (this.work_id == 0) return false;
         Work w = Work.getWork(this.work_id);
         if (w == null) return false;
@@ -261,6 +225,7 @@ public class CommandPowBty extends IComputationAttachment {
 
         // todo, check if double spending prevention has to rely on verificator hash as well? But if yes ... what do we do with same hashes (hash len = 0 is always the same)
 
+        // TODO: Check the following
         // Now check for duplicate entry (I guess verificator hash is enough, isn't it?)
         /*byte[] myHash = this.getVerificatorHash();
         if(PowAndBounty.hasVerificatorHash(w.getId(), myHash))
@@ -311,7 +276,9 @@ public class CommandPowBty extends IComputationAttachment {
             return false;
         }
 
-        BigInteger myTarget = this.getPow_target_command_level();
+        BigInteger myTarget = Retargeter.getPowTargetAtHeight(transaction.getHeight()); // TODO: Make sure target is
+        // calculated correctly here
+
         int[] target = Convert.bigintToInts(myTarget,4);
         // safeguard
         if(target.length!=4) target = new int[]{0,0,0,0};
@@ -399,7 +366,4 @@ public class CommandPowBty extends IComputationAttachment {
         return dig.digest();
     }
 
-    public BigInteger getPow_target_command_level() {
-        return powTarget;
-    }
 }

@@ -1207,7 +1207,7 @@ class NxtDbVersion extends DbVersion {
                                 "BOOLEAN NOT NULL DEFAULT FALSE, work_id BIGINT NOT NULL, hash BINARY(32), multiplier" +
                                 " VARBINARY, storage_bucket INT, validator VARBINARY, account_id BIGINT NOT NULL, " +
                                 "is_pow BOOLEAN NOT NULL DEFAULT TRUE, verificator_hash BINARY(32), pow_hash BINARY" +
-                                "(32), prev_pow_id BIGINT, pow_target BINARY(32) NOT NULL, pow_height INT, timestamp " +
+                                "(32), timestamp " +
                                 "INT NOT NULL, " +
                                 " " +
                                 "height " +
