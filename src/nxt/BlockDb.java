@@ -236,6 +236,8 @@ final class BlockDb {
             long powTarget = rs.getLong("pow_target");
             int pow_last_mass = rs.getInt("pow_last_mass");
             int pow_mass = rs.getInt("pow_mass");
+            int target_last_mass = rs.getInt("target_last_mass");
+            int target_mass = rs.getInt("target_mass");
             long nextBlockId = rs.getLong("next_block_id");
             int height = rs.getInt("height");
             byte[] generationSignature = rs.getBytes("generation_signature");
@@ -244,7 +246,7 @@ final class BlockDb {
             long id = rs.getLong("id");
             return new BlockImpl(version, timestamp, previousBlockId, totalAmountNQT, totalFeeNQT, payloadLength, payloadHash,
                     generatorId, generationSignature, blockSignature, previousBlockHash,
-                    cumulativeDifficulty, baseTarget, powTarget, pow_last_mass, pow_mass, nextBlockId, height, id,
+                    cumulativeDifficulty, baseTarget, powTarget, pow_last_mass, pow_mass, target_last_mass, target_mass, nextBlockId, height, id,
                     loadTransactions ?
                     TransactionDb.findBlockTransactions(con, id) : null);
         } catch (SQLException e) {
@@ -256,10 +258,10 @@ final class BlockDb {
         try {
             try (PreparedStatement pstmt = con.prepareStatement("INSERT INTO block (id, version, timestamp, previous_block_id, "
                     + "total_amount, total_fee, payload_length, previous_block_hash, cumulative_difficulty, "
-                    + "base_target, pow_target, pow_last_mass, pow_mass, height, generation_signature, " +
+                    + "base_target, pow_target, pow_last_mass, pow_mass, target_last_mass, target_mass, height, generation_signature, " +
                     "block_signature, payload_hash, " +
                     "generator_id) "
-                    + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+                    + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
                 int i = 0;
                 pstmt.setLong(++i, block.getId());
                 pstmt.setInt(++i, block.getVersion());
@@ -272,8 +274,10 @@ final class BlockDb {
                 pstmt.setBytes(++i, block.getCumulativeDifficulty().toByteArray());
                 pstmt.setLong(++i, block.getBaseTarget());
                 pstmt.setLong(++i, block.getPowTarget());
-                pstmt.setLong(++i, block.getPowLastMass());
-                pstmt.setLong(++i, block.getPowMass());
+                pstmt.setInt(++i, block.getPowLastMass());
+                pstmt.setInt(++i, block.getPowMass());
+                pstmt.setLong(++i, block.getTargetLastMass());
+                pstmt.setLong(++i, block.getTargetMass());
                 pstmt.setInt(++i, block.getHeight());
                 pstmt.setBytes(++i, block.getGenerationSignature());
                 pstmt.setBytes(++i, block.getBlockSignature());

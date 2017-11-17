@@ -69,6 +69,11 @@ public interface Block {
 
     int getPowMass();
 
+    long getTargetLastMass();
+
+    long getTargetMass();
+
+
     BigInteger getCumulativeDifficulty();
 
     byte[] getBytes();

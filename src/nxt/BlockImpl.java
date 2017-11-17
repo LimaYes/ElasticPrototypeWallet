@@ -59,6 +59,8 @@ final class BlockImpl implements Block {
     private long powTarget = 0;
     private int powLastMass = 0;
     private int powMass = 0;
+    private long targetLastMass = 0;
+    private long targetMass = 0;
     private volatile long nextBlockId;
     private int height = -1;
     private volatile long id;
@@ -116,6 +118,7 @@ final class BlockImpl implements Block {
               byte[] payloadHash, long generatorId, byte[] generationSignature, byte[] blockSignature,
               byte[] previousBlockHash, BigInteger cumulativeDifficulty, long baseTarget, long powTarget, int
                       powLastMass, int powMass, long
+                      targetLastMass, long targetMass, long
               nextBlockId, int height, long id,
               List<TransactionImpl> blockTransactions) {
         this(version, timestamp, previousBlockId, totalAmountNQT, totalFeeNQT, payloadLength, payloadHash,
@@ -125,6 +128,8 @@ final class BlockImpl implements Block {
         this.powTarget = powTarget;
         this.powLastMass = powLastMass;
         this.powMass = powMass;
+        this.targetLastMass = targetLastMass;
+        this.targetMass = targetMass;
         this.nextBlockId = nextBlockId;
         this.height = height;
         this.id = id;
@@ -228,6 +233,16 @@ final class BlockImpl implements Block {
     @Override
     public int getPowMass() {
         return powMass;
+    }
+
+    @Override
+    public long getTargetLastMass() {
+        return targetLastMass;
+    }
+
+    @Override
+    public long getTargetMass() {
+        return targetMass;
     }
 
     @Override
@@ -590,6 +605,7 @@ final class BlockImpl implements Block {
             BlockImpl b = BlockDb.findBlockAtHeight(this.getHeight()-ComputationConstants.POW_RETARGET_DEPTH);
             powMass = powcnt + previousBlock.powMass - b.powLastMass;
             powLastMass = powcnt;
+
 
             powTarget = previousBlock.powTarget; // Now this has to be adjusted somehow TODO TODO TODO
         }
