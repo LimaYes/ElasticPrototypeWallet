@@ -581,7 +581,8 @@ final class BlockImpl implements Block {
 
     private void calculatePowTarget(BlockImpl previousBlock) {
         int powcnt = 0;
-
+        double nTargetTimespan = 0;
+        double nActualTimespan = 0;
         if(this.getHeight() < ComputationConstants.START_ENCODING_BLOCK){
             // Do nothing
             return;
@@ -611,10 +612,10 @@ final class BlockImpl implements Block {
 
             double darkTarget = (double)previousBlock.targetMass;
             darkTarget /= ComputationConstants.POW_RETARGET_DEPTH;
-            double nActualTimespan = ((double)this.getTimestamp()-b.getTimestamp());
+            nActualTimespan = ((double)this.getTimestamp()-b.getTimestamp());
 
             // TODO: check implication of setting this to no-retarget in case no POW submissions come in
-            double nTargetTimespan = nActualTimespan;
+            nTargetTimespan = nActualTimespan;
             if(powMass!=0)
                 nTargetTimespan = powMass * (60 / ComputationConstants.WE_WANT_X_POW_PER_MINUTE);
 
@@ -639,14 +640,14 @@ final class BlockImpl implements Block {
         }
 
         Logger.logInfoMessage("Block " + this.getHeight() + " POW retarget; powLastMass=" + powLastMass + ", powMass=" +
-                        powMass + ", targetLastMass=" + targetLastMass + ", targetMass=" + targetMass + " -> TARGET = " + powTarget);
+                        powMass + ", targetLastMass=" + targetLastMass + ", targetMass=" + targetMass + ", a=" + nActualTimespan + ", t=" +  nTargetTimespan + "\t-> TARGET = " + powTarget);
 
 
 
     }
 
     private int countPow() {
-        return 0; // todo
+        return 10; // todo
     }
 
 }
