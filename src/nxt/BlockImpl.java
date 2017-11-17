@@ -18,10 +18,12 @@
 package nxt;
 
 import nxt.AccountLedger.LedgerEvent;
+import nxt.computation.ComputationConstants;
 import nxt.crypto.Crypto;
 import nxt.db.DbIterator;
 import nxt.util.Convert;
 import nxt.util.Logger;
+import org.h2.schema.Constant;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -54,6 +56,9 @@ final class BlockImpl implements Block {
     private byte[] blockSignature;
     private BigInteger cumulativeDifficulty = BigInteger.ZERO;
     private long baseTarget = Constants.INITIAL_BASE_TARGET;
+    private long powTarget = 0;
+    private int powLastMass = 0;
+    private int powMass = 0;
     private volatile long nextBlockId;
     private int height = -1;
     private volatile long id;
@@ -109,12 +114,17 @@ final class BlockImpl implements Block {
 
     BlockImpl(int version, int timestamp, long previousBlockId, long totalAmountNQT, long totalFeeNQT, int payloadLength,
               byte[] payloadHash, long generatorId, byte[] generationSignature, byte[] blockSignature,
-              byte[] previousBlockHash, BigInteger cumulativeDifficulty, long baseTarget, long nextBlockId, int height, long id,
+              byte[] previousBlockHash, BigInteger cumulativeDifficulty, long baseTarget, long powTarget, int
+                      powLastMass, int powMass, long
+              nextBlockId, int height, long id,
               List<TransactionImpl> blockTransactions) {
         this(version, timestamp, previousBlockId, totalAmountNQT, totalFeeNQT, payloadLength, payloadHash,
                 null, generationSignature, blockSignature, previousBlockHash, null);
         this.cumulativeDifficulty = cumulativeDifficulty;
         this.baseTarget = baseTarget;
+        this.powTarget = powTarget;
+        this.powLastMass = powLastMass;
+        this.powMass = powMass;
         this.nextBlockId = nextBlockId;
         this.height = height;
         this.id = id;
@@ -124,7 +134,10 @@ final class BlockImpl implements Block {
 
     @Override
     public void setLocallyProcessed() {
+
         BlockDb.updateBlockLocallyProcessed(this);
+        BlockDb.updateBlockPowTargets( this );
+
     }
 
     @Override
@@ -200,6 +213,21 @@ final class BlockImpl implements Block {
     @Override
     public long getBaseTarget() {
         return baseTarget;
+    }
+
+    @Override
+    public long getPowTarget() {
+        return powTarget;
+    }
+
+    @Override
+    public int getPowLastMass() {
+        return powLastMass;
+    }
+
+    @Override
+    public int getPowMass() {
+        return powMass;
     }
 
     @Override
@@ -287,6 +315,16 @@ final class BlockImpl implements Block {
         getTransactions().forEach(transaction -> transactionsData.add(transaction.getJSONObject()));
         json.put("transactions", transactionsData);
         return json;
+    }
+
+    @Override
+    public long getPreviousBlockPowTarget() {
+        try {
+            BlockImpl previousBlock = BlockchainImpl.getInstance().getBlock(getPreviousBlockId());
+            return previousBlock.getPowTarget();
+        }catch(Exception e){
+            return 0;
+        }
     }
 
     static BlockImpl parseBlock(JSONObject blockData) throws NxtException.NotValidException {
@@ -465,6 +503,7 @@ final class BlockImpl implements Block {
             }
             this.height = block.getHeight() + 1;
             this.calculateBaseTarget(block);
+            this.calculatePowTarget(block);
         } else {
             this.height = 0;
         }
@@ -523,6 +562,65 @@ final class BlockImpl implements Block {
             baseTarget = prevBaseTarget;
         }
         cumulativeDifficulty = previousBlock.cumulativeDifficulty.add(Convert.two64.divide(BigInteger.valueOf(baseTarget)));
+    }
+
+    private void calculatePowTarget(BlockImpl previousBlock) {
+        int powcnt = 0;
+
+        if(this.getHeight() < ComputationConstants.START_ENCODING_BLOCK){
+            // Do nothing
+            return;
+        }
+        else if(this.getHeight() < ComputationConstants.START_ENCODING_BLOCK + ComputationConstants
+                .POW_RETARGET_DEPTH){
+            powcnt = this.countPow();
+            // Initialization Window. Just count and set target to MAX, don't adjust anything
+            if(this.getHeight()==ComputationConstants.START_ENCODING_BLOCK)
+            {
+                powMass = powcnt;
+            }else{
+                powMass = powcnt + previousBlock.powMass;
+            }
+            powLastMass = powcnt;
+            powTarget = Long.MAX_VALUE;
+
+        }else{
+            powcnt = this.countPow();
+            // Regular handling with "rolling window"
+            BlockImpl b = BlockDb.findBlockAtHeight(this.getHeight()-ComputationConstants.POW_RETARGET_DEPTH);
+            powMass = powcnt + previousBlock.powMass - b.powLastMass;
+            powLastMass = powcnt;
+
+            powTarget = previousBlock.powTarget; // Now this has to be adjusted somehow TODO TODO TODO
+        }
+
+        Logger.logInfoMessage("Block " + this.getHeight() + " POW retarget; lastMass=" + powLastMass + ", powMass=" +
+                        powMass);
+
+
+
+        /*
+            baseTarget = BigInteger.valueOf(prevBaseTarget)
+                    .multiply(BigInteger.valueOf(this.timestamp - previousBlock.timestamp))
+                    .divide(BigInteger.valueOf(60)).longValue();
+            if (baseTarget < 0 || baseTarget > Constants.MAX_BASE_TARGET) {
+                baseTarget = Constants.MAX_BASE_TARGET;
+            }
+            if (baseTarget < prevBaseTarget / 2) {
+                baseTarget = prevBaseTarget / 2;
+            }
+            if (baseTarget == 0) {
+                baseTarget = 1;
+            }
+            long twofoldCurBaseTarget = prevBaseTarget * 2;
+            if (twofoldCurBaseTarget < 0) {
+                twofoldCurBaseTarget = Constants.MAX_BASE_TARGET;
+            }
+            if (baseTarget > twofoldCurBaseTarget) {
+                baseTarget = twofoldCurBaseTarget;
+            }
+        }
+        */
     }
 
 }

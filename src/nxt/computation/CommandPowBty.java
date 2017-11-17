@@ -2,7 +2,6 @@ package nxt.computation;
 
 import com.community.Executor;
 import com.community.ExposedToRhino;
-import com.community.Retargeter;
 import nxt.*;
 import nxt.crypto.Crypto;
 import nxt.util.Convert;
@@ -276,8 +275,18 @@ public class CommandPowBty extends IComputationAttachment {
             return false;
         }
 
-        BigInteger myTarget = Retargeter.getPowTargetAtHeight(transaction.getHeight()); // TODO: Make sure target is
-        // calculated correctly here
+        long lastBlocksTarget = transaction.getBlock().getPreviousBlockPowTarget();
+        if(lastBlocksTarget==0){
+            lastBlocksTarget = 1;
+            Logger.logErrorMessage("Fatal error came up: previous block target seems to be 0! Block ID of parent " +
+                    "block: " + transaction.getBlock().getStringId());
+        }else{
+
+        }
+
+        BigInteger myTarget = ComputationConstants.MAXIMAL_WORK_TARGET;
+        myTarget = myTarget.divide(BigInteger.valueOf(Long.MAX_VALUE));
+        myTarget = myTarget.multiply(BigInteger.valueOf(lastBlocksTarget));
 
         int[] target = Convert.bigintToInts(myTarget,4);
         // safeguard

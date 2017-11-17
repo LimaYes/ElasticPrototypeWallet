@@ -40,7 +40,7 @@ public class ComputationConstants {
     public static final int MAX_CHAINED_TX_ACCEPTED = 5; // no more than 10 chained TX
     public static final int MAX_UNCOMPRESSED_WORK_SIZE = 6*1024*1024; // 6 MB is the maximum for now
     public static final short WORK_TRANSACTION_DEADLINE_VALUE = 48;
-    public static final int START_ENCODING_BLOCK = 0;
+    public static final int START_ENCODING_BLOCK = 1;
     public static final int BOUNTY_STORAGE_INTS = 32;
     public static final short MULTIPLIER_LENGTH = 32;
     public static final int POW_MIN = 10;
@@ -49,7 +49,8 @@ public class ComputationConstants {
     public static final int MAX_EXECUTION_TIME_IN_MS = 15 * 1000;
     public static final int VERIFICATOR_INTS = 500; // these are the submit_sz ints actually, not the storage but the verification "result" basically
     public static final short MD5LEN = 16 ;
-    public static final int TIME_PER_POW_TARGET_IN_SECONDS = 20;
-    public static final BigInteger MINIMAL_WORK_TARGET = BigInteger.ONE; // TODO, FIX THE VALUE
+    public static final int WE_WANT_X_POW_PER_MINUTE = 10;
+    public static final int POW_RETARGET_DEPTH = 14;
+    public static final BigInteger MINIMAL_WORK_TARGET = BigInteger.ONE;
     public static final BigInteger MAXIMAL_WORK_TARGET = new BigInteger("00000FFFFFFFFFFFFFFFFFFFFFFFFFFF", 16);
 }

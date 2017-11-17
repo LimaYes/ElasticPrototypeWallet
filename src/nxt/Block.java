@@ -63,10 +63,17 @@ public interface Block {
 
     long getBaseTarget();
 
+    long getPowTarget();
+
+    int getPowLastMass();
+
+    int getPowMass();
+
     BigInteger getCumulativeDifficulty();
 
     byte[] getBytes();
 
     JSONObject getJSONObject();
 
+    long getPreviousBlockPowTarget();
 }
