@@ -39,8 +39,7 @@ class NxtDbVersion extends DbVersion {
                         + "total_fee BIGINT NOT NULL, payload_length INT NOT NULL, "
                         + "previous_block_hash BINARY(32), cumulative_difficulty VARBINARY NOT NULL, base_target " +
                         "BIGINT NOT NULL, pow_target BIGINT, pow_last_mass INT, pow_mass INT, target_last_mass BIGINT, target_mass BIGINT, " +
-                        "NULL, "
-                        + "next_block_id BIGINT, "
+                        "next_block_id BIGINT, "
                         + "height INT NOT NULL, generation_signature BINARY(64) NOT NULL, "
                         + "block_signature BINARY(64) NOT NULL, payload_hash BINARY(32) NOT NULL, generator_id BIGINT NOT NULL, locally_processed BOOLEAN NOT NULL DEFAULT FALSE)");
             case 2:

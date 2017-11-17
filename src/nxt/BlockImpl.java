@@ -590,14 +590,17 @@ final class BlockImpl implements Block {
                 .POW_RETARGET_DEPTH){
             powcnt = this.countPow();
             // Initialization Window. Just count and set target to MAX, don't adjust anything
+            powTarget = Long.MAX_VALUE / 100;
             if(this.getHeight()==ComputationConstants.START_ENCODING_BLOCK)
             {
                 powMass = powcnt;
+                targetMass = powTarget;
             }else{
                 powMass = powcnt + previousBlock.powMass;
+                targetMass = previousBlock.targetMass + powTarget;
             }
             powLastMass = powcnt;
-            powTarget = Long.MAX_VALUE;
+            targetLastMass = powTarget;
 
         }else{
             powcnt = this.countPow();
@@ -605,38 +608,45 @@ final class BlockImpl implements Block {
             BlockImpl b = BlockDb.findBlockAtHeight(this.getHeight()-ComputationConstants.POW_RETARGET_DEPTH);
             powMass = powcnt + previousBlock.powMass - b.powLastMass;
             powLastMass = powcnt;
+            targetMass = powTarget + previousBlock.targetMass - b.targetLastMass;
 
+            long darkTarget = targetMass;
+            darkTarget /= ComputationConstants.POW_RETARGET_DEPTH;
+            int nActualTimespan = this.getTimestamp()-b.getTimestamp();
 
-            powTarget = previousBlock.powTarget; // Now this has to be adjusted somehow TODO TODO TODO
+            // TODO: check implication of setting this to no-retarget in case no POW submissions come in
+            int nTargetTimespan = nActualTimespan;
+            if(powMass!=0)
+                nTargetTimespan = powMass * (60 / ComputationConstants.WE_WANT_X_POW_PER_MINUTE);
+
+            if (nActualTimespan < nTargetTimespan / 3)
+                nActualTimespan = nTargetTimespan / 3;
+            if (nActualTimespan > nTargetTimespan * 3)
+                nActualTimespan = nTargetTimespan * 3;
+
+            long tmp = darkTarget;
+            darkTarget = (darkTarget / nTargetTimespan)*nActualTimespan;
+
+            // Overflow safety, TODO: check if these overflows can be handled this way on signed long
+            if((nActualTimespan>nTargetTimespan && darkTarget<tmp) || (darkTarget > Long.MAX_VALUE / 100)){
+                darkTarget = Long.MAX_VALUE / 100;
+            }
+            if((nActualTimespan<nTargetTimespan && darkTarget>tmp) || (darkTarget < 1)){
+                darkTarget = 1;
+            }
+            powTarget = darkTarget;
+            targetLastMass = powTarget;
         }
 
-        Logger.logInfoMessage("Block " + this.getHeight() + " POW retarget; lastMass=" + powLastMass + ", powMass=" +
-                        powMass);
+        Logger.logInfoMessage("Block " + this.getHeight() + " POW retarget; powLastMass=" + powLastMass + ", powMass=" +
+                        powMass + ", targetLastMass=" + targetLastMass + ", targetMass=" + targetMass + " -> TARGET = " + powTarget);
 
 
 
-        /*
-            baseTarget = BigInteger.valueOf(prevBaseTarget)
-                    .multiply(BigInteger.valueOf(this.timestamp - previousBlock.timestamp))
-                    .divide(BigInteger.valueOf(60)).longValue();
-            if (baseTarget < 0 || baseTarget > Constants.MAX_BASE_TARGET) {
-                baseTarget = Constants.MAX_BASE_TARGET;
-            }
-            if (baseTarget < prevBaseTarget / 2) {
-                baseTarget = prevBaseTarget / 2;
-            }
-            if (baseTarget == 0) {
-                baseTarget = 1;
-            }
-            long twofoldCurBaseTarget = prevBaseTarget * 2;
-            if (twofoldCurBaseTarget < 0) {
-                twofoldCurBaseTarget = Constants.MAX_BASE_TARGET;
-            }
-            if (baseTarget > twofoldCurBaseTarget) {
-                baseTarget = twofoldCurBaseTarget;
-            }
-        }
-        */
+    }
+
+    private int countPow() {
+        return 0; // todo
     }
 
 }

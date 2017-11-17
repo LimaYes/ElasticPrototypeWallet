@@ -236,8 +236,8 @@ final class BlockDb {
             long powTarget = rs.getLong("pow_target");
             int pow_last_mass = rs.getInt("pow_last_mass");
             int pow_mass = rs.getInt("pow_mass");
-            int target_last_mass = rs.getInt("target_last_mass");
-            int target_mass = rs.getInt("target_mass");
+            long target_last_mass = rs.getLong("target_last_mass");
+            long target_mass = rs.getLong("target_mass");
             long nextBlockId = rs.getLong("next_block_id");
             int height = rs.getInt("height");
             byte[] generationSignature = rs.getBytes("generation_signature");
@@ -323,12 +323,16 @@ final class BlockDb {
         try {
             try (Connection con = Db.db.getConnection();
                  PreparedStatement pstmt = con.prepareStatement("UPDATE block SET pow_target = ?, pow_last_mass = ?," +
-                         " pow_mass = ?" +
+                         " pow_mass = ?, target_last_mass = ?, target_mass = ?" +
                          " WHERE id = ?")) {
                 int i = 0;
                 pstmt.setLong(++i, block.getPowTarget());
                 pstmt.setLong(++i, block.getPowLastMass());
                 pstmt.setLong(++i, block.getPowMass());
+                pstmt.setLong(++i, block.getTargetLastMass());
+                pstmt.setLong(++i, block.getTargetMass());
+                pstmt.setLong(++i, block.getId());
+
                 pstmt.executeUpdate();
             }
         } catch (SQLException e) {
