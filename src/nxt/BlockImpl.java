@@ -609,21 +609,21 @@ final class BlockImpl implements Block {
             powMass = powcnt + previousBlock.powMass - b.powLastMass;
             powLastMass = powcnt;
 
-            long darkTarget = previousBlock.targetMass;
+            double darkTarget = (double)previousBlock.targetMass;
             darkTarget /= ComputationConstants.POW_RETARGET_DEPTH;
-            int nActualTimespan = this.getTimestamp()-b.getTimestamp();
+            double nActualTimespan = ((double)this.getTimestamp()-b.getTimestamp());
 
             // TODO: check implication of setting this to no-retarget in case no POW submissions come in
-            int nTargetTimespan = nActualTimespan;
+            double nTargetTimespan = nActualTimespan;
             if(powMass!=0)
                 nTargetTimespan = powMass * (60 / ComputationConstants.WE_WANT_X_POW_PER_MINUTE);
 
-            if (nActualTimespan < nTargetTimespan / 3)
-                nActualTimespan = nTargetTimespan / 3;
-            if (nActualTimespan > nTargetTimespan * 3)
-                nActualTimespan = nTargetTimespan * 3;
+            if (nActualTimespan < nTargetTimespan / 3.0)
+                nActualTimespan = nTargetTimespan / 3.0;
+            if (nActualTimespan > nTargetTimespan * 3.0)
+                nActualTimespan = nTargetTimespan * 3.0;
 
-            long tmp = darkTarget;
+            double tmp = darkTarget;
             darkTarget = (darkTarget / nTargetTimespan)*nActualTimespan;
 
             // Overflow safety, TODO: check if these overflows can be handled this way on signed long
@@ -633,7 +633,7 @@ final class BlockImpl implements Block {
             if((nActualTimespan<nTargetTimespan && darkTarget>tmp) || (darkTarget < 1)){
                 darkTarget = 1;
             }
-            powTarget = darkTarget;
+            powTarget = (long)darkTarget;
             targetMass = powTarget + previousBlock.targetMass - b.targetLastMass;
             targetLastMass = powTarget;
         }
