@@ -608,9 +608,8 @@ final class BlockImpl implements Block {
             BlockImpl b = BlockDb.findBlockAtHeight(this.getHeight()-ComputationConstants.POW_RETARGET_DEPTH);
             powMass = powcnt + previousBlock.powMass - b.powLastMass;
             powLastMass = powcnt;
-            targetMass = powTarget + previousBlock.targetMass - b.targetLastMass;
 
-            long darkTarget = targetMass;
+            long darkTarget = previousBlock.targetMass;
             darkTarget /= ComputationConstants.POW_RETARGET_DEPTH;
             int nActualTimespan = this.getTimestamp()-b.getTimestamp();
 
@@ -635,6 +634,7 @@ final class BlockImpl implements Block {
                 darkTarget = 1;
             }
             powTarget = darkTarget;
+            targetMass = powTarget + previousBlock.targetMass - b.targetLastMass;
             targetLastMass = powTarget;
         }
 
