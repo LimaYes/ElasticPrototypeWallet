@@ -327,8 +327,8 @@ final class BlockDb {
                          " WHERE id = ?")) {
                 int i = 0;
                 pstmt.setLong(++i, block.getPowTarget());
-                pstmt.setLong(++i, block.getPowLastMass());
-                pstmt.setLong(++i, block.getPowMass());
+                pstmt.setInt(++i, block.getPowLastMass());
+                pstmt.setInt(++i, block.getPowMass());
                 pstmt.setLong(++i, block.getTargetLastMass());
                 pstmt.setLong(++i, block.getTargetMass());
                 pstmt.setLong(++i, block.getId());

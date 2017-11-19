@@ -71,8 +71,9 @@ public class MessageEncoder {
                 }
             }
         }
-        block.setLocallyProcessed();
         block.calculatePowTarget(powCounter);
+        block.setLocallyProcessed();
+
     }
 
     static {

@@ -584,6 +584,10 @@ final class BlockImpl implements Block {
         double nActualTimespan = 0;
 
         BlockImpl previousBlock = null;
+
+        if(this.getHeight() == 60){
+            previousBlock = null;
+        }
         if(this.getPreviousBlockId()!=0)
             previousBlock = BlockDb.findBlock(this.getPreviousBlockId());
 
