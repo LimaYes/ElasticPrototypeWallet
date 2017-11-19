@@ -1630,7 +1630,7 @@ public final class BlockchainProcessorImpl implements BlockchainProcessor {
             int fromTimestamp = Nxt.getEpochTime() - Constants.MAX_PRUNABLE_LIFETIME;
             for (TransactionImpl transaction : block.getTransactions()) {
                 try {
-                    transaction.apply();
+                    transaction.apply(); // TODO, please test is this wasAPow thing works fine for phased transactions
                     if (transaction.getTimestamp() > fromTimestamp) {
                         for (Appendix.AbstractAppendix appendage : transaction.getAppendages(true)) {
                             if ((appendage instanceof Appendix.Prunable) &&
@@ -1692,10 +1692,12 @@ public final class BlockchainProcessorImpl implements BlockchainProcessor {
                     }
                 });
             }
+
             blockListeners.notify(block, Event.AFTER_BLOCK_APPLY);
             if (block.getTransactions().size() > 0) {
                 TransactionProcessorImpl.getInstance().notifyListeners(block.getTransactions(), TransactionProcessor.Event.ADDED_CONFIRMED_TRANSACTIONS);
             }
+
             AccountLedger.commitEntries();
         } finally {
             isProcessingBlock = false;

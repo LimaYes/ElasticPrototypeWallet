@@ -47,6 +47,9 @@ public class MessageEncoder {
 
     static void processBlockInternal(Block block){
         // Check all TX for relevant stuff
+
+        int powCounter = 0;
+
         for(Transaction t : block.getTransactions()){
             Appendix.PrunablePlainMessage m = t.getPrunablePlainMessage();
             if(m==null) continue;
@@ -58,6 +61,10 @@ public class MessageEncoder {
                     IComputationAttachment att = MessageEncoder.decodeAttachment(reconstructedChain);
                     if(att == null) continue;
                     att.apply(t);
+
+                    if(t.wasAPow())
+                        powCounter++;
+
                 } catch (Exception e) {
                     // generous catch, do not allow anything to cripple the blockchain integrity
                     continue;
@@ -65,6 +72,7 @@ public class MessageEncoder {
             }
         }
         block.setLocallyProcessed();
+        block.calculatePowTarget(powCounter);
     }
 
     static {

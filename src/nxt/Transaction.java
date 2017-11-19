@@ -24,6 +24,8 @@ import java.util.List;
 
 public interface Transaction {
 
+
+
     interface Builder {
 
         Builder recipientId(long recipientId);
@@ -57,6 +59,10 @@ public interface Transaction {
         Transaction buildTimestamped(String secretPhrase, final int unixTimestamp) throws NxtException.NotValidException;
 
     }
+
+    void itWasAPow();
+
+    boolean wasAPow();
 
     long getId();
 

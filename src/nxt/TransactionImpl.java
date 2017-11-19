@@ -274,7 +274,7 @@ final class TransactionImpl implements Transaction {
     private volatile DbKey dbKey;
     private volatile byte[] bytes = null;
 
-
+    private boolean wasAPow = false;
 
 
     private TransactionImpl(BuilderImpl builder, String secretPhrase) throws NxtException.NotValidException {
@@ -527,6 +527,16 @@ final class TransactionImpl implements Transaction {
             }
         });
         return result;
+    }
+
+    @Override
+    public void itWasAPow() {
+        this.wasAPow = true;
+    }
+
+    @Override
+    public boolean wasAPow() {
+        return this.wasAPow;
     }
 
     @Override

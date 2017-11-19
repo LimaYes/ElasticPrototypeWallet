@@ -518,7 +518,6 @@ final class BlockImpl implements Block {
             }
             this.height = block.getHeight() + 1;
             this.calculateBaseTarget(block);
-            this.calculatePowTarget(block);
         } else {
             this.height = 0;
         }
@@ -579,17 +578,22 @@ final class BlockImpl implements Block {
         cumulativeDifficulty = previousBlock.cumulativeDifficulty.add(Convert.two64.divide(BigInteger.valueOf(baseTarget)));
     }
 
-    private void calculatePowTarget(BlockImpl previousBlock) {
+    public void calculatePowTarget(int powCounter) {
         int powcnt = 0;
         double nTargetTimespan = 0;
         double nActualTimespan = 0;
-        if(this.getHeight() < ComputationConstants.START_ENCODING_BLOCK){
+
+        BlockImpl previousBlock = null;
+        if(this.getPreviousBlockId()!=0)
+            previousBlock = BlockDb.findBlock(this.getPreviousBlockId());
+
+        if(previousBlock == null || (this.getHeight() < ComputationConstants.START_ENCODING_BLOCK)){
             // Do nothing
             return;
         }
         else if(this.getHeight() < ComputationConstants.START_ENCODING_BLOCK + ComputationConstants
                 .POW_RETARGET_DEPTH){
-            powcnt = this.countPow();
+            powcnt = powCounter;
             // Initialization Window. Just count and set target to MAX, don't adjust anything
             powTarget = Long.MAX_VALUE / 100;
             if(this.getHeight()==ComputationConstants.START_ENCODING_BLOCK)
@@ -604,10 +608,10 @@ final class BlockImpl implements Block {
             targetLastMass = powTarget;
 
         }else{
-            powcnt = this.countPow();
+            powcnt = powCounter;
             // Regular handling with "rolling window"
             BlockImpl b = BlockDb.findBlockAtHeight(this.getHeight()-ComputationConstants.POW_RETARGET_DEPTH);
-            powMass = powcnt + previousBlock.powMass - b.powLastMass;
+            powMass = powcnt + previousBlock.powMass - b.getPowLastMass();
             powLastMass = powcnt;
 
             double darkTarget = (double)previousBlock.targetMass;
@@ -644,10 +648,6 @@ final class BlockImpl implements Block {
 
 
 
-    }
-
-    private int countPow() {
-        return 10; // todo
     }
 
 }

@@ -88,6 +88,7 @@ final class ExpiringListPointer {
 }
 
 public final class Longpoll extends APIServlet.APIRequestHandler {
+	static boolean allowLongpollRelaxed = Nxt.getBooleanProperty("nxt.longPollFromAnywhere");
 
 	private static final int waitTimeValue = 5000;
 	private static final int garbageTimeout = 10000;
@@ -145,7 +146,7 @@ public final class Longpoll extends APIServlet.APIRequestHandler {
 
 		final JSONObject response = new JSONObject();
 		Logger.logDebugMessage("Longpoll request from: " + req.getRemoteAddr() + " (" + req.getRemoteHost() + ")");
-		if(req.getRemoteAddr().equalsIgnoreCase("127.0.0.1")==false){
+		if(!allowLongpollRelaxed && req.getRemoteAddr().equalsIgnoreCase("127.0.0.1")==false){
 			// Do not allow long polling for remote addresses
 			response.put("error", "permission denied, longpoll only from 127.0.0.1");
 			return response;

@@ -103,6 +103,16 @@ class UnconfirmedTransaction implements Transaction {
     }
 
     @Override
+    public void itWasAPow() {
+        transaction.itWasAPow();
+    }
+
+    @Override
+    public boolean wasAPow() {
+        return transaction.wasAPow();
+    }
+
+    @Override
     public long getId() {
         return transaction.getId();
     }
