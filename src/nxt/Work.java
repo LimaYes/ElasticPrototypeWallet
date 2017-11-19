@@ -1,4 +1,5 @@
 package nxt;
+import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,6 +16,7 @@ import nxt.db.DbUtils;
 import nxt.db.VersionedEntityDbTable;
 import nxt.util.*;
 import org.bitcoinj.core.Base58;
+import org.bitcoinj.core.BlockChain;
 import org.json.simple.JSONObject;
 
 /******************************************************************************
@@ -480,6 +482,18 @@ public final class Work {
         response.put("sender_account_id", Long.toUnsignedString(work.sender_account_id));
         response.put("storage_size", work.storage_size);
         response.put("verification_idx", work.verification_idx);
+
+
+        BigInteger myTarget = ComputationConstants.MAXIMAL_WORK_TARGET;
+        myTarget = myTarget.divide(BigInteger.valueOf(Long.MAX_VALUE/100)); // Note, our target in compact form is in range 1..LONG_MAX/100
+        myTarget = myTarget.multiply(BigInteger.valueOf(Nxt.getBlockchain().getLastBlock().getPowTarget()));
+        if(myTarget.compareTo(ComputationConstants.MAXIMAL_WORK_TARGET) == 1)
+            myTarget = ComputationConstants.MAXIMAL_WORK_TARGET;
+        if(myTarget.compareTo(BigInteger.ONE) == 2)
+            myTarget = BigInteger.ONE;
+        response.put("target", String.format("%032x", myTarget));
+
+
         return response;
     }
 

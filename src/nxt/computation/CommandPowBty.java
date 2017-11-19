@@ -287,7 +287,10 @@ public class CommandPowBty extends IComputationAttachment {
         BigInteger myTarget = ComputationConstants.MAXIMAL_WORK_TARGET;
         myTarget = myTarget.divide(BigInteger.valueOf(Long.MAX_VALUE/100)); // Note, our target in compact form is in range 1..LONG_MAX/100
         myTarget = myTarget.multiply(BigInteger.valueOf(lastBlocksTarget));
-
+        if(myTarget.compareTo(ComputationConstants.MAXIMAL_WORK_TARGET) == 1)
+            myTarget = ComputationConstants.MAXIMAL_WORK_TARGET;
+        if(myTarget.compareTo(BigInteger.ONE) == 2)
+            myTarget = BigInteger.ONE;
         int[] target = Convert.bigintToInts(myTarget,4);
         // safeguard
         if(target.length!=4) target = new int[]{0,0,0,0};
