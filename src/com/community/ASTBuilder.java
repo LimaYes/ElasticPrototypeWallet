@@ -1188,14 +1188,14 @@ public class ASTBuilder {
             case NODE_MUL_ASSIGN:
             case NODE_DIV_ASSIGN:
                 if (state.stack_exp.get(state.stack_exp.size()-2).is_vm_mem /*|| state.stack_exp.get(state.stack_exp.size()-2).is_vm_storage */ /* changed: allow to write into storage */) {
-                throw new Exceptions.SyntaxErrorException("Syntax Error: Line: " + token.line_num + " - Illegal assignment to m/s array");
-            }
+                    throw new Exceptions.SyntaxErrorException("Syntax Error: Line: " + token.line_num + " - Illegal assignment to m/s array");
+                }
 
-            if (((state.stack_exp.get(state.stack_exp.size()-2).token_num < token_num) && (top_exp(state).token_num > token_num)) &&
-            ((state.stack_exp.get(state.stack_exp.size()-2).type == NODE_VAR_CONST) || (state.stack_exp.get(state.stack_exp.size()-2).type == NODE_VAR_EXP)) &&
-            (top_exp(state).data_type != DT_NONE))
-            return;
-            break;
+                if (((state.stack_exp.get(state.stack_exp.size()-2).token_num < token_num) && (top_exp(state).token_num > token_num)) &&
+                ((state.stack_exp.get(state.stack_exp.size()-2).type == NODE_VAR_CONST) || (state.stack_exp.get(state.stack_exp.size()-2).type == NODE_VAR_EXP)) &&
+                (top_exp(state).data_type != DT_NONE))
+                return;
+                break;
 
             // Expressions w/ 1 Int/Uint/Long/Ulong Variable (Left Operand) & 1 Int/Uint/Long/Ulong (Right Operand)
             case NODE_MOD_ASSIGN:
@@ -1310,7 +1310,7 @@ public class ASTBuilder {
                 break;
         }
 
-       throw new Exceptions.SyntaxErrorException("Syntax Error: Line: " + token.line_num + " - Invalid inputs for '" + get_node_str(node_type) + "'"); // todo nodestr function
+       throw new Exceptions.SyntaxErrorException("Syntax Error: Line: " + token.line_num + " - Invalid inputs for '" + get_node_str(node_type) + "'");
     }
 
     private static String get_node_str(Primitives.NODE_TYPE node_type) {

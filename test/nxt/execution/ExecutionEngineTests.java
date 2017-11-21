@@ -326,4 +326,23 @@ public class ExecutionEngineTests {
             Assert.assertTrue(false);
         }
     }
+
+    @Test
+    public void testOP1(){
+        String code = null;
+        boolean threw_exception = false;
+        try {
+            code = readFile("test/testfiles/OP1.epl", Charset.defaultCharset());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            String epl = Executor.checkCodeAndReturnVerify(code);
+            System.out.println(epl);
+        } catch (Exception e) {
+            e.printStackTrace();
+            threw_exception = true;
+        }
+        Assert.assertFalse(threw_exception);
+    }
 }
