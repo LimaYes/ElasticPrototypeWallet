@@ -1313,9 +1313,14 @@ public class ASTBuilder {
        throw new Exceptions.SyntaxErrorException("Syntax Error: Line: " + token.line_num + " - Invalid inputs for '" + get_node_str(node_type) + "'");
     }
 
-    public static void dump_vm_ast(Primitives.STATE state) {
+
+    public static void dump_vm_ast(Primitives.STATE state){
+        for (int i = state.ast_func_idx; i < state.stack_exp.size(); i++) {
+            dump_vm_ast(state, state.stack_exp.get(i));
+        }
+    }
+    public static void dump_vm_ast(Primitives.STATE state, AST root) {
         boolean downward = true;
-        AST root = state.stack_exp.peek();
         AST ast_ptr = root;
 
         if (root.type == NODE_FUNCTION) {
