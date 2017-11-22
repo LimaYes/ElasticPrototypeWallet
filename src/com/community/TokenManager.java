@@ -38,11 +38,16 @@ public class TokenManager {
 
             // Determine If '-' Is Binary Or Unary
             if (epl_tok.type == TOKEN_SUB) {
-                if (this.state.token_list.size() == 0)
+                if (this.state.token_list.size() == 0) {
                     token_id++;
+                    epl_tok = epl_token[token_id];
+                }
                 else if (this.state.token_list.get(this.state.token_list.size() - 1).type != TOKEN_CLOSE_PAREN) {
                     if (this.state.token_list.get(this.state.token_list.size() - 1).exp != EXP_EXPRESSION || this.state.token_list.get(this.state.token_list.size() - 1).inputs > 1)
+                    {
                         token_id++;
+                        epl_tok = epl_token[token_id];
+                    }
                 }
             }
             Primitives.SOURCE_TOKEN tok = new Primitives.SOURCE_TOKEN(token_id, epl_tok.type, null, epl_tok.exp, epl_tok.inputs, epl_tok.prec, line_num, epl_tok.data_type);
@@ -160,6 +165,20 @@ public class TokenManager {
             }
         }
     }
+    public void dump_token_list()
+    {
+        int i;
+
+        System.out.println("\nNum\tLine\tToken\t\tToken ID\n");
+        System.out.println("----------------------------------------\n");
+        for (i = 0; i < this.state.token_list.size(); i++) {
+            if (this.state.token_list.get(i).type == TOKEN_LITERAL)
+                System.out.println(String.format("%d:\t%d\t%s\t\t%s", (Integer)i, (Integer)this.state.token_list.get(i).line_num, this.state.token_list.get(i).literal, this.state.token_list.get(i).type.name()));
+            else
+                System.out.println(String.format("%d:\t%d\t%s\t\t%s", i, this.state.token_list.get(i).line_num, epl_token[this.state.token_list.get(i).token_id].str, this.state.token_list.get(i).type.name()));
+        }
+    }
+
 
     public void build_token_list(String str) throws Exceptions.SyntaxErrorException {
         int i, idx, len, token_id, line_num, token_list_sz, literal_idx;

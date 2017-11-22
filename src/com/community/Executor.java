@@ -48,6 +48,7 @@ public class Executor {
         if(elasticPL.length()>MAX_SOURCE_SIZE) throw new Exceptions.SyntaxErrorException("Code length exceeded");
         TokenManager t = new TokenManager();
         t.build_token_list(elasticPL);
+        //t.dump_token_list();
         ASTBuilder.parse_token_list(t.state);
         int wcet = WCETCalculator.calc_wcet(t.state);
         int verify_wcet = WCETCalculator.get_verify_wcet(t.state);
