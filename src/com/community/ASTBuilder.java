@@ -1313,6 +1313,193 @@ public class ASTBuilder {
        throw new Exceptions.SyntaxErrorException("Syntax Error: Line: " + token.line_num + " - Invalid inputs for '" + get_node_str(node_type) + "'");
     }
 
+    public static void dump_vm_ast(Primitives.STATE state) {
+        boolean downward = true;
+        AST root = state.stack_exp.peek();
+        AST ast_ptr = root;
+
+        if (root.type == NODE_FUNCTION) {
+            System.out.println(String.format("FUNCTION '%s'", root.svalue));
+            System.out.println(String.format("---------------------------------------------------------"));
+            ast_ptr = root.right;
+        }
+
+        while (ast_ptr != null) {
+
+            // Navigate Down The Tree
+            if (downward) {
+
+                // Navigate To Lowest Left Node
+                while (ast_ptr.left != null) {
+
+                    // Print Left Node
+                    if (ast_ptr.right != null)
+                        print_node(ast_ptr);
+
+                    ast_ptr = ast_ptr.left;
+                }
+
+                // Print Build In Functions
+                if (ast_ptr.exp == EXP_FUNCTION)
+                    print_node(ast_ptr);
+
+                // If There Is A Right Node, Switch To It
+                if (ast_ptr.right != null) {
+                    ast_ptr = ast_ptr.right;
+                }
+                // Otherwise, Print Current Node & Navigate Back Up The Tree
+                else {
+                    print_node(ast_ptr);
+                    downward = false;
+                }
+            }
+
+            // Navigate Back Up The Tree
+            else {
+                if (ast_ptr == root)
+                    break;
+
+                // Check If We Need To Navigate Back Down A Right Branch
+                if ((ast_ptr == ast_ptr.parent.left) && (ast_ptr.parent.right != null)) {
+                    print_node(ast_ptr.parent);
+                    ast_ptr = ast_ptr.parent.right;
+                    downward = true;
+                }
+                else {
+                    ast_ptr = ast_ptr.parent;
+                }
+            }
+        }
+    }
+
+
+    static void print_node(AST node) {
+
+
+        if (node.type == NODE_PARAM)
+            return;
+
+        switch (node.type) {
+            case NODE_CONSTANT:
+                if (node.is_float) {
+                    System.out.print(String.format("\tType: %d,\t%f\t\t\t", node.type.ordinal(), node.fvalue));
+                }
+                else {
+                    if (node.is_signed)
+                        System.out.print(String.format("\tType: %d,\t%d\t\t\t", node.type.ordinal(), node.ivalue));
+                    else
+                        System.out.print(String.format("\tType: %d,\t%d (wrong converted)\t\t\t", node.type.ordinal(), node.uvalue)); // TODO uint
+                }
+                break;
+            case NODE_VAR_CONST:
+                if (node.is_float) {
+                    if (node.is_64bit)
+                        System.out.print(String.format("\tType: %d,\td[%lu]\t\t\t", node.type.ordinal(), node.uvalue));
+                    else
+                        System.out.print(String.format("\tType: %d,\tf[%d]\t\t\t", node.type.ordinal(), node.uvalue));
+                }
+                else {
+                    if (node.is_64bit) {
+                        if (node.is_signed)
+                            System.out.print(String.format("\tType: %d,\tl[%d]\t\t\t", node.type.ordinal(), node.uvalue));
+                        else
+                            System.out.print(String.format("\tType: %d,\tul[%d]\t\t\t", node.type.ordinal(), node.uvalue));
+                    }
+                    else {
+                        if (node.is_signed) {
+                            System.out.print(String.format("\tType: %d,\ti[%d]\t\t\t", node.type.ordinal(), node.uvalue));
+                        }
+                        else {
+                            if (node.is_vm_mem)
+                                System.out.print(String.format("\tType: %d,\tm[%d]\t\t\t", node.type.ordinal(), node.uvalue));
+                            else
+                                System.out.print(String.format("\tType: %d,\tu[%d]\t\t\t", node.type.ordinal(), node.uvalue));
+                        }
+                    }
+                }
+                break;
+            case NODE_VAR_EXP:
+                if (node.is_float) {
+                    if (node.is_64bit)
+                        System.out.print(String.format("\tType: %d,\td[x]\t\t\t", node.type.ordinal()));
+                    else
+                        System.out.print(String.format("\tType: %d,\tf[x]\t\t\t", node.type.ordinal()));
+                }
+                else {
+                    if (node.is_64bit) {
+                        if (node.is_signed)
+                            System.out.print(String.format("\tType: %d,\tl[x]\t\t\t", node.type.ordinal()));
+                        else
+                            System.out.print(String.format("\tType: %d,\tul[x]\t\t\t", node.type.ordinal()));
+                    }
+                    else {
+                        if (node.is_signed) {
+                            System.out.print(String.format("\tType: %d,\ti[x]\t\t\t", node.type.ordinal()));
+                        }
+                        else {
+                            if (node.is_vm_mem)
+                                System.out.print(String.format("\tType: %d,\tm[x]\t\t\t", node.type.ordinal()));
+                            else
+                                System.out.print(String.format("\tType: %d,\tu[x]\t\t\t", node.type.ordinal()));
+
+                        }
+                    }
+                }
+                break;
+            case NODE_FUNCTION:
+                System.out.print(String.format("\tType: %d,\t%s %s\t\t", node.type.ordinal(), get_node_str(node.type), node.svalue));
+                break;
+            case NODE_CALL_FUNCTION:
+                System.out.print(String.format("\tType: %d,\t%s()\t\t", node.type.ordinal(), node.svalue));
+                break;
+            case NODE_REPEAT:
+                System.out.print(String.format("\tType: %d,\t%s (u[%llu], %lld)\t", node.type.ordinal(), get_node_str(node.type), node.uvalue, node.ivalue));
+                break;
+            case NODE_BLOCK:
+                if (node.parent.type != NODE_FUNCTION)
+                    System.out.println(String.format("\t-------------------------------------------------\n"));
+                return;
+            case NODE_ARRAY_INT:
+            case NODE_ARRAY_UINT:
+            case NODE_ARRAY_LONG:
+            case NODE_ARRAY_ULONG:
+            case NODE_ARRAY_FLOAT:
+            case NODE_ARRAY_DOUBLE:
+                System.out.print(String.format("\tType: %d,\t%s\t\t", node.type.ordinal(), get_node_str(node.type)));
+                break;
+            default:
+                System.out.print(String.format("\tType: %d,\t%s\t\t\t", node.type.ordinal(), get_node_str(node.type)));
+                break;
+        }
+
+        switch (node.data_type) {
+            case DT_INT:
+                System.out.println(String.format("(int)"));
+                break;
+            case DT_UINT:
+                System.out.println(String.format("(uint)"));
+                break;
+            case DT_LONG:
+                System.out.println(String.format("(long)"));
+                break;
+            case DT_ULONG:
+                System.out.println(String.format("(ulong)"));
+                break;
+            case DT_FLOAT:
+                System.out.println(String.format("(float)"));
+                break;
+            case DT_DOUBLE:
+                System.out.println(String.format("(double)"));
+                break;
+            case DT_STRING:
+                System.out.println(String.format("(string)\n"));
+                break;
+            default:
+                System.out.println(String.format("(N/A)\n"));
+                break;
+        }
+    }
+
     private static String get_node_str(Primitives.NODE_TYPE node_type) {
             switch (node_type) {
                 case NODE_ARRAY_INT:
@@ -1507,7 +1694,7 @@ public class ASTBuilder {
             call_stack.push(root);
             ast_ptr = root;
             while (ast_ptr != null) {
-                //System.out.println(downward + " -> " + ast_ptr.data_type + " (" + ast_ptr.svalue + ")");
+                //System.out.println(downward + " . " + ast_ptr.data_type + " (" + ast_ptr.svalue + ")");
                 // Navigate Down The Tree
                 if (downward) {
                     // Navigate To Lowest Left Parent Node

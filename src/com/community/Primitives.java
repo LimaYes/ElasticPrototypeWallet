@@ -324,7 +324,7 @@ public class Primitives {
         int num_exp;
 
         // CODE related stuff
-        Stack<String> stack_code;
+        public Stack<String> stack_code;
         int tabs;
 
 

@@ -150,7 +150,7 @@ public class TokenManager {
         return (string ? DT_STRING : DT_INT);
     }
 
-    private void validate_tokens() throws Exceptions.SyntaxErrorException {
+    private void validate_tokens() throws Exceptions.SyntaxErrorException { // Todo: why unused
         int i;
         for (i = 0; i < this.state.token_list.size(); i++) {
             // Validate That If/Repeat/Functions Have '('
@@ -169,13 +169,13 @@ public class TokenManager {
     {
         int i;
 
-        System.out.println("\nNum\tLine\tToken\t\tToken ID\n");
+        System.out.println("\nNum\t\tLine\t\tToken\t\tToken ID\n");
         System.out.println("----------------------------------------\n");
         for (i = 0; i < this.state.token_list.size(); i++) {
             if (this.state.token_list.get(i).type == TOKEN_LITERAL)
-                System.out.println(String.format("%d:\t%d\t%s\t\t%s", (Integer)i, (Integer)this.state.token_list.get(i).line_num, this.state.token_list.get(i).literal, this.state.token_list.get(i).type.name()));
+                System.out.println(String.format("%d:\t\t%d\t\t%s\t\t%s", (Integer)i, (Integer)this.state.token_list.get(i).line_num, this.state.token_list.get(i).literal, this.state.token_list.get(i).type.name()));
             else
-                System.out.println(String.format("%d:\t%d\t%s\t\t%s", i, this.state.token_list.get(i).line_num, epl_token[this.state.token_list.get(i).token_id].str, this.state.token_list.get(i).type.name()));
+                System.out.println(String.format("%d:\t\t%d\t\t%s\t\t%s", i, this.state.token_list.get(i).line_num, epl_token[this.state.token_list.get(i).token_id].str, this.state.token_list.get(i).type.name()));
         }
     }
 

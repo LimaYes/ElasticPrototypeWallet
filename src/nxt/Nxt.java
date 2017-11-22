@@ -57,6 +57,8 @@ public final class Nxt {
 
     public static final String NXT_DEFAULT_PROPERTIES = "nxt-default.properties";
     public static final String NXT_DEFAULT_JUNIT_PROPERTIES = "nxt-junit-default.properties";
+    public static final String NXT_DEFAULT_TESTVM_PROPERTIES = "testvm.properties";
+
     public static final String NXT_PROPERTIES = "nxt.properties";
     public static final String CONFIG_DIR = "conf";
 
