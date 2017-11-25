@@ -1,5 +1,7 @@
 package com.community;
 
+import nxt.util.Logger;
+
 import static com.community.Constants.MAX_AST_DEPTH;
 import static com.community.Constants.REPEAT_STACK_SIZE;
 import static com.community.Primitives.EXP_TYPE.EXP_FUNCTION;
@@ -48,10 +50,11 @@ public class WCETCalculator {
             call_depth--;
         }
 
-        /*for (i = state.ast_func_idx; i < state.stack_exp.size(); i++) {
-            System.out.println("[dbg] function " + state.stack_exp.get(i).svalue + ", WCET: " + state.stack_exp
+
+        for (i = state.ast_func_idx; i < state.stack_exp.size(); i++) {
+            Logger.logDebugMessage("[dbg] function " + state.stack_exp.get(i).svalue + ", WCET: " + state.stack_exp
                     .get(i).fvalue + ", DEPTH: " + state.stack_exp.get(i).uvalue);
-        }*/
+        }
 
 
 

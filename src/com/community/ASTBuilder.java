@@ -1584,7 +1584,7 @@ public class ASTBuilder {
                 System.out.print(String.format("\tType: %d,\t%s()\t\t", node.type.ordinal(), node.svalue));
                 break;
             case NODE_REPEAT:
-                System.out.print(String.format("\tType: %d,\t%s (u[%llu], %lld)\t", node.type.ordinal(), get_node_str(node.type), node.uvalue, node.ivalue));
+                System.out.print(String.format("\tType: %d,\t%s (u[%d], %d)\t", node.type.ordinal(), get_node_str(node.type), node.uvalue, node.ivalue)); // first u[d] should be u[l] TODO
                 break;
             case NODE_BLOCK:
                 if (node.parent.type != NODE_FUNCTION)

@@ -299,14 +299,14 @@ public class CodeConverter {
                 switch (node.data_type) {
                     case DT_INT:
                         if (var_exp_flg)
-                            str = String.format("if((%s) < %d)\n\t%si[%s]", mylrstr.lstr, state.ast_vm_ints, tab[state.tabs], mylrstr.lstr);
+                            str = String.format("if((%s) < %d)\n\t%si[%s]", mylrstr.lstr, state.ast_vm_ints, tab[Math.max(state.tabs,0)], mylrstr.lstr);
                         else
                             str = String.format("i[(((%s) < %d) ? %s : 0)]", mylrstr.lstr, state.ast_vm_ints, mylrstr.lstr);
                         break;
                     case DT_UINT:
                         if (node.is_vm_mem) {
                             if (var_exp_flg)
-                                str = String.format("if((%s) < %d)\n\t%sm[%s]", mylrstr.lstr, VM_M_ARRAY_SIZE, tab[state.tabs], mylrstr.lstr);
+                                str = String.format("if((%s) < %d)\n\t%sm[%s]", mylrstr.lstr, VM_M_ARRAY_SIZE, tab[Math.max(state.tabs,0)], mylrstr.lstr);
                             else
                                 str = String.format("m[(((%s) < %d) ? %s : 0)]", mylrstr.lstr, VM_M_ARRAY_SIZE, mylrstr.lstr);
                         }
@@ -319,32 +319,32 @@ public class CodeConverter {
                         }
                         else {
                             if (var_exp_flg)
-                                str = String.format("if((%s) < %d)\n\t%su[%s]", mylrstr.lstr, state.ast_vm_uints, tab[state.tabs], mylrstr.lstr);
+                                str = String.format("if((%s) < %d)\n\t%su[%s]", mylrstr.lstr, state.ast_vm_uints, tab[Math.max(state.tabs,0)], mylrstr.lstr);
                             else
                                 str = String.format("u[(((%s) < %d) ? %s : 0)]", mylrstr.lstr, state.ast_vm_uints, mylrstr.lstr);
                         }
                         break;
                     case DT_LONG:
                         if (var_exp_flg)
-                            str = String.format("if((%s) < %d)\n\t%sl[%s]", mylrstr.lstr, state.ast_vm_longs, tab[state.tabs], mylrstr.lstr);
+                            str = String.format("if((%s) < %d)\n\t%sl[%s]", mylrstr.lstr, state.ast_vm_longs, tab[Math.max(state.tabs,0)], mylrstr.lstr);
                         else
                             str = String.format("l[(((%s) < %d) ? %s : 0)]", mylrstr.lstr, state.ast_vm_longs, mylrstr.lstr);
                         break;
                     case DT_ULONG:
                         if (var_exp_flg)
-                            str = String.format("if((%s) < %d)\n\t%sul[%s]", mylrstr.lstr, state.ast_vm_ulongs, tab[state.tabs], mylrstr.lstr);
+                            str = String.format("if((%s) < %d)\n\t%sul[%s]", mylrstr.lstr, state.ast_vm_ulongs, tab[Math.max(state.tabs,0)], mylrstr.lstr);
                         else
                             str = String.format("ul[(((%s) < %d) ? %s : 0)]", mylrstr.lstr, state.ast_vm_ulongs, mylrstr.lstr);
                         break;
                     case DT_FLOAT:
                         if (var_exp_flg)
-                            str = String.format("if((%s) < %d)\n\t%sf[%s]", mylrstr.lstr, state.ast_vm_floats, tab[state.tabs], mylrstr.lstr);
+                            str = String.format("if((%s) < %d)\n\t%sf[%s]", mylrstr.lstr, state.ast_vm_floats, tab[Math.max(state.tabs,0)], mylrstr.lstr);
                         else
                             str = String.format("f[(((%s) < %d) ? %s : 0)]", mylrstr.lstr, state.ast_vm_floats, mylrstr.lstr);
                         break;
                     case DT_DOUBLE:
                         if (var_exp_flg)
-                            str = String.format("if((%s) < %d)\n\t%sd[%s]", mylrstr.lstr, state.ast_vm_doubles, tab[state.tabs], mylrstr.lstr);
+                            str = String.format("if((%s) < %d)\n\t%sd[%s]", mylrstr.lstr, state.ast_vm_doubles, tab[Math.max(state.tabs,0)], mylrstr.lstr);
                         else
                             str = String.format("d[(((%s) < %d) ? %s : 0)]", mylrstr.lstr, state.ast_vm_doubles, mylrstr.lstr);
                         break;
@@ -355,26 +355,35 @@ public class CodeConverter {
                 break;
             case NODE_IF:
                 if (state.tabs < 1) state.tabs = 1;
-                
-                str = String.format("%sif (%s) {\n", tab[state.tabs - 1], mylrstr.lstr);
+                // Always Wrap "IF" In Brackets
+                str = String.format("%sif (%s) {\n", tab[Math.max(state.tabs - 1,0)], mylrstr.lstr);
                 break;
             case NODE_ELSE:
                 if (state.tabs < 1) state.tabs = 1;
-                // Always Wrap "ELSE" In Brackets
-                str = String.format("selse {\n", tab[state.tabs - 1]); //  TODO ERROR
+
+                // Check If "IF" Has Closing Bracket - If Not, Add Closing Bracket
+
+                if(node.right != null && node.right.type != NODE_BLOCK)
+                    str = String.format("%s}\n%selse {\n", tab[Math.max(state.tabs - 1,0)], tab[Math.max(state.tabs - 1,0)]);
+                else
+                    str = String.format("%selse {\n", tab[Math.max(state.tabs - 1,0)]);
+
                 break;
             case NODE_REPEAT:
                 
                 if (state.tabs < 1) state.tabs = 1; // todo: not, i chaged u[%lld] t u[%d] ... check for problems please
-                str = String.format("%svar loop%d = 0;\n%sfor (loop%d = 0; loop%d < (%s); loop%d++) {\n%s\tif (loop%d >= %d) break;\n%s\tu[%d] = loop%d;\n", tab[state.tabs - 1], node.token_num, tab[state.tabs - 1], node.token_num, node.token_num, mylrstr.lstr, node.token_num, tab[state.tabs - 1], node.token_num, node.ivalue, tab[state.tabs - 1], node.uvalue, node.token_num);
+                str = String.format("%svar loop%d = 0;\n%sfor (loop%d = 0; loop%d < (%s); loop%d++) {\n%s\tif (loop%d >= %d) break;\n%s\tu[%d] = loop%d;\n", tab[Math.max(state.tabs - 1,0)], node.token_num, tab[Math.max(state.tabs - 1,0)], node.token_num, node.token_num, mylrstr.lstr, node.token_num, tab[Math.max(state.tabs - 1,0)], node.token_num, node.ivalue, tab[Math.max(state.tabs - 1,0)], node.uvalue, node.token_num);
                 break;
             case NODE_BLOCK:
                 
                 if (node.parent.type == NODE_FUNCTION) {
                     str = String.format("}\n");
                 }
+                else if(node.parent.type == NODE_REPEAT){ // Todo: this might be redundant
+                    str = String.format("%s}\n", tab[Math.max(state.tabs - 1,0)]);
+                }
                 else
-                    str = String.format("%s}\n", tab[state.tabs - 1]);
+                    str = String.format("%s}\n", tab[Math.max(state.tabs - 1,0)]);
                 break;
             case NODE_BREAK:
                 
@@ -649,14 +658,16 @@ public class CodeConverter {
 
         // Terminate Statements
         if (node.end_stmnt && (node.type != NODE_IF) && (node.type != NODE_ELSE) && (node.type != NODE_REPEAT) && (node.type != NODE_BLOCK) && (node.type != NODE_FUNCTION)) {
-            tmp = String.format("%s%s;\n", tab[state.tabs], str);
+            tmp = String.format("%s%s;\n", tab[Math.max(state.tabs,0)], str);
             state.stack_code.push(tmp);
 
+            /* Removed this in the context of the bracket fix
             // Add Closing Bracket To IF / ELSE That Don't Have Them
             if (node.parent != null && node.parent.right != null && (node.parent.right.type != NODE_BLOCK) && ((node.parent.type == NODE_IF) || (node.parent.type == NODE_ELSE))) {
-                tmp = String.format("%s}\n", tab[state.tabs - 1], str);
+                tmp = String.format("%s}\n", tab[Math.max(state.tabs,0)], str);
                 state.stack_code.push(tmp);
             }
+            */
         }
         else {
             state.stack_code.push(str);
@@ -721,6 +732,12 @@ public class CodeConverter {
                     ast_ptr = ast_ptr.parent;
                     if ((ast_ptr.type == NODE_IF) || (ast_ptr.type == NODE_ELSE) || (ast_ptr.type == NODE_REPEAT)) {
                         if (state.tabs > 0) state.tabs--;
+
+                        if(ast_ptr.parent!= null && ast_ptr.parent.type != NODE_BLOCK && ast_ptr.parent.parent != null && ast_ptr.parent.parent.type != NODE_FUNCTION && ast_ptr.right!=null && ast_ptr.type != NODE_BLOCK){
+                            String str = String.format("%s}\n", tab[Math.max(state.tabs,0)]);
+                            state.stack_code.push(str);
+
+                        }
                     } else if (ast_ptr.type == NODE_BLOCK) {
                         if ((ast_ptr.parent.type == NODE_IF) || (ast_ptr.parent.type == NODE_ELSE) || (ast_ptr.parent.type == NODE_REPEAT) || (ast_ptr.parent.type == NODE_FUNCTION)) {
                             convert_node(state, ast_ptr);
