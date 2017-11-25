@@ -150,7 +150,7 @@ public class Executor {
 
         // TODO: IMPLEMENT POW_HASH CHECK
 
-
+        String vcode = "";
         CODE_RESULT result = new CODE_RESULT();
         result.bty = false;
         result.pow = false;
@@ -188,10 +188,16 @@ public class Executor {
                 i[pyx]=m[pyx];
 
 
-            float[] f = new float[10000];
+            float[] f = new float[10000]; // TODO: Make dynamic
             double[] d = new double[10000];
+            long[] l = new long[10000];
+            long[] ul = new long[10000];
+
             sandbox.inject("u", u);
-            sandbox.inject("m", i);
+            sandbox.inject("m", m);
+            sandbox.inject("i", i);
+            sandbox.inject("l", l);
+            sandbox.inject("ul", ul);
             sandbox.inject("f", f);
             sandbox.inject("d", d);
 
@@ -199,12 +205,14 @@ public class Executor {
             // Add native java object for Rhino exposed POW functions
             sandbox.inject("ExposedToRhino", jsObj);
 
-            String vcode = verifyCode + " verify(); function res(){ return [pow_found, " +
+            vcode = verifyCode + " verify(); function res(){ return [pow_found, " +
                     "bounty_found]; } " +
                     "res();";
 
             org.mozilla.javascript.NativeArray array = (NativeArray) sandbox.eval("epl", vcode);
 
+
+            /*
 
             // todo: here is a lot debug stuff
             System.out.println("SZ: " + String.valueOf(storage.length) + ", VALIDATION_IDX: " + String.valueOf(validator_offset_index));
@@ -229,10 +237,10 @@ public class Executor {
             System.out.println(Convert.toHexString(multiplier));
             System.out.println("\n\n");
             System.out.println(vcode); // todo, comment in to see what code is being executed, remove for production
-
+            */
             double p = (double) array.get(0);
             double b = (double) array.get(1);
-            System.out.println(p + ", " + b);
+            //System.out.println(p + ", " + b);
 
             result.bty = b==1.0;
             result.pow = p==1.0;
@@ -240,6 +248,8 @@ public class Executor {
             return result;
         }catch(Exception e){
             e.printStackTrace(); // todo, remove for production
+            System.err.println("Executed Code was:");
+            System.err.println(vcode);
             result.pow = false;
             result.bty = false;
             result.error = true;

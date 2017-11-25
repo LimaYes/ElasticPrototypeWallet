@@ -356,18 +356,12 @@ public class CodeConverter {
             case NODE_IF:
                 if (state.tabs < 1) state.tabs = 1;
                 
-                if ((node.right.type == NODE_BLOCK) || ((node.right.type == NODE_ELSE) && (node.right.left.type == NODE_BLOCK)))
-                    str = String.format("%sif (%s) {\n", tab[state.tabs - 1], mylrstr.lstr);
-                else
-                    str = String.format("%sif (%s)\n", tab[state.tabs - 1], mylrstr.lstr);
+                str = String.format("%sif (%s) {\n", tab[state.tabs - 1], mylrstr.lstr);
                 break;
             case NODE_ELSE:
                 if (state.tabs < 1) state.tabs = 1;
-                
-                if (node.right.type == NODE_BLOCK)
-                    str = String.format("%selse {\n", tab[state.tabs - 1]);
-                else
-                    str = String.format("%selse\n", tab[state.tabs - 1]);
+                // Always Wrap "ELSE" In Brackets
+                str = String.format("selse {\n", tab[state.tabs - 1]); //  TODO ERROR
                 break;
             case NODE_REPEAT:
                 
@@ -380,7 +374,7 @@ public class CodeConverter {
                     str = String.format("}\n");
                 }
                 else
-                    str = String.format("%s}\n", tab[state.tabs]);
+                    str = String.format("%s}\n", tab[state.tabs - 1]);
                 break;
             case NODE_BREAK:
                 
@@ -657,6 +651,12 @@ public class CodeConverter {
         if (node.end_stmnt && (node.type != NODE_IF) && (node.type != NODE_ELSE) && (node.type != NODE_REPEAT) && (node.type != NODE_BLOCK) && (node.type != NODE_FUNCTION)) {
             tmp = String.format("%s%s;\n", tab[state.tabs], str);
             state.stack_code.push(tmp);
+
+            // Add Closing Bracket To IF / ELSE That Don't Have Them
+            if (node.parent != null && node.parent.right != null && (node.parent.right.type != NODE_BLOCK) && ((node.parent.type == NODE_IF) || (node.parent.type == NODE_ELSE))) {
+                tmp = String.format("%s}\n", tab[state.tabs - 1], str);
+                state.stack_code.push(tmp);
+            }
         }
         else {
             state.stack_code.push(str);
