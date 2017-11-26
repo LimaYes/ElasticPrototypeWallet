@@ -733,7 +733,8 @@ public class CodeConverter {
                     if ((ast_ptr.type == NODE_IF) || (ast_ptr.type == NODE_ELSE) || (ast_ptr.type == NODE_REPEAT)) {
                         if (state.tabs > 0) state.tabs--;
 
-                        if(ast_ptr.parent!= null && ast_ptr.parent.type != NODE_BLOCK && ast_ptr.parent.parent != null && ast_ptr.parent.parent.type != NODE_FUNCTION && ast_ptr.right!=null && ast_ptr.type != NODE_BLOCK){
+                        // TODO: Change order because parent.parent may segfault if parent = null
+                        if ((ast_ptr.parent.parent != null && (ast_ptr.parent.parent.type != NODE_FUNCTION)) && (ast_ptr.right != null  && (ast_ptr.right.type != NODE_BLOCK)) && (ast_ptr.parent!= null  && (ast_ptr.parent.type != NODE_BLOCK))) {
                             String str = String.format("%s}\n", tab[Math.max(state.tabs,0)]);
                             state.stack_code.push(str);
 
