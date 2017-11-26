@@ -19,5 +19,31 @@ body {
 	height: 400px;
 	font-size:8pt;
 	font-family: "Lucida Console", Monaco, monospace
-
+}
+#exampleFormControlTextarea3{
+	width: 540px;
+	height: 400px;
+	font-size:8pt;
+	font-family: "Lucida Console", Monaco, monospace
+}
+#exampleFormControlTextarea4{
+	width: 100%;
+	height: 400px;
+	font-size:8pt;
+	font-family: "Lucida Console", Monaco, monospace
+}
+#exampleFormControlTextarea5{
+	width: 100%;
+	height: 400px;
+	font-size:8pt;
+	font-family: "Lucida Console", Monaco, monospace
+}
+#example_wrapper{
+	padding-top: 10px;
+}
+#example2_wrapper{
+	padding-top: 10px;
+}
+.form-control-sm {
+	width: 120px !important;
 }

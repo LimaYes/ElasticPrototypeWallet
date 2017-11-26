@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
@@ -11,77 +12,285 @@
 
     <!-- Bootstrap core CSS -->
     <link href="bootstrap.min.css" rel="stylesheet">
-
+    <link href="dataTables.bootstrap4.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles/androidstudio.css">
+    <script src="highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
     <!-- Custom styles for this template -->
     <link href="starter-template.css" rel="stylesheet">
     <script language="JavaScript">
-        function startme(){
-          var xhr = new XMLHttpRequest();
-          xhr.onreadystatechange = function () {
-            if (this.readyState != 4) return;
+        function startme() {
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (this.readyState != 4) return;
 
-            if (this.status == 200) {
-                var data = this.responseText;
-                document.getElementById('exampleFormControlTextarea2').value = data;   // plain JavaScript
-            }
+                if (this.status == 200) {
+                    var data = this.responseText;
+                    var tbl = $('#example').DataTable();
+                    var tbl2 = $('#example2').DataTable();
 
-            // end of state change: it can be after some time (async)
-        };
-          var text1 = document.getElementById('exampleFormControlTextarea1').value;     // plain JavaScript
-          xhr.open("POST", "/debug_run", true);
-          xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-          xhr.send(text1);
-          document.getElementById('exampleFormControlTextarea2').value = "... please wait while we run your code.";   // plain JavaScript
+                    var lines = data.split('\n');
+                    var code = "";
+                    var incode = false;
+
+                    var ast = "";
+                    var inast = false;
+
+                    var tok = "";
+                    var intok = false;
+
+                    var ex = "The program has been executed successfully.";
+                    var inerr = false;
+
+
+                    tbl.clear().draw( false );
+                    tbl2.clear().draw( false );
+
+                    for(var i = 0;i < lines.length;i++){
+                        var ln = lines[i];
+                      
+                        if(ln.indexOf("--END CODE")>=0)
+                          incode = false;
+
+                         if(ln.indexOf("--END AST")>=0)
+                          inast = false;
+
+                         if(ln.indexOf("--END TOKENS")>=0)
+                          intok = false;
+
+                        if(ln.indexOf("Exception")>=0){
+                          if(inerr==false) ex="";
+                          inerr=true;
+
+                        }
+
+                        if(inerr)
+                          ex+=ln+"\n";
+
+                        if(incode){
+                          code = code + ln + "\n";
+                        }  
+                        if(inast){
+                          ast = ast + ln + "\n";
+                        }  
+                        if(intok){
+                          tok = tok + ln + "\n";
+                        }  
+                        if(ln.indexOf("--BEGIN CODE")>=0)
+                          incode = true;
+
+                       if(ln.indexOf("--BEGIN AST")>=0)
+                          inast = true;
+
+                         if(ln.indexOf("--BEGIN TOKENS")>=0)
+                          intok = true;
+
+                        if(ln.indexOf("POW-Hash")>=0){
+                          tbl2.row.add([1,"POW-Hash", ln.split(": ")[1].trim()]); 
+                        }
+
+                        if(ln.indexOf("MARR")>=0){
+                          var arr=ln.split(":")[1].trim()
+                          arr = arr.substring(1, arr.length-1);
+                          var g = arr.split(", ");
+                          for(var d=0;d<g.length;++d){
+                              tbl2.row.add([d+2,"m[" + d + "]", g[d]]);
+                          }
+
+                        }
+                        if(ln.indexOf("ARR-")>=0){
+                          var p = ln.split("-");
+                          p=p[1];
+                          var t = p.split(":")[0].toLowerCase();
+                          var arr=p.split(":")[1].trim()
+                          arr = arr.substring(1, arr.length-1);
+                          var g = arr.split(", ");
+                          for(var d=0;d<g.length;++d){
+                            if(g[d]!=0)
+                              tbl.row.add([t,d, g[d]]);
+                          }
+
+                        }
+                    }
+                    document.getElementById('exampleFormControlTextarea2').value = ex; // plain JavaScript
+
+                    document.getElementById('exampleFormControlTextarea3').innerHTML = code.trim(); // plain JavaScript
+                                        document.getElementById('exampleFormControlTextarea4').value = ast.trim(); // plain JavaScript
+
+                    document.getElementById('exampleFormControlTextarea5').value = tok.trim(); // plain JavaScript
+
+                     $('pre code').each(function(i, block) {
+                      hljs.highlightBlock(block);
+                    });
+                      tbl.draw( false );;
+tbl2.draw( false );;
+
+                }
+
+                // end of state change: it can be after some time (async)
+            };
+            var text1 = document.getElementById('exampleFormControlTextarea1').value; // plain JavaScript
+            xhr.open("POST", "/debug_run", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+            xhr.send(text1);
+            document.getElementById('exampleFormControlTextarea2').value = "... please wait while we run your code."; // plain JavaScript
 
         }
+
+   
     </script>
-  </head>
+</head>
 
-
-  <body>
+<body>
 
     <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-    
 
-      <div class="collapse navbar-collapse" id="navbarsExampleDefault">
-              <a class="navbar-brand" href="#">XEL Testbench</a>
-				<form class="form-inline my-2 my-lg-0">
-          <button class="btn btn-outline-success my-2 my-sm-0" type="button" onclick="startme();">Compile and Execute EPL Code</button>
-        </form>
-      </div>
+        <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+            <a class="navbar-brand" href="#">XEL Testbench</a>
+            <form class="form-inline my-2 my-lg-0">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="button" onclick="startme();">Compile and Execute EPL Code</button>
+            </form>
+        </div>
     </nav>
 
     <main role="main" class="container">
 
-      <div class="starter-template">
-        <p class="lead">Enter your EPL Code in the following field and click on the green button in the upper-left corner<br>in order to compile and execute your code snippet.</p>
-       
-      </div>
+        <div class="starter-template">
+            <p class="lead">Enter your EPL Code in the following field and click on the green button in the upper-left corner
+                <br>in order to compile and execute your code snippet.</p>
 
-       <div class="row">
-    <div class="col">
-       <div class="form-group">
-		    <label for="exampleFormControlTextarea1">Your EPL Code</label>
-		    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
-		  </div>
-    </div>
-    <div class="col">
-      <div class="form-group">
-		    <label for="exampleFormControlTextarea1">Test-VM Dump:</label>
-		    <textarea class="form-control" id="exampleFormControlTextarea2" wrap="off" readonly rows="3"></textarea>
-		  </div>
-    </div>
-  </div>
+        </div>
 
-    </main><!-- /.container -->
+        <div class="row">
+            <div class="col">
+                <ul class="nav nav-tabs" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#xxx" role="tab" data-toggle="tab">Your EPL Code</a>
+                    </li>
+                </ul>
 
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane active" id="xxx">
+
+                        <div class="form-group">
+                            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="col">
+                <ul class="nav nav-tabs" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#tab1" role="tab" data-toggle="tab">Console Output</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#tab2" role="tab" data-toggle="tab">JS</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#tab3" role="tab" data-toggle="tab">Variables</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#tab4" role="tab" data-toggle="tab">More</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#tab5" role="tab" data-toggle="tab">AST</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#tab6" role="tab" data-toggle="tab">Tokens</a>
+                    </li>
+                </ul>
+
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane active" id="tab1">
+                        <div class="form-group">
+                            <textarea class="form-control" id="exampleFormControlTextarea2" wrap="off" readonly rows="3"></textarea>
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="tab2">
+                        <pre><code class="javascript" id="exampleFormControlTextarea3"></code></pre>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="tab3">
+                      <table id="example" class="table table-striped table-bordered" width="100%" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Array</th>
+                <th>#</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <th>Array</th>
+                <th>#</th>
+                <th>Value</th>
+            </tr>
+        </tfoot>
+        <tbody>
+           
+
+        </tbody>
+    </table>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="tab4">  <table id="example2" class="table table-striped table-bordered" width="100%" cellspacing="0">
+        <thead>
+            <tr>
+                              <th>#</th>
+
+                <th>Name</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Value</th>
+            </tr>
+        </tfoot>
+        <tbody>
+           
+
+        </tbody>
+    </table></div>
+                    <div role="tabpanel" class="tab-pane" id="tab5">
+                    <div class="form-group">
+                            <textarea class="form-control" id="exampleFormControlTextarea4" wrap="off" readonly rows="3"></textarea>
+                        </div>
+                      </div>
+                    <div role="tabpanel" class="tab-pane" id="tab6">
+                    <div class="form-group">
+                            <textarea class="form-control" id="exampleFormControlTextarea5" wrap="off" readonly rows="3"></textarea>
+                        </div></div>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+    <!-- /.container -->
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script>window.jQuery || document.write('<script src="../../../../assets/js/vendor/jquery.min.js"><\/script>')</script>
+    <script>
+        window.jQuery || document.write('<script src="../../../../assets/js/vendor/jquery.min.js"><\/script>')
+    </script>
     <script src="popper.min.js"></script>
     <script src="bootstrap.min.js"></script>
-  </body>
+    <script src="jquery.dataTables.min.js"></script>
+    <script src="dataTables.bootstrap4.min.js"></script>
+    <script type="text/javascript">
+           $(document).ready(function() {
+            var t = $('#example').DataTable();
+            t.clear().draw( false );;
+             var t2 = $('#example2').DataTable();
+            t2.clear().draw( false );;
+        } );
+    </script>
+</body>
+
 </html>

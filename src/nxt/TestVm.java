@@ -195,13 +195,18 @@ public class TestVm {
                 Logger.logMessage("Dumping the token list now");
                 System.out.flush();
                 System.err.flush();
+                System.out.println("--BEGIN TOKENS");
+
                 t.dump_token_list();
+                System.out.println("--END TOKENS");
+
             }
 
             ASTBuilder.parse_token_list(t.state);
 
             if (dumpAst) {
                 Logger.logMessage("Dumping AST");
+
                 System.out.flush();
                 System.err.flush();
                 try {
@@ -209,7 +214,9 @@ public class TestVm {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+                System.out.println("--BEGIN AST");
                 ASTBuilder.dump_vm_ast(t.state);
+                System.out.println("--END AST");
             }
 
             int wcet = WCETCalculator.calc_wcet(t.state);
@@ -243,7 +250,7 @@ public class TestVm {
                 Logger.logMessage("Dumping generated source code");
                 System.out.flush();
                 System.err.flush();
-                System.out.println(code);
+                System.out.println("--BEGIN CODE\n" + code + "\n--END CODE");
             }
 
             if (exec) {
@@ -318,50 +325,47 @@ public class TestVm {
 
 
                 // todo: here is a lot debug stuff
-                System.out.println("SZ: " + String.valueOf(s.length) + ", VALIDATION_IDX: " + String.valueOf(validator_offset_index));
-                System.out.println("Last POW Hash:");
+                System.out.println("Storagesize: " + String.valueOf(s.length) + ", VALIDATION_IDX: " + String.valueOf(validator_offset_index));
+                System.out.println("\nM Personalized Int Stream:");
                 System.out.println("--------------------------");
-                System.out.println(Convert.toHexString(ExposedToRhino.lastCalculatedPowHash));
-                System.out.println("M Personalized Int Stream:");
-                System.out.println("--------------------------");
-                System.out.println(Arrays.toString(m));
+                System.out.println("MARR: " + Arrays.toString(m));
 
                 if(s != null) {
-                    System.out.println("Storage Array (S Array):");
+                    System.out.println("\nStorage Array (S Array):");
                     System.out.println("------------------------");
-                    System.out.println(Arrays.toString(s));
+                    System.out.println("ARR-S: " + Arrays.toString(s));
                 }
 
                 if(u.length>0){
-                    System.out.println("u Array");
+                    System.out.println("\nu Array");
                     System.out.println("------------------------");
-                    System.out.println(Arrays.toString(u));
+                    System.out.println("ARR-U: " + Arrays.toString(u));
                 }
                 if(f.length>0){
-                    System.out.println("f Array");
+                    System.out.println("\nf Array");
                     System.out.println("------------------------");
-                    System.out.println(Arrays.toString(f));
+                    System.out.println("ARR-F: " + Arrays.toString(f));
                 }
 
                 if(d.length>0){
-                    System.out.println("d Array");
+                    System.out.println("\nd Array");
                     System.out.println("------------------------");
-                    System.out.println(Arrays.toString(d));
+                    System.out.println("ARR-D: " + Arrays.toString(d));
                 }
                 if(i.length>0){
-                    System.out.println("i Array");
+                    System.out.println("\ni Array");
                     System.out.println("------------------------");
-                    System.out.println(Arrays.toString(i));
+                    System.out.println("ARR-I: " + Arrays.toString(i));
                 }
                 if(l.length>0){
-                    System.out.println("l Array");
+                    System.out.println("\nl Array");
                     System.out.println("------------------------");
-                    System.out.println(Arrays.toString(l));
+                    System.out.println("ARR-L: " + Arrays.toString(l));
                 }
                 if(ul.length>0){
-                    System.out.println("ul Array");
+                    System.out.println("\nul Array");
                     System.out.println("------------------------");
-                    System.out.println(Arrays.toString(ul));
+                    System.out.println("ARR-UL: " + Arrays.toString(ul));
                 }
 
 
@@ -376,7 +380,7 @@ public class TestVm {
                 */
                 double p = (double) array.get(0);
                 double b = (double) array.get(1);
-                System.out.println("Solution array: POW:" + p + ", BTY:" + b);
+                System.out.println("\nSolutions found?\nPOW:" + p + "\nBTY:" + b);
 
 
             }
