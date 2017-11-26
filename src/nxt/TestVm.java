@@ -8,9 +8,9 @@ import nxt.util.Convert;
 import nxt.util.Logger;
 import org.mozilla.javascript.NativeArray;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
 
@@ -20,7 +20,38 @@ import static nxt.Nxt.loadProperties;
 
 
 public class TestVm {
+
+    private static class OutputStreamCombiner extends OutputStream {
+        private List<OutputStream> outputStreams;
+
+        public OutputStreamCombiner(List<OutputStream> outputStreams) {
+            this.outputStreams = outputStreams;
+        }
+
+        public void write(int b) throws IOException {
+            for (OutputStream os : outputStreams) {
+                os.write(b);
+            }
+        }
+
+        public void flush() throws IOException {
+            for (OutputStream os : outputStreams) {
+                os.flush();
+            }
+        }
+
+        public void close() throws IOException {
+            for (OutputStream os : outputStreams) {
+                os.close();
+            }
+        }
+    }
+
     private static final Properties defaultProperties = new Properties();
+
+    static{
+        loadProperties(defaultProperties,NXT_DEFAULT_TESTVM_PROPERTIES,true);
+    }
 
     public static String getStringProperty(String name) {
         return getStringProperty(name, null, false);
@@ -28,6 +59,50 @@ public class TestVm {
 
     public static String getStringProperty(String name, String defaultValue) {
         return getStringProperty(name, defaultValue, false);
+    }
+
+    private static ByteArrayOutputStream baos;
+    private static PrintStream previous;
+    private static PrintStream previous2;
+
+    private static boolean capturing;
+
+    public static void start() {
+        if (capturing) {
+            return;
+        }
+
+        capturing = true;
+        previous = System.out;
+        previous2 = System.err;
+        baos = new ByteArrayOutputStream();
+
+        OutputStream outputStreamCombiner =
+                new OutputStreamCombiner(Arrays.asList(previous, baos));
+        OutputStream outputStreamCombiner2 =
+                new OutputStreamCombiner(Arrays.asList(previous2, baos));
+        PrintStream custom = new PrintStream(outputStreamCombiner);
+        PrintStream custom2 = new PrintStream(outputStreamCombiner2);
+
+        System.setOut(custom);
+        System.setErr(custom2);
+    }
+
+    public static String stop() {
+        if (!capturing) {
+            return "";
+        }
+
+        System.setOut(previous);
+        System.setErr(previous2);
+        String capturedValue = baos.toString();
+
+        baos = null;
+        previous = null;
+        previous2 = null;
+        capturing = false;
+
+        return capturedValue;
     }
 
     public static String getStringProperty(String name, String defaultValue, boolean doNotLog) {
@@ -93,14 +168,26 @@ public class TestVm {
     }
 
     public static void main(String[] args) {
-        loadProperties(defaultProperties, NXT_DEFAULT_TESTVM_PROPERTIES, true);
         String file = getStringProperty("nxt.test_file");
+        String content = null;
+        try {
+            content = new Scanner(new File(file)).useDelimiter("\\Z").next();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return;
+        }
+        String result = exec(content);
+        //System.out.println(result);
+    }
+
+    public static synchronized String exec(String content){
+
+        start();
         boolean dumpTokens = getBooleanProperty("nxt.dump_tokens");
         boolean dumpAst = getBooleanProperty("nxt.dump_ast");
         boolean dumpCode = getBooleanProperty("nxt.dump_code");
         boolean exec = getBooleanProperty("nxt.execute_code");
         try {
-            String content = new Scanner(new File(file)).useDelimiter("\\Z").next();
             TokenManager t = new TokenManager();
             t.build_token_list(content);
 
@@ -294,16 +381,15 @@ public class TestVm {
 
             }
 
-        } catch (FileNotFoundException e) {
-            Logger.logErrorMessage("File " + file + " not found.");
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             Logger.logErrorMessage("The following syntax error has been found");
             System.out.flush();
             System.err.flush();
             e.printStackTrace();
         }
+        return stop();
     }
-
     private static int[] fakeInts() {
         int[] m = new int[12]; //personalizedIntStream(publicKey, 123456789, multiplier, 12345);
         return m;

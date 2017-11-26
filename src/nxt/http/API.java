@@ -83,7 +83,7 @@ public final class API {
 
     public static final int openAPIPort;
     public static final int openAPISSLPort;
-
+    public static final boolean enableHtmlDebugger;
     public static final List<String> disabledAPIs;
     public static final List<APITag> disabledAPITags;
 
@@ -139,6 +139,7 @@ public final class API {
             final int sslPort = Constants.isTestnet ? TESTNET_API_SSLPORT : Nxt.getIntProperty("nxt.apiServerSSLPort");
             final String host = Nxt.getStringProperty("nxt.apiServerHost");
             disableAdminPassword = Nxt.getBooleanProperty("nxt.disableAdminPassword") || ("127.0.0.1".equals(host) && adminPassword.isEmpty());
+            enableHtmlDebugger = Nxt.getBooleanProperty("nxt.enableHtmlDebugger");
 
             apiServer = new Server();
             ServerConnector connector;
@@ -232,6 +233,18 @@ public final class API {
                 apiHandlers.addHandler(contextHandler);
             }
 
+            if (enableHtmlDebugger) {
+                ContextHandler contextHandler = new ContextHandler("/debug");
+                ResourceHandler docFileHandler = new ResourceHandler();
+                docFileHandler.setDirectoriesListed(false);
+                docFileHandler.setWelcomeFiles(new String[]{"interface.html"});
+                docFileHandler.setResourceBase("./html/debugger");
+                contextHandler.setHandler(docFileHandler);
+                apiHandlers.addHandler(contextHandler);
+                Logger.logMessage("Enabling HTML Based Test-VM Debugger");
+            }
+
+
             ServletHolder servletHolder = apiHandler.addServlet(APIServlet.class, "/nxt");
             servletHolder.getRegistration().setMultipartConfig(new MultipartConfigElement(
                     null, Math.max(Nxt.getIntProperty("nxt.maxUploadFileSize"), Constants.MAX_TAGGED_DATA_DATA_LENGTH), -1L, 0));
@@ -255,6 +268,8 @@ public final class API {
             apiHandler.addServlet(APITestServlet.class, "/test-proxy");
 
             apiHandler.addServlet(DbShellServlet.class, "/dbshell");
+            apiHandler.addServlet(DebugRunServlet.class, "/debug_run");
+
 
             if (apiServerCORS) {
                 FilterHolder filterHolder = apiHandler.addFilter(CrossOriginFilter.class, "/*", null);
@@ -304,6 +319,7 @@ public final class API {
             disableAdminPassword = false;
             openAPIPort = 0;
             openAPISSLPort = 0;
+            enableHtmlDebugger = false;
             Logger.logMessage("API server not enabled");
         }
 

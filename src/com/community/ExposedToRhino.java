@@ -70,9 +70,10 @@ public class ExposedToRhino {
             for (int i = 0; i < 4; i++)
                 hash32[i] = Convert.swap(hash32[i]);
 
+            System.out.println("POW-Hash: " + Convert.toHexString(Convert.int2byte(hash32)) + " (swapped version as seen on xel_miner)");
 
             // todo: remove for production
-            System.out.println("Difficulty Checks (hash vs target):");
+            System.out.println("\nDifficulty Checks (hash vs target):");
             System.out.println("===================================");
             for (int i = 0; i < 4; i++)
                 System.out.println(Integer.toHexString(hash32[i]) + "\t" + Integer.toHexString(target[i]));

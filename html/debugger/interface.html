@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="favicon.ico">
+
+    <title>XEL TestVM Online Interface</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="starter-template.css" rel="stylesheet">
+    <script language="JavaScript">
+        function startme(){
+          var xhr = new XMLHttpRequest();
+          xhr.onreadystatechange = function () {
+            if (this.readyState != 4) return;
+
+            if (this.status == 200) {
+                var data = this.responseText;
+                document.getElementById('exampleFormControlTextarea2').value = data;   // plain JavaScript
+            }
+
+            // end of state change: it can be after some time (async)
+        };
+          var text1 = document.getElementById('exampleFormControlTextarea1').value;     // plain JavaScript
+          xhr.open("POST", "/debug_run", true);
+          xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+          xhr.send(text1);
+          document.getElementById('exampleFormControlTextarea2').value = "... please wait while we run your code.";   // plain JavaScript
+
+        }
+    </script>
+  </head>
+
+
+  <body>
+
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+    
+
+      <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+              <a class="navbar-brand" href="#">XEL Testbench</a>
+				<form class="form-inline my-2 my-lg-0">
+          <button class="btn btn-outline-success my-2 my-sm-0" type="button" onclick="startme();">Compile and Execute EPL Code</button>
+        </form>
+      </div>
+    </nav>
+
+    <main role="main" class="container">
+
+      <div class="starter-template">
+        <p class="lead">Enter your EPL Code in the following field and click on the green button in the upper-left corner<br>in order to compile and execute your code snippet.</p>
+       
+      </div>
+
+       <div class="row">
+    <div class="col">
+       <div class="form-group">
+		    <label for="exampleFormControlTextarea1">Your EPL Code</label>
+		    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+		  </div>
+    </div>
+    <div class="col">
+      <div class="form-group">
+		    <label for="exampleFormControlTextarea1">Test-VM Dump:</label>
+		    <textarea class="form-control" id="exampleFormControlTextarea2" wrap="off" readonly rows="3"></textarea>
+		  </div>
+    </div>
+  </div>
+
+    </main><!-- /.container -->
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script>window.jQuery || document.write('<script src="../../../../assets/js/vendor/jquery.min.js"><\/script>')</script>
+    <script src="popper.min.js"></script>
+    <script src="bootstrap.min.js"></script>
+  </body>
+</html>
