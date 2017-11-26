@@ -296,12 +296,12 @@ public class Primitives {
 
     public static class STATE {
         // Max Array Variable Index For Each Data Type
-        int ast_vm_ints;
-        int ast_vm_uints;
-        int ast_vm_longs;
-        int ast_vm_ulongs;
-        int ast_vm_floats;
-        int ast_vm_doubles;
+        public int ast_vm_ints;
+        public int ast_vm_uints;
+        public int ast_vm_longs;
+        public int ast_vm_ulongs;
+        public int ast_vm_floats;
+        public int ast_vm_doubles;
 
         // Number Of Unsigned Ints To Store Per Interation / Import & Export Index
         int ast_submit_sz;

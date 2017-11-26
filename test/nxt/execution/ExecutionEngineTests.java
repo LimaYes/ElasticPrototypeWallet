@@ -1,6 +1,7 @@
 package nxt.execution;
 
 import com.community.Executor;
+import com.community.Primitives;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -166,7 +167,17 @@ public class ExecutionEngineTests {
     }
 
 
+    private Primitives.STATE st(){
+        Primitives.STATE state = new Primitives.STATE();
+        state.ast_vm_longs = 100;
+        state.ast_vm_doubles = 100;
+        state.ast_vm_floats = 100;
+        state.ast_vm_uints = 100;
+        state.ast_vm_ints = 100;
+        state.ast_vm_ulongs = 100;
 
+        return state;
+    }
     @Test
     public void testCompile(){
         String code = null;
@@ -191,7 +202,8 @@ public class ExecutionEngineTests {
             byte[] pow_hash = new byte[16];
             int validator_index = 0;
 
-            Executor.CODE_RESULT cd = Executor.executeCode(pubkey, blockid, workid, epl, m, s, v, validator_index, true, new int[]{0,0}, pow_hash);
+
+            Executor.CODE_RESULT cd = Executor.executeCode(pubkey, blockid, workid, epl, m, s, v, validator_index, true, new int[]{0,0}, pow_hash, st());
             Assert.assertFalse(cd.error);
 
             System.out.println("Result:\nbty\t" + cd.bty);
@@ -225,7 +237,7 @@ public class ExecutionEngineTests {
             int validator_index = 0;
 
 
-            Executor.CODE_RESULT cd = Executor.executeCode(pubkey, blockid, workid, epl, m, s, v, validator_index,true, new int[]{0,0}, pow_hash);
+            Executor.CODE_RESULT cd = Executor.executeCode(pubkey, blockid, workid, epl, m, s, v, validator_index,true, new int[]{0,0}, pow_hash, st());
             Assert.assertTrue(cd.bty);
             Assert.assertFalse(cd.error);
             System.out.println("Result:\nbty\t" + cd.bty);
@@ -316,7 +328,7 @@ public class ExecutionEngineTests {
             byte[] pow_hash = new byte[16];
             int validator_index = 0;
 
-            Executor.CODE_RESULT cd = Executor.executeCode(pubkey, blockid, workid, epl, m, s, v, validator_index, true, new int[]{0,0}, pow_hash);
+            Executor.CODE_RESULT cd = Executor.executeCode(pubkey, blockid, workid, epl, m, s, v, validator_index, true, new int[]{0,0}, pow_hash, st());
             Assert.assertFalse(cd.error);
             Assert.assertFalse(cd.bty);
             System.out.println("Result:\nbty\t" + cd.bty);

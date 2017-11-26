@@ -146,7 +146,7 @@ public class Executor {
 
     public static CODE_RESULT executeCode(final byte[] publicKey, final long blockId, final long workId, String
             verifyCode, byte[] multiplier, int[] storage, int[] validator, int validator_offset_index, boolean verify_pow, int[]
-            target, byte[] pow_hash){
+            target, byte[] pow_hash, Primitives.STATE state){
 
         // TODO: IMPLEMENT POW_HASH CHECK
 
@@ -171,27 +171,22 @@ public class Executor {
             // Inject temp arrays
             int[] m = personalizedIntStream(publicKey, blockId, multiplier, workId);
 
+            int[] u = new int[state.ast_vm_uints];
+            float[] f = new float[state.ast_vm_floats];
+            double[] d = new double[state.ast_vm_doubles];
+            long[] l = new long[state.ast_vm_longs];
+            long[] ul = new long[state.ast_vm_ulongs];
+            int[] i = new int[state.ast_vm_ints];
 
-
-            int[] u = new int[10000];
 
             // now, fill the validator uints! (also called "data" in xelminer)
-            for(int i=0;i<validator.length;++i){
-                u[validator_offset_index+i] = validator[i];
+            for(int xx=0;xx<validator.length;++xx){
+                u[validator_offset_index+xx] = validator[xx];
             }
 
-            // TO CHECK; WE GIVE I ARRAY AS M-VARIABLE TO JS, BUT IT DOES NOT CONTAIN M IN ANY CASE! PLEASE ELABORATE ON THIS, THIS MIGHT BE THE ERROR! PUT I IN M AND YOURE POSSIBLY DONE
-
-            int[] i = new int[10000];
             // fill beginning of i (or better say m array) with deterministic stuff
             for(int pyx = 0; pyx < m.length; ++pyx)
                 i[pyx]=m[pyx];
-
-
-            float[] f = new float[10000]; // TODO: Make dynamic
-            double[] d = new double[10000];
-            long[] l = new long[10000];
-            long[] ul = new long[10000];
 
             sandbox.inject("u", u);
             sandbox.inject("m", m);
@@ -212,8 +207,8 @@ public class Executor {
             org.mozilla.javascript.NativeArray array = (NativeArray) sandbox.eval("epl", vcode);
 
 
-            /*
 
+            /*
             // todo: here is a lot debug stuff
             System.out.println("SZ: " + String.valueOf(storage.length) + ", VALIDATION_IDX: " + String.valueOf(validator_offset_index));
             System.out.println("Last POW Hash:");
@@ -237,11 +232,12 @@ public class Executor {
             System.out.println(Convert.toHexString(multiplier));
             System.out.println("\n\n");
             System.out.println(vcode); // todo, comment in to see what code is being executed, remove for production
+
+            //System.out.println(p + ", " + b);
             */
+
             double p = (double) array.get(0);
             double b = (double) array.get(1);
-            //System.out.println(p + ", " + b);
-
             result.bty = b==1.0;
             result.pow = p==1.0;
 

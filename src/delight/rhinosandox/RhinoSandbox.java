@@ -58,4 +58,6 @@ public interface RhinoSandbox {
    * <p><code>variables</code> defines variables with Java objects which will be available for the execution of this script.
    */
   public abstract Object eval(final String soureName, final String js, final Map<String, Object> variables);
+
+  public Object getGlobalScopeObject(String u);
 }

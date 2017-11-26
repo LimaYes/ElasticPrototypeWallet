@@ -130,7 +130,13 @@ public class RhinoSandboxImpl implements RhinoSandbox {
       Context.exit();
     }
   }
-  
+
+  @Override
+  public Object getGlobalScopeObject(String u) {
+    if(this.globalScope== null) return null;
+    return this.globalScope.get(u);
+  }
+
   @Override
   public Object eval(final String sourceName, final String js) {
     HashMap<String, Object> _hashMap = new HashMap<String, Object>();

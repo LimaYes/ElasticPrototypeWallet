@@ -43,7 +43,7 @@ public class CodeConverter {
         return true;
     }
 
-    private static void get_cast(lrcast mylrcast, Primitives.DATA_TYPE ldata_type, Primitives.DATA_TYPE rdata_type,
+    /*private static void get_cast(lrcast mylrcast, Primitives.DATA_TYPE ldata_type, Primitives.DATA_TYPE rdata_type,
                                  boolean right_only) {
         mylrcast.lcast = null;
         mylrcast.rcast = null;
@@ -90,7 +90,7 @@ public class CodeConverter {
             }
             return;
         }
-    }
+    }*/
 
 
     public static void convert_verify(Primitives.STATE state) throws Exceptions.SyntaxErrorException {
@@ -444,13 +444,13 @@ public class CodeConverter {
                     case NODE_RSHIFT:		op = String.format("%s", ">>");	break;
                 }
                 
-                get_cast(mylrcast, node.left.data_type, node.right.data_type, false);
-                if (mylrcast.lcast != null)
+                //get_cast(mylrcast, node.left.data_type, node.right.data_type, false); // TODO FIX UINT
+                /*if (mylrcast.lcast != null)
                     str = String.format("(%s)(%s) %s (%s)", mylrcast.lcast, mylrstr.lstr, op, mylrstr.rstr);
                 else if (mylrcast.rcast != null)
                     str = String.format("(%s) %s (%s)(%s)", mylrstr.lstr, op, mylrcast.rcast, mylrstr.rstr);
-                else
-                    str = String.format("(%s) %s (%s)", mylrstr.lstr, op, mylrstr.rstr);
+                else*/
+                str = String.format("(%s) %s (%s)", mylrstr.lstr, op, mylrstr.rstr);
                 break;
 
             case NODE_DIV:
@@ -460,11 +460,11 @@ public class CodeConverter {
                     case NODE_MOD:	op = String.format("%s", "%"); break;
                 }
                 
-                get_cast(mylrcast, node.left.data_type, node.right.data_type, true);
-                if (mylrcast.rcast!=null)
+                //get_cast(mylrcast, node.left.data_type, node.right.data_type, true); // TODO FIX UINT
+                /*if (mylrcast.rcast!=null)
                     str = String.format("(((%s) != 0) ? (%s) %s (%s)(%s) : 0)", mylrstr.rstr, mylrstr.lstr, op, mylrcast.rcast, mylrstr.rstr);
-                else
-                    str = String.format("(((%s) != 0) ? (%s) %s (%s) : 0)", mylrstr.rstr, mylrstr.lstr, op, mylrstr.rstr);
+                else*/
+                str = String.format("(((%s) != 0) ? (%s) %s (%s) : 0)", mylrstr.rstr, mylrstr.lstr, op, mylrstr.rstr);
                 break;
 
             case NODE_ASSIGN:
@@ -488,11 +488,11 @@ public class CodeConverter {
                     case NODE_OR_ASSIGN:	op = String.format("%s", "|=");	break;
                 }
                 
-                get_cast(mylrcast, node.left.data_type, node.right.data_type, true);
-                if (mylrcast.rcast!=null)
+                //get_cast(mylrcast, node.left.data_type, node.right.data_type, true); // TODO FIX UINT
+                /*if (mylrcast.rcast!=null)
                     str = String.format("%s %s (%s)(%s)", mylrstr.lstr, op, mylrcast.rcast, mylrstr.rstr);
-                else
-                    str = String.format("%s %s %s", mylrstr.lstr, op, mylrstr.rstr);
+                else*/
+                str = String.format("%s %s %s", mylrstr.lstr, op, mylrstr.rstr);
                 break;
 
             case NODE_DIV_ASSIGN:
@@ -502,12 +502,12 @@ public class CodeConverter {
                     case NODE_MOD_ASSIGN:	op = String.format("%s", "%");	break;
                 }
                 
-                get_cast(mylrcast, node.left.data_type, node.right.data_type, true);
-                if (mylrcast.rcast != null)
+                // get_cast(mylrcast, node.left.data_type, node.right.data_type, true); // TODO FIX UINT
+                /*if (mylrcast.rcast != null)
                     str = String.format("%s = (((%s) != 0) ? (%s) %s (%s)(%s) : 0)", mylrstr.lstr, mylrstr.rstr, mylrstr.lstr, op, mylrcast.rcast,
                             mylrstr.rstr);
-                else
-                    str = String.format("%s = (((%s) != 0) ? (%s) %s (%s) : 0)", mylrstr.lstr, mylrstr.rstr, mylrstr.lstr, op, mylrstr.rstr);
+                else*/
+                str = String.format("%s = (((%s) != 0) ? (%s) %s (%s) : 0)", mylrstr.lstr, mylrstr.rstr, mylrstr.lstr, op, mylrstr.rstr);
                 break;
 
             case NODE_INCREMENT_R:

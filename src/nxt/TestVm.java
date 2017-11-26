@@ -10,9 +10,11 @@ import org.mozilla.javascript.NativeArray;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Arrays;
 import java.util.Properties;
 import java.util.Scanner;
 
+import static com.community.Executor.personalizedIntStream;
 import static nxt.Nxt.NXT_DEFAULT_TESTVM_PROPERTIES;
 import static nxt.Nxt.loadProperties;
 
@@ -50,6 +52,44 @@ public class TestVm {
         }
         Logger.logMessage(name + " not defined, assuming false");
         return false;
+    }
+
+
+    public static int[] getIntArray(Object x){
+        NativeArray arr = (NativeArray) x;
+        int [] array = new int[(int) arr.getLength()];
+        for (Object o : arr.getIds()) {
+            int index = (Integer) o;
+            array[index] = (int) arr.get(index, null);
+        }
+        return array;
+    }
+    public static float[] getFloatArray(Object x){
+        NativeArray arr = (NativeArray) x;
+        float [] array = new float[(int) arr.getLength()];
+        for (Object o : arr.getIds()) {
+            int index = (Integer) o;
+            array[index] = (int) arr.get(index, null);
+        }
+        return array;
+    }
+    public static double[] getDoubleArray(Object x){
+        NativeArray arr = (NativeArray) x;
+        double [] array = new double[(int) arr.getLength()];
+        for (Object o : arr.getIds()) {
+            int index = (Integer) o;
+            array[index] = (int) arr.get(index, null);
+        }
+        return array;
+    }
+    public static long[] getLongArray(Object x){
+        NativeArray arr = (NativeArray) x;
+        long [] array = new long[(int) arr.getLength()];
+        for (Object o : arr.getIds()) {
+            int index = (Integer) o;
+            array[index] = (int) arr.get(index, null);
+        }
+        return array;
     }
 
     public static void main(String[] args) {
@@ -120,26 +160,32 @@ public class TestVm {
             }
 
             if (exec) {
+
+                int validator_offset_index = 0;
                 Logger.logMessage("We will now execute the code");
 
                 delight.rhinosandox.RhinoSandbox sandbox = delight.rhinosandox.RhinoSandboxes.create();
                 sandbox.setInstructionLimit(com.community.Constants.INSTRUCTION_LIMIT);
-                sandbox.setMaxDuration(Constants.SAFE_TIME_LIMIT);
+                sandbox.setMaxDuration(Constants.SAFE_TIME_LIMIT); // TODO: Good idea?
                 sandbox.allow(ExposedToRhino.class);
 
                 // Add some dummy storae
                 int[] s = new int[10000];
                 sandbox.inject("s", s); // todo, add extra elements to S[] as coralreefer proposed
 
-                int[] target = Convert.bigintToInts(ComputationConstants.MAXIMAL_WORK_TARGET, 4);
+                int[] target = Convert.bigintToInts(ComputationConstants.TESTVM_WORK_TARGET, 4);
                 sandbox.inject("target", target);
                 sandbox.inject("verify_pow", false); // always go for the bounty check here
 
                 // Inject temp arrays
                 int[] m = fakeInts();
 
-
-                int[] u = new int[10000];
+                int[] u = new int[t.state.ast_vm_uints];
+                float[] f = new float[t.state.ast_vm_floats];
+                double[] d = new double[t.state.ast_vm_doubles];
+                long[] l = new long[t.state.ast_vm_longs];
+                long[] ul = new long[t.state.ast_vm_ulongs];
+                int[] i = new int[t.state.ast_vm_ints];
 
                 // now, fill the validator uints! (also called "data" in xelminer)
                     /*
@@ -150,16 +196,11 @@ public class TestVm {
 
                 // TO CHECK; WE GIVE I ARRAY AS M-VARIABLE TO JS, BUT IT DOES NOT CONTAIN M IN ANY CASE! PLEASE ELABORATE ON THIS, THIS MIGHT BE THE ERROR! PUT I IN M AND YOURE POSSIBLY DONE
 
-                int[] i = new int[10000];
+
                 // fill beginning of i (or better say m array) with deterministic stuff
                 for (int pyx = 0; pyx < m.length; ++pyx)
                     i[pyx] = m[pyx];
 
-
-                float[] f = new float[10000]; // TODO: Make dynamic
-                double[] d = new double[10000];
-                long[] l = new long[10000];
-                long[] ul = new long[10000];
 
                 sandbox.inject("u", u);
                 sandbox.inject("m", m);
@@ -178,6 +219,79 @@ public class TestVm {
                         "res();";
 
                 org.mozilla.javascript.NativeArray array = (NativeArray) sandbox.eval("epl", code);
+
+                u = (int[]) sandbox.getGlobalScopeObject("u");
+                m = (int[]) sandbox.getGlobalScopeObject("m");
+                i = (int[]) sandbox.getGlobalScopeObject("i");
+                l = (long[]) sandbox.getGlobalScopeObject("l");
+                ul = (long[]) sandbox.getGlobalScopeObject("ul");
+                f = (float[]) sandbox.getGlobalScopeObject("f");
+                d = (double[]) sandbox.getGlobalScopeObject("d");
+
+
+
+                // todo: here is a lot debug stuff
+                System.out.println("SZ: " + String.valueOf(s.length) + ", VALIDATION_IDX: " + String.valueOf(validator_offset_index));
+                System.out.println("Last POW Hash:");
+                System.out.println("--------------------------");
+                System.out.println(Convert.toHexString(ExposedToRhino.lastCalculatedPowHash));
+                System.out.println("M Personalized Int Stream:");
+                System.out.println("--------------------------");
+                System.out.println(Arrays.toString(m));
+
+                if(s != null) {
+                    System.out.println("Storage Array (S Array):");
+                    System.out.println("------------------------");
+                    System.out.println(Arrays.toString(s));
+                }
+
+                if(u.length>0){
+                    System.out.println("u Array");
+                    System.out.println("------------------------");
+                    System.out.println(Arrays.toString(u));
+                }
+                if(f.length>0){
+                    System.out.println("f Array");
+                    System.out.println("------------------------");
+                    System.out.println(Arrays.toString(f));
+                }
+
+                if(d.length>0){
+                    System.out.println("d Array");
+                    System.out.println("------------------------");
+                    System.out.println(Arrays.toString(d));
+                }
+                if(i.length>0){
+                    System.out.println("i Array");
+                    System.out.println("------------------------");
+                    System.out.println(Arrays.toString(i));
+                }
+                if(l.length>0){
+                    System.out.println("l Array");
+                    System.out.println("------------------------");
+                    System.out.println(Arrays.toString(l));
+                }
+                if(ul.length>0){
+                    System.out.println("ul Array");
+                    System.out.println("------------------------");
+                    System.out.println(Arrays.toString(ul));
+                }
+
+
+                /*System.out.println("Validator/Data Array:");
+                System.out.println("---------------------");
+                System.out.println(Arrays.toString(validator));
+                System.out.println("Raw Multiplicator Was::");
+                System.out.println("---------------------");
+                System.out.println(Convert.toHexString(multiplier));
+                System.out.println("\n\n");
+                System.out.println(vcode); // todo, comment in to see what code is being executed, remove for production
+                */
+                double p = (double) array.get(0);
+                double b = (double) array.get(1);
+                System.out.println("Solution array: POW:" + p + ", BTY:" + b);
+
+
             }
 
         } catch (FileNotFoundException e) {
@@ -191,7 +305,7 @@ public class TestVm {
     }
 
     private static int[] fakeInts() {
-        int[] ints = new int[12];
-        return ints;
+        int[] m = new int[12]; //personalizedIntStream(publicKey, 123456789, multiplier, 12345);
+        return m;
     }
 }
