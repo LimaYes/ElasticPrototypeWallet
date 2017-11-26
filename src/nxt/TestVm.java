@@ -223,7 +223,7 @@ public class TestVm {
             int verify_wcet = WCETCalculator.get_verify_wcet(t.state);
 
             Logger.logMessage("WCET: " + wcet);
-            Logger.logMessage("Verify-WCET: " + verify_wcet);
+            System.out.println("Verify-WCET: " + verify_wcet);
             System.out.flush();
             System.err.flush();
 
@@ -380,7 +380,7 @@ public class TestVm {
                 */
                 double p = (double) array.get(0);
                 double b = (double) array.get(1);
-                System.out.println("\nSolutions found?\nPOW:" + p + "\nBTY:" + b);
+                System.out.println("\nSolutions found?\nFound-POW:" + p + "\nFound-BTY:" + b);
 
 
             }

@@ -91,13 +91,21 @@
                         if (ln.indexOf("POW-Hash") >= 0) {
                             tbl2.row.add([1, "POW-Hash", ln.split(": ")[1].trim()]);
                         }
-
+                        if (ln.indexOf("Verify-WCET") >= 0) {
+                            tbl2.row.add([2, "Verify WCET", ln.split(": ")[1].trim()]);
+                        }
+                        if (ln.indexOf("Found-POW:") >= 0) {
+                            tbl2.row.add([3, "Found POW?", ln.split(":")[1].trim()]);
+                        }
+                        if (ln.indexOf("Found-BTY") >= 0) {
+                            tbl2.row.add([4, "Found Bounty?", ln.split(":")[1].trim()]);
+                        }
                         if (ln.indexOf("MARR") >= 0) {
                             var arr = ln.split(":")[1].trim()
                             arr = arr.substring(1, arr.length - 1);
                             var g = arr.split(", ");
                             for (var d = 0; d < g.length; ++d) {
-                                tbl2.row.add([d + 2, "m[" + d + "]", g[d]]);
+                                tbl2.row.add([d + 5, "m[" + d + "]", g[d]]);
                             }
 
                         }
