@@ -81,6 +81,14 @@ public class Executor {
                 "  return word << shift | word >>> 32 - shift;\n" +
                 "}\n";
 
+        pre_code += "function gcd(a, b) {\n" +
+                "    if ( ! b) {\n" +
+                "        return a;\n" +
+                "    }\n" +
+                "\n" +
+                "    return gcd(b, a % b);\n" +
+                "};";
+
         // todo, make this better (and more correct)
 
         return pre_code + "\n" + result;

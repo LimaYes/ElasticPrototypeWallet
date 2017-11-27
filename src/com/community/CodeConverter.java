@@ -566,83 +566,83 @@ public class CodeConverter {
                 break;
             case NODE_ABS:
                 
-                str = String.format("abs(%s)", mylrstr.lstr);
+                str = String.format("Math.abs(%s)", mylrstr.lstr);
                 break;
             case NODE_POW:
                 
-                str = String.format("pow(%s, %s)", mylrstr.lstr, mylrstr.rstr);
+                str = String.format("Math.pow(%s, %s)", mylrstr.lstr, mylrstr.rstr);
                 break;
             case NODE_SIN:
                 
-                str = String.format("sin(%s)", mylrstr.lstr);
+                str = String.format("Math.sin(%s)", mylrstr.lstr);
                 break;
             case NODE_COS:
                 
-                str = String.format("cos(%s)", mylrstr.lstr);
+                str = String.format("Math.cos(%s)", mylrstr.lstr);
                 break;
             case NODE_TAN:
                 
-                str = String.format("tan(%s)", mylrstr.lstr);
+                str = String.format("Math.tan(%s)", mylrstr.lstr);
                 break;
             case NODE_SINH:
                 
-                str = String.format("(((%s >= -1.0) && (%s <= 1.0)) ? sinh( %s ) : 0.0)", mylrstr.lstr, mylrstr.lstr, mylrstr.lstr);
+                str = String.format("(((%s >= -1.0) && (%s <= 1.0)) ? Math.sinh( %s ) : 0.0)", mylrstr.lstr, mylrstr.lstr, mylrstr.lstr);
                 break;
             case NODE_COSH:
                 
-                str = String.format("(((%s >= -1.0) && (%s <= 1.0)) ? cosh( %s ) : 0.0)", mylrstr.lstr, mylrstr.lstr, mylrstr.lstr);
+                str = String.format("(((%s >= -1.0) && (%s <= 1.0)) ? Math.cosh( %s ) : 0.0)", mylrstr.lstr, mylrstr.lstr, mylrstr.lstr);
                 break;
             case NODE_TANH:
                 
-                str = String.format("tanh(%s)", mylrstr.lstr);
+                str = String.format("Math.tanh(%s)", mylrstr.lstr);
                 break;
             case NODE_ASIN:
                 
-                str = String.format("(((%s >= -1.0) && (%s <= 1.0)) ? asin( %s ) : 0.0)", mylrstr.lstr, mylrstr.lstr, mylrstr.lstr);
+                str = String.format("(((%s >= -1.0) && (%s <= 1.0)) ? Math.asin( %s ) : 0.0)", mylrstr.lstr, mylrstr.lstr, mylrstr.lstr);
                 break;
             case NODE_ACOS:
                 
-                str = String.format("(((%s >= -1.0) && (%s <= 1.0)) ? acos( %s ) : 0.0)", mylrstr.lstr, mylrstr.lstr, mylrstr.lstr);
+                str = String.format("(((%s >= -1.0) && (%s <= 1.0)) ? Math.acos( %s ) : 0.0)", mylrstr.lstr, mylrstr.lstr, mylrstr.lstr);
                 break;
             case NODE_ATAN:
                 
-                str = String.format("atan(%s)", mylrstr.lstr);
+                str = String.format("Math.atan(%s)", mylrstr.lstr);
                 break;
             case NODE_ATAN2:
                 
-                str = String.format("((%s != 0) ? atan2(%s, %s) : 0.0)", mylrstr.rstr, mylrstr.lstr, mylrstr.rstr);
+                str = String.format("((%s != 0) ? Math.atan2(%s, %s) : 0.0)", mylrstr.rstr, mylrstr.lstr, mylrstr.rstr);
                 break;
             case NODE_EXPNT:
                 
-                str = String.format("((((%s) >= -708.0) && ((%s) <= 709.0)) ? exp( %s ) : 0.0)", mylrstr.lstr, mylrstr.lstr, mylrstr.lstr);
+                str = String.format("((((%s) >= -708.0) && ((%s) <= 709.0)) ? Math.exp( %s ) : 0.0)", mylrstr.lstr, mylrstr.lstr, mylrstr.lstr);
                 break;
             case NODE_LOG:
                 
-                str = String.format("((%s > 0) ? log( %s ) : 0.0)", mylrstr.lstr, mylrstr.lstr);
+                str = String.format("((%s > 0) ? Math.log( %s ) : 0.0)", mylrstr.lstr, mylrstr.lstr);
                 break;
             case NODE_LOG10:
                 
-                str = String.format("((%s > 0) ? log10( %s ) : 0.0)", mylrstr.lstr, mylrstr.lstr);
+                str = String.format("((%s > 0) ? Math.log10( %s ) : 0.0)", mylrstr.lstr, mylrstr.lstr);
                 break;
             case NODE_SQRT:
                 
-                str = String.format("((%s > 0) ? sqrt( %s ) : 0.0)", mylrstr.lstr, mylrstr.lstr);
+                str = String.format("((%s > 0) ? Math.sqrt( %s ) : 0.0)", mylrstr.lstr, mylrstr.lstr);
                 break;
             case NODE_CEIL:
                 
-                str = String.format("ceil(%s)", mylrstr.lstr);
+                str = String.format("Math.ceil(%s)", mylrstr.lstr);
                 break;
             case NODE_FLOOR:
                 
-                str = String.format("floor(%s)", mylrstr.lstr);
+                str = String.format("Math.floor(%s)", mylrstr.lstr);
                 break;
             case NODE_FABS:
                 
-                str = String.format("fabs(%s)", mylrstr.lstr);
+                str = String.format("Math.abs(%s)", mylrstr.lstr);
                 break;
             case NODE_FMOD:
-                
-                str = String.format("((%s != 0) ? fmod(%s, %s) : 0.0)", mylrstr.rstr, mylrstr.lstr, mylrstr.rstr);
+                //TODO: FMOD is not supported, mod is wrong here! FIX ASAP
+                str = String.format("((%s != 0) ? (%s %% %s) : 0.0)", mylrstr.rstr, mylrstr.lstr, mylrstr.rstr);
                 break;
             case NODE_GCD:
                 

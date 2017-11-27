@@ -43,7 +43,7 @@
                     var tok = "";
                     var intok = false;
 
-                    var ex = "The program has been executed successfully.";
+                    var ex = "The program has been executed successfully. You may now use this debug area to take a look at the generated JS code (note, EPL programs are converted to JS and executed in a rhino sandbox). Furthermore, you can take a look at the variables (only those with a value != 0 are shown), see some meta information such as the POW hash, and take a look at the generated AST tree and token list.";
                     var inerr = false;
 
                     tbl.clear().draw(false);
@@ -61,7 +61,7 @@
                         if (ln.indexOf("--END TOKENS") >= 0)
                             intok = false;
 
-                        if (ln.indexOf("Exception") >= 0) {
+                        if (ln.indexOf("Exception") >= 0 || ln.indexOf("org.mozilla.javascript.") >= 0) {
                             if (inerr == false) ex = "";
                             inerr = true;
 
@@ -87,18 +87,18 @@
 
                         if (ln.indexOf("--BEGIN TOKENS") >= 0)
                             intok = true;
-
+console.log(ln);
                         if (ln.indexOf("POW-Hash") >= 0) {
-                            tbl2.row.add([1, "POW-Hash", ln.split(": ")[1].trim()]);
+                            tbl2.row.add([1, "Pow-Hash", ln.split(": ")[1].trim().replace("(swapped version as seen on xel_miner)", "")]);
                         }
                         if (ln.indexOf("Verify-WCET") >= 0) {
-                            tbl2.row.add([2, "Verify WCET", ln.split(": ")[1].trim()]);
+                            tbl2.row.add([2, "Vfy-Wcet", ln.split(": ")[1].trim()]);
                         }
                         if (ln.indexOf("Found-POW:") >= 0) {
-                            tbl2.row.add([3, "Found POW?", ln.split(":")[1].trim()]);
+                            tbl2.row.add([3, "POW", ((ln.split(":")[1].trim() == "1.0") ? "Found" : "Not Found")]);
                         }
                         if (ln.indexOf("Found-BTY") >= 0) {
-                            tbl2.row.add([4, "Found Bounty?", ln.split(":")[1].trim()]);
+                            tbl2.row.add([3, "Bounty", ((ln.split(":")[1].trim() == "1.0") ? "Found" : "Not Found")]);
                         }
                         if (ln.indexOf("MARR") >= 0) {
                             var arr = ln.split(":")[1].trim()
@@ -123,12 +123,17 @@
 
                         }
                     }
-                    document.getElementById('exampleFormControlTextarea2').value = ex; // plain JavaScript
+                    var editor2 = ace.edit("editor2");
+                    var editor3 = ace.edit("editor3");
+                    var editor4 = ace.edit("editor4");
 
-                    document.getElementById('exampleFormControlTextarea3').innerHTML = code.trim(); // plain JavaScript
-                    document.getElementById('exampleFormControlTextarea4').value = ast.trim(); // plain JavaScript
+                    var editor5 = ace.edit("editor5");
 
-                    document.getElementById('exampleFormControlTextarea5').value = tok.trim(); // plain JavaScript
+                    editor2.getSession().setValue(code.trim()); // plain JavaScript
+                    editor4.getSession().setValue(ast.trim()); // plain JavaScript
+                    editor3.getSession().setValue(ex); // plain JavaScript
+
+                    editor5.getSession().setValue(tok.trim()); // plain JavaScript
 
                     $('pre code').each(function(i, block) {
                         hljs.highlightBlock(block);
@@ -140,11 +145,13 @@
 
                 // end of state change: it can be after some time (async)
             };
-            var text1 = document.getElementById('exampleFormControlTextarea1').value; // plain JavaScript
+            var editor3 = ace.edit("editor3");
+            var editor = ace.edit("editor");
+            var text1 = editor.getValue(); // plain JavaScript
             xhr.open("POST", "/debug_run", true);
             xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
             xhr.send(text1);
-            document.getElementById('exampleFormControlTextarea2').value = "... please wait while we run your code."; // plain JavaScript
+            editor3.getSession().setValue("... please wait while we run your code."); // plain JavaScript
 
         }
     </script>
@@ -152,132 +159,172 @@
 
 <body>
 
-    <nav class="navbar navbar-toggleable-md navbar-inverse bg-inverse fixed-top">
+    <main role="main" class="container-fluid h-100">
 
-        <div class="collapse navbar-collapse" id="navbarsExampleDefault">
-            <a class="navbar-brand" href="#">XEL Testbench</a>
-            <form class="form-inline my-2 my-lg-0">
-                <button class="btn btn-outline-success my-2 my-sm-0" type="button" onclick="startme();">Compile and Execute EPL Code</button>
-            </form>
-        </div>
-    </nav>
+        <div class="row justify-content-center h-100">
+            <div class="col-8 hidden-md-down">
+                <div id="XXX">
 
-    <main role="main" class="container">
+                    <div class="topbuttons">
+                        <form class="form-inline">
+                            <div>
+                                <h3>xel <b>IDE</b></h3></div>
+                            <button class="btn btn-outline-info my-2 my-sm-0 leftspace whiteborder" type="button" onclick="load();">Load File</button>
+                            <div class="btn-group leftspace">
+                                <button type="button" class="btn btn-outline-primary dropdown-toggle " data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Load Example
+                                </button>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="#">Action</a>
+                                    <a class="dropdown-item" href="#">Another action</a>
+                                    <a class="dropdown-item" href="#">Something else here</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="#">Separated link</a>
+                                </div>
+                            </div>
+                            <button class="btn btn-outline-info my-2 my-sm-0 leftspace whiteborder" type="button" onclick="load();">Save File</button>
 
-        <div class="starter-template">
-            <p class="lead">Enter your EPL Code in the following field and click on the green button in the upper-left corner
-                <br>in order to compile and execute your code snippet.</p>
+                            <button class="btn btn-outline-success my-2 my-sm-0 leftspace" type="button" onclick="startme();">Execute</button>
+                            <button class="btn btn-outline-warning my-2 my-sm-0 leftspace" type="button" onclick="startme();">Configure VM</button>
+                            <div class="btn-group">
 
-        </div>
+                            </div>
 
-        <div class="row">
-            <div class="col">
-                <ul class="nav nav-tabs" role="tablist">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#xxx" role="tab" data-toggle="tab">Your EPL Code</a>
-                    </li>
-                </ul>
+                        </form>
+                    </div>
+<div id="editor">array_int 1000;
+array_uint 210;
+array_float 100;
+/* A simple EPL test program */
+function test {
+    f[0] = sin(10);
+    f[1] = cos(-11);
+    f[2] = tan(12);
+    f[3] = sinh(.4);
+    f[4] = cosh(-.5);
+    f[5] = tanh(.6);
+    f[6] = asin(-.4);
+    f[7] = acos(.5);
+    f[8] = atan(2);
+    f[9] = atan2(-2, 3);
+    f[10] = exp(10);
+    f[11] = log(20);
+    f[12] = log10(21);
+    f[13] = pow(2, 4);
+    f[14] = sqrt(5);
+    f[15] = ceil(2.2);
+    f[16] = floor(3.5);
+    f[17] = fabs(-12.345);
+    f[18] = fmod(21, 4);
+    i[80] = abs(-12345);
+    i[81] = gcd(1234, 22);
+    repeat(u[2], 200, 200) {
+        u[u[2] + 3] = u[2] * 20;
+    }
+}
 
-                <div class="tab-content">
-                    <div role="tabpanel" class="tab-pane active" id="xxx">
+function main {
+    verify();
+}
 
-                        <div class="form-group">
-                            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+function verify {
+    test();
+    u[0] = m[0] + i[0] + i[1] + i[2] + i[3] + i[4] + i[5] + i[6] + i[7] + i[8] + i[9];
+    u[1] = m[1] + i[20] + i[21] + i[22] + i[23];
+    u[2] = m[2] + f[0] + f[1] + f[2] + f[3] + f[4] + f[5] + f[6] + f[7] + f[8] + f[9];
+    u[3] = m[3] + f[20] + f[21];
+    verify_bty(m[0] <= 100);
+    verify_pow(u[0], u[1], u[2], u[3]);
+}</div>
+</div>
+                </div>
+                <div class="col-4 hidden-md-down">
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#tab1" role="tab" data-toggle="tab">Console Output</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#tab2" role="tab" data-toggle="tab">JS</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#tab3" role="tab" data-toggle="tab">Variables</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#tab4" role="tab" data-toggle="tab">More</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#tab5" role="tab" data-toggle="tab">AST</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#tab6" role="tab" data-toggle="tab">Tokens</a>
+                        </li>
+                    </ul>
+
+                    <!-- Tab panes -->
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="tab1">
+                            <div id="editor3">Welcome to xelIDE. Please use the editor to your left in order to write your EPL program. You may as well load an EPL code snippet either from your hard drive or from our list of ready-to-try examples. Then, click "Execute" in order to compile and run your code, as well as to view the VM internals in this debug window. If you have any questions, please read the documentation or get in touch with someone on the forums or in the slack.</div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="tab2">
+                            <div id="editor2">
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="tab3">
+                            <table id="example" class="table-striped table-dark" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>Array</th>
+                                        <th>#</th>
+                                        <th>Value</th>
+                                    </tr>
+                                </thead>
+                                <tfoot>
+                                    <tr>
+                                        <th>Array</th>
+                                        <th>#</th>
+                                        <th>Value</th>
+                                    </tr>
+                                </tfoot>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="tab4">
+                            <table id="example2" class="table-striped table-dark" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+
+                                        <th>Name</th>
+                                        <th>Value</th>
+                                    </tr>
+                                </thead>
+                                <tfoot>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Name</th>
+                                        <th>Value</th>
+                                    </tr>
+                                </tfoot>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="tab5">
+                            <div id="editor4">
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="tab6">
+                            <div id="editor5">
+                            </div>
                         </div>
                     </div>
 
                 </div>
 
             </div>
-            <div class="col">
-                <ul class="nav nav-tabs" role="tablist">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#tab1" role="tab" data-toggle="tab">Console Output</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#tab2" role="tab" data-toggle="tab">JS</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#tab3" role="tab" data-toggle="tab">Variables</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#tab4" role="tab" data-toggle="tab">More</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#tab5" role="tab" data-toggle="tab">AST</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#tab6" role="tab" data-toggle="tab">Tokens</a>
-                    </li>
-                </ul>
-
-                <!-- Tab panes -->
-                <div class="tab-content">
-                    <div role="tabpanel" class="tab-pane active" id="tab1">
-                        <div class="form-group">
-                            <textarea class="form-control" id="exampleFormControlTextarea2" wrap="off" readonly rows="3"></textarea>
-                        </div>
-                    </div>
-                    <div role="tabpanel" class="tab-pane" id="tab2">
-                        <pre><code class="javascript" id="exampleFormControlTextarea3"></code></pre>
-                    </div>
-                    <div role="tabpanel" class="tab-pane" id="tab3">
-                        <table id="example" class="table table-striped table-bordered" width="100%" cellspacing="0">
-                            <thead>
-                                <tr>
-                                    <th>Array</th>
-                                    <th>#</th>
-                                    <th>Value</th>
-                                </tr>
-                            </thead>
-                            <tfoot>
-                                <tr>
-                                    <th>Array</th>
-                                    <th>#</th>
-                                    <th>Value</th>
-                                </tr>
-                            </tfoot>
-                            <tbody>
-
-                            </tbody>
-                        </table>
-                    </div>
-                    <div role="tabpanel" class="tab-pane" id="tab4">
-                        <table id="example2" class="table table-striped table-bordered" width="100%" cellspacing="0">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-
-                                    <th>Name</th>
-                                    <th>Value</th>
-                                </tr>
-                            </thead>
-                            <tfoot>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Name</th>
-                                    <th>Value</th>
-                                </tr>
-                            </tfoot>
-                            <tbody>
-
-                            </tbody>
-                        </table>
-                    </div>
-                    <div role="tabpanel" class="tab-pane" id="tab5">
-                        <div class="form-group">
-                            <textarea class="form-control" id="exampleFormControlTextarea4" wrap="off" readonly rows="3"></textarea>
-                        </div>
-                    </div>
-                    <div role="tabpanel" class="tab-pane" id="tab6">
-                        <div class="form-group">
-                            <textarea class="form-control" id="exampleFormControlTextarea5" wrap="off" readonly rows="3"></textarea>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
 
     </main>
     <!-- /.container -->
@@ -285,21 +332,77 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script>
-        window.jQuery || document.write('<script src="../../../../assets/js/vendor/jquery.min.js"><\/script>')
-    </script>
+    <script src="jquery-3.2.1.slim.min.js"></script>
     <script src="popper.min.js"></script>
     <script src="tether.min.js"></script>
     <script src="bootstrap.min.js"></script>
     <script src="jquery.dataTables.min.js"></script>
     <script src="dataTables.bootstrap4.min.js"></script>
+    <script src="ace.js"></script>
+    <script src="theme-merbivore_soft.js"></script>
+    <script src="mode-c_cpp.js"></script>
+    <script src="mode-javascript.js"></script>
+
     <script type="text/javascript">
         $(document).ready(function() {
             var t = $('#example').DataTable();
             t.clear().draw(false);;
             var t2 = $('#example2').DataTable();
             t2.clear().draw(false);;
+
+            var editor = ace.edit("editor");
+            editor.setTheme("ace/theme/merbivore_soft");
+            editor.setOptions({
+                fontSize: "14pt"
+            });
+            editor.getSession().setMode("ace/mode/c_cpp");
+
+            var editor2 = ace.edit("editor2");
+            editor2.setTheme("ace/theme/merbivore_soft");
+            editor2.setOptions({
+                fontSize: "14pt"
+            });
+            editor2.getSession().setMode("ace/mode/javascript");
+
+            var editor3 = ace.edit("editor3");
+            editor3.setTheme("ace/theme/merbivore_soft");
+            editor3.setOptions({
+                fontSize: "14pt"
+            });
+            var editor4 = ace.edit("editor4");
+            editor4.setTheme("ace/theme/merbivore_soft");
+            editor4.setOptions({
+                fontSize: "14pt"
+            });
+            var editor5 = ace.edit("editor5");
+            editor5.setTheme("ace/theme/merbivore_soft");
+            editor5.setOptions({
+                fontSize: "14pt"
+            });
+            var heightUpdateFunction = function() {
+                editor.resize();
+                editor2.resize();
+                editor3.resize();
+                editor4.resize();
+                editor5.resize();
+            };
+            // Set initial size to match initial content
+            heightUpdateFunction();
+            // Whenever a change happens inside the ACE editor, update
+            // the size again
+            editor.getSession().on('change', heightUpdateFunction);
+            editor2.getSession().on('change', heightUpdateFunction);
+            editor5.getSession().on('change', heightUpdateFunction);
+
+            editor3.getSession().on('change', heightUpdateFunction);
+            editor4.getSession().on('change', heightUpdateFunction);
+
+            editor.getSession().setUseWrapMode(true);
+            editor2.getSession().setUseWrapMode(true);
+            editor3.getSession().setUseWrapMode(true);
+            editor4.getSession().setUseWrapMode(true);
+            editor5.getSession().setUseWrapMode(true);
+
         });
     </script>
 </body>

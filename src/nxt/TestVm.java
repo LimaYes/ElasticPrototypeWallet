@@ -243,7 +243,13 @@ public class TestVm {
             pre_code += "function rotl32(word, shift) {\n" +
                     "  return word << shift | word >>> 32 - shift;\n" +
                     "}\n";
-
+            pre_code += "function gcd(a, b) {\n" +
+                    "    if ( ! b) {\n" +
+                    "        return a;\n" +
+                    "    }\n" +
+                    "\n" +
+                    "    return gcd(b, a % b);\n" +
+                    "};";
 
             String code = pre_code + "\n" + result;
             if (dumpCode) {
