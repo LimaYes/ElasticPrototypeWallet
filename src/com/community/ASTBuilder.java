@@ -28,6 +28,8 @@ import static com.community.Primitives.NODE_TYPE.*;
  *                                                                            *
  ******************************************************************************/
 
+// TODO: this is probably also on your list, but if you use a single line comment, you get the exception "Syntax Error - Missing new line after single line comment"
+    
 public class ASTBuilder {
 
     private static void push_op(Primitives.STATE state, int token_id) {

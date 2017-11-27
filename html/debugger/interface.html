@@ -87,7 +87,7 @@
 
                         if (ln.indexOf("--BEGIN TOKENS") >= 0)
                             intok = true;
-console.log(ln);
+
                         if (ln.indexOf("POW-Hash") >= 0) {
                             tbl2.row.add([1, "Pow-Hash", ln.split(": ")[1].trim().replace("(swapped version as seen on xel_miner)", "")]);
                         }
@@ -110,7 +110,7 @@ console.log(ln);
 
                         }
                         if (ln.indexOf("ARR-") >= 0) {
-                            var p = ln.split("-");
+                            var p = ln.split("R-");
                             p = p[1];
                             var t = p.split(":")[0].toLowerCase();
                             var arr = p.split(":")[1].trim()
