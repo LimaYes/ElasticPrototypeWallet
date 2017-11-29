@@ -48,7 +48,7 @@ public class DebugRunServlet extends HttpServlet {
         try {
             BufferedReader reader = req.getReader();
             while ((line = reader.readLine()) != null)
-                jb.append(line);
+                jb.append(line + "\n");
         } catch (Exception e) { /*report an error*/ }
 
         String jbs = jb.toString();

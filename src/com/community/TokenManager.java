@@ -259,6 +259,7 @@ public class TokenManager {
                     int pos = str.indexOf("\n",idx);
 
                     if (pos == -1){
+                        System.out.println(str);
                         throw new Exceptions.SyntaxErrorException("Syntax Error - Missing new line after single line comment: " + line_num);
                     }
 
