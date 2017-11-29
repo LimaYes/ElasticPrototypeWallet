@@ -34,8 +34,7 @@ public class CodeConverter {
     }
 
     // Hard Coded Tabs...Could Make This Dynamic
-    private static String[] tab = {"\t", "\t\t", "\t\t\t", "\t\t\t\t", "\t\t\t\t\t", "\t\t\t\t\t\t", "\t\t\t\t\t\t\t",
-            "\t\t\t\t\t\t\t"};
+    private static String[] tab = { "", "\t", "\t\t", "\t\t\t", "\t\t\t\t", "\t\t\t\t\t", "\t\t\t\t\t\t", "\t\t\t\t\t\t\t", "\t\t\t\t\t\t\t" };
 
     public static boolean strcmp(String a, String b){
         if(a.equalsIgnoreCase(b))
@@ -363,7 +362,7 @@ public class CodeConverter {
 
                 // Check If "IF" Has Closing Bracket - If Not, Add Closing Bracket
 
-                if(node.right != null && node.right.type != NODE_BLOCK)
+                if(node.left != null && node.left.type != NODE_BLOCK)
                     str = String.format("%s}\n%selse {\n", tab[Math.max(state.tabs - 1,0)], tab[Math.max(state.tabs - 1,0)]);
                 else
                     str = String.format("%selse {\n", tab[Math.max(state.tabs - 1,0)]);
@@ -381,6 +380,9 @@ public class CodeConverter {
                 }
                 else if(node.parent.type == NODE_REPEAT){ // Todo: this might be redundant
                     str = String.format("%s}\n", tab[Math.max(state.tabs - 1,0)]);
+                }
+                else if ((node.parent.type == NODE_ELSE) && (node == node.parent.right)) {
+                    str = "";
                 }
                 else
                     str = String.format("%s}\n", tab[Math.max(state.tabs - 1,0)]);
@@ -444,7 +446,7 @@ public class CodeConverter {
                     case NODE_RSHIFT:		op = String.format("%s", ">>");	break;
                 }
                 
-                //get_cast(mylrcast, node.left.data_type, node.right.data_type, false); // TODO FIX UINT
+                //get_cast(mylrcast, node.left.data_type, node.right.data_type, false); // TODO FIX UINT, ALSO THIS IS GONE IN COMMIT fa0611b89 ... why?
                 /*if (mylrcast.lcast != null)
                     str = String.format("(%s)(%s) %s (%s)", mylrcast.lcast, mylrstr.lstr, op, mylrstr.rstr);
                 else if (mylrcast.rcast != null)
@@ -682,6 +684,7 @@ public class CodeConverter {
             throw new Exceptions.SyntaxErrorException("Unable to convert NULL object.");
 
         ast_ptr = root;
+        state.tabs++;
 
         while (ast_ptr != null) {
 
@@ -728,17 +731,23 @@ public class CodeConverter {
                     }
 
                     downward = true;
-                } else {
+                }
+                else {
                     ast_ptr = ast_ptr.parent;
                     if ((ast_ptr.type == NODE_IF) || (ast_ptr.type == NODE_ELSE) || (ast_ptr.type == NODE_REPEAT)) {
                         if (state.tabs > 0) state.tabs--;
 
-                        // TODO: Change order because parent.parent may segfault if parent = null
-                        if ((ast_ptr.parent.parent != null && (ast_ptr.parent.parent.type != NODE_FUNCTION)) && (ast_ptr.right != null  && (ast_ptr.right.type != NODE_BLOCK)) && (ast_ptr.parent!= null  && (ast_ptr.parent.type != NODE_BLOCK))) {
+                        // Add Closing Bracket If Needed
+                        if ((ast_ptr.type != NODE_ELSE) && (ast_ptr.right != null && (ast_ptr.right.type != NODE_BLOCK))) {
                             String str = String.format("%s}\n", tab[Math.max(state.tabs,0)]);
                             state.stack_code.push(str);
-
                         }
+
+                        // Indent Else Statements To Match Corresponding IF
+                        if ((ast_ptr.type == NODE_ELSE)) {
+                            state.tabs++;
+                        }
+
                     } else if (ast_ptr.type == NODE_BLOCK) {
                         if ((ast_ptr.parent.type == NODE_IF) || (ast_ptr.parent.type == NODE_ELSE) || (ast_ptr.parent.type == NODE_REPEAT) || (ast_ptr.parent.type == NODE_FUNCTION)) {
                             convert_node(state, ast_ptr);

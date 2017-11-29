@@ -29,7 +29,7 @@ import static com.community.Primitives.NODE_TYPE.*;
  ******************************************************************************/
 
 // TODO: this is probably also on your list, but if you use a single line comment, you get the exception "Syntax Error - Missing new line after single line comment"
-    
+
 public class ASTBuilder {
 
     private static void push_op(Primitives.STATE state, int token_id) {
@@ -690,29 +690,31 @@ public class ASTBuilder {
             }
 
             // Process If/Else/Repeat Operators On Stack
-            while ((state.stack_op.size() > 1) && (top_op(state) >= 0) &&
-                    ((state.token_list.get(top_op(state)).type == TOKEN_IF) || (state.token_list.get(top_op(state)).type == TOKEN_ELSE) || (state.token_list.get(top_op(state)).type == TOKEN_REPEAT))) {
+            if ((state.stack_exp.size() > 0) && (state.stack_exp.get(state.stack_exp.size()-1).type != NODE_IF)) {
+                while ((state.stack_op.size() > 1) && (top_op(state) >= 0) &&
+                        ((state.token_list.get(top_op(state)).type == TOKEN_IF) || (state.token_list.get(top_op(state)).type == TOKEN_ELSE) || (state.token_list.get(top_op(state)).type == TOKEN_REPEAT))) {
 
-                // Validate That If/Repeat Condition Is On The Stack
-                if (((state.token_list.get(top_op(state)).type == TOKEN_IF) || (state.token_list.get(top_op(state)).type == TOKEN_REPEAT)) &&
-                        ((state.stack_exp.get(state.stack_exp.size()-2).token_num < top_op(state)) || (state.stack_exp.get(state.stack_exp.size()-2).end_stmnt)))
-                    break;
+                    // Validate That If/Repeat Condition Is On The Stack
+                    if (((state.token_list.get(top_op(state)).type == TOKEN_IF) || (state.token_list.get(top_op(state)).type == TOKEN_REPEAT)) &&
+                            ((state.stack_exp.get(state.stack_exp.size() - 2).token_num < top_op(state)) || (state.stack_exp.get(state.stack_exp.size() - 2).end_stmnt)))
+                        break;
 
-                // Validate That Else Left Statement Is On The Stack
-                if ((state.token_list.get(top_op(state)).type == TOKEN_ELSE) && (!state.stack_exp.get(state.stack_exp.size()-2).end_stmnt))
-                    break;
+                    // Validate That Else Left Statement Is On The Stack
+                    if ((state.token_list.get(top_op(state)).type == TOKEN_ELSE) && (!state.stack_exp.get(state.stack_exp.size() - 2).end_stmnt))
+                        break;
 
-                // Validate That If/Else/Repeat Statement Is On The Stack
-                if ((top_exp(state).token_num < top_op(state)) || (!top_exp(state).end_stmnt))
-                    break;
+                    // Validate That If/Else/Repeat Statement Is On The Stack
+                    if ((top_exp(state).token_num < top_op(state)) || (!top_exp(state).end_stmnt))
+                        break;
 
-                // Add If/Else/Repeat Expression To Stack
-                token_id = pop_op(state);
-                create_exp(state, state.token_list.get(token_id), token_id);
+                    // Add If/Else/Repeat Expression To Stack
+                    token_id = pop_op(state);
+                    create_exp(state, state.token_list.get(token_id), token_id);
 
-                // Only Process A Single Statement When "Else" Token Arrives.  Still Need To Process Rest Of Else
-                if (state.token_list.get(i).type == TOKEN_ELSE)
-                    break;
+                    // Only Process A Single Statement When "Else" Token Arrives.  Still Need To Process Rest Of Else
+                    if (state.token_list.get(i).type == TOKEN_ELSE)
+                        break;
+                }
             }
 
             // Process Token
@@ -797,6 +799,10 @@ public class ASTBuilder {
                     while (state.stack_op.size() > 0 && (top_op(state) >= 0) && (state.token_list.get(top_op(state)).type == TOKEN_IF || state.token_list.get(top_op(state)).type == TOKEN_ELSE || state.token_list.get(top_op(state)).type == TOKEN_REPEAT || state.token_list.get(top_op(state)).type == TOKEN_FUNCTION)) {
                         token_id = pop_op(state);
                         create_exp(state, state.token_list.get(token_id), token_id);
+
+                        // Stop Linking If An Else Is The Next Statement
+                        if ((i < (state.token_list.size() - 1)) && (state.token_list.get(i + 1).type == TOKEN_ELSE))
+                            break;
                     }
                     break;
 
