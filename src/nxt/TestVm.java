@@ -297,11 +297,6 @@ public class TestVm {
                 // TO CHECK; WE GIVE I ARRAY AS M-VARIABLE TO JS, BUT IT DOES NOT CONTAIN M IN ANY CASE! PLEASE ELABORATE ON THIS, THIS MIGHT BE THE ERROR! PUT I IN M AND YOURE POSSIBLY DONE
 
 
-                // fill beginning of i (or better say m array) with deterministic stuff
-                for (int pyx = 0; pyx < m.length; ++pyx)
-                    i[pyx] = m[pyx];
-
-
                 sandbox.inject("u", u);
                 sandbox.inject("m", m);
                 sandbox.inject("i", i);

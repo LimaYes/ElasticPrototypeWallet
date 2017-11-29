@@ -192,9 +192,6 @@ public class Executor {
                 u[validator_offset_index+xx] = validator[xx];
             }
 
-            // fill beginning of i (or better say m array) with deterministic stuff
-            for(int pyx = 0; pyx < m.length; ++pyx)
-                i[pyx]=m[pyx];
 
             sandbox.inject("u", u);
             sandbox.inject("m", m);
