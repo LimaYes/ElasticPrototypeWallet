@@ -193,6 +193,62 @@ public final class Convert {
         return bytes == null ? EMPTY_BYTES : bytes;
     }
 
+    public static byte[] nullToEmpty(byte[] bytes) {
+        return bytes == null ? EMPTY_BYTE : bytes;
+    }
+
+
+    public static byte[] truncate(byte[] b, int maxlen){
+        if(b.length==0) return b;
+        int firstIndex = 0;
+        if(b.length>maxlen){
+            firstIndex = b.length - maxlen;
+        }
+        int copylen = b.length-firstIndex;
+        byte[] r = new byte[copylen];
+        System.arraycopy(b, firstIndex, r, 0, copylen);
+        return r;
+    }
+
+    public static int bytesToInt(byte[] in){
+        in = truncate(in, 32);
+        int value = 0;
+        for (int i = 0; i < in.length; i++)
+        {
+            value += ((int) in[i] & 0xff) << (8 * i);
+        }
+        return value;
+    }
+    public static long bytesToLong(byte[] in){
+        in = truncate(in, 64);
+        long value = 0;
+        for (int i = 0; i < in.length; i++)
+        {
+            value += ((long) in[i] & 0xffL) << (8 * i);
+        }
+        return value;
+    }
+
+    public static byte[] pack(byte[] b, int maxlen){
+        if(b.length==0) return b;
+
+        int firstIndex = 0;
+        if(b.length>maxlen){
+            firstIndex = b.length - maxlen;
+        }
+        while(firstIndex<b.length && b[firstIndex]==0x00) firstIndex++;
+
+        if(firstIndex == b.length) return new byte[0]; // Empty if only zeros
+        int copylen = b.length-firstIndex;
+        byte[] r = new byte[copylen];
+        System.arraycopy(b, firstIndex, r, 0, copylen);
+        return r;
+    }
+
+    public static byte[] nullToEmptyPacked(byte[] bytes, int maxlen) {
+        return bytes == null ? EMPTY_BYTE : pack(bytes, maxlen);
+    }
+
     public static long[] nullToEmpty(long[] array) {
         return array == null ? EMPTY_LONG : array;
     }

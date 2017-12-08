@@ -250,12 +250,12 @@ public class Primitives {
     };
 
     public static class EXP_TOKEN_LIST {
-        String str;
-        int len;
-        EPL_TOKEN_TYPE type;
+        public String str;
+        public int len;
+        public EPL_TOKEN_TYPE type;
         EXP_TYPE exp;
-        int inputs;
-        int prec;
+        public int inputs;
+        public int prec;
         DATA_TYPE data_type;
 
         public EXP_TOKEN_LIST(String str, int len, EPL_TOKEN_TYPE type, EXP_TYPE exp, int inputs, int prec, DATA_TYPE data_type) {

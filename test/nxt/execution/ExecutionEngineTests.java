@@ -3,8 +3,11 @@ package nxt.execution;
 import com.community.CTypeInts.Int32_t;
 import com.community.CTypeInts.Uint32_t;
 import com.community.CTypeInts.Uint64_t;
+import com.community.Constants;
 import com.community.Executor;
 import com.community.Primitives;
+import com.community.TokenManager;
+import org.h2.schema.Constant;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -401,5 +404,12 @@ public class ExecutionEngineTests {
         System.out.println("Test 6: -17179869184 !== " + res);
         Assert.assertEquals(res.toString(), "-17179869184"); // int64 shl no overflow
 
+
+        for(int i = 0; i< Constants.epl_token.length; ++i){
+            Primitives.EXP_TOKEN_LIST t = Constants.epl_token[i];
+            System.out.println(t.type.toString().replace("TOKEN_","ENIGMA_") + "(0x00, " + t.len + ", " + t.inputs +
+                    ", " + t
+                    .prec + ", \"" + t.str + "\"),");
+        }
     }
 }
