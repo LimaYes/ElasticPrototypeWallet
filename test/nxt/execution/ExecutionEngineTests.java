@@ -366,8 +366,17 @@ public class ExecutionEngineTests {
         Assert.assertFalse(threw_exception);
     }
 
+
+
     @Test
     public void uint_objects(){
+
+        long test1 = 3147483647L;
+        int test2 = (int)test1;
+        int test3 = (int)(test1 & 0xFFFFFFFFL);
+        System.out.println(test2 + " ==? " + test3);
+        Assert.assertEquals(test2,test3);
+
         Object res = sandbox.eval("epl", "function test1(a) { return new com.community.CTypeInts.Uint32_t(a); } test1(\"-1\").half();");
         System.out.println("Test 1: 2147483647 !== " + res);
         Assert.assertEquals(res.toString(), "2147483647"); // Halving unsigned int
@@ -377,12 +386,20 @@ public class ExecutionEngineTests {
         Assert.assertEquals(res.toString(), "0"); // halfing -1 with rounding down
 
         res = sandbox.eval("epl", "function test1(a) { return new com.community.CTypeInts.Uint64_t(a); } test1(\"-1\").half();");
-        System.out.println("Test 1: 9223372036854775807 !== " + res);
+        System.out.println("Test 3: 9223372036854775807 !== " + res);
         Assert.assertEquals(res.toString(), "9223372036854775807"); // Halving unsigned long
 
         res = sandbox.eval("epl", "function test1(a) { return new com.community.CTypeInts.Int64_t(a); } test1(\"-1\").half();");
-        System.out.println("Test 2: 0 !== " + res);
+        System.out.println("Test 4: 0 !== " + res);
         Assert.assertEquals(res.toString(), "0"); // halfing -1 as signed long with rounding down
+
+        res = sandbox.eval("epl", "function test1(a) { return new com.community.CTypeInts.Uint32_t(a); } test1(\"-268435456\").shl(6);");
+        System.out.println("Test 5: 0 !== " + res);
+        Assert.assertEquals(res.toString(), "0"); // int32 shl overflow
+
+        res = sandbox.eval("epl", "function test1(a) { return new com.community.CTypeInts.Int64_t(a); } test1(\"-268435456\").shl(6);");
+        System.out.println("Test 6: -17179869184 !== " + res);
+        Assert.assertEquals(res.toString(), "-17179869184"); // int64 shl no overflow
 
     }
 }

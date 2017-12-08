@@ -43,6 +43,42 @@ public abstract class IntegerType {
         return this.content;
     }
 
+    public long shr(int val){ // primarily used for testing
+        if(bytes==4){
+            this.content = (long)((int)this.content >>> val);
+        }else{
+            this.content = this.content >>> val;
+        }
+        return this.content;
+    }
+
+    public long shl(int val){ // primarily used for testing
+        if(bytes==4){
+            this.content = (long)((int)this.content << val);
+        }else{
+            this.content = this.content << val;
+        }
+        return this.content;
+    }
+
+    public long rotl(int val){ // primarily used for testing
+        if(bytes==4){
+            this.content = Integer.rotateRight((int)content, val);
+        }else{
+            this.content = Long.rotateRight(content, val);
+        }
+        return this.content;
+    }
+
+    public long rotr(int val){ // primarily used for testing
+        if(bytes==4){
+            this.content = Integer.rotateLeft((int)content, val);
+        }else{
+            this.content = Long.rotateLeft(content, val);
+        }
+        return this.content;
+    }
+
     public String stringValue(){ // also, still only used in testing
         if(unsigned) return Long.toUnsignedString(content);
         else return Long.toString(content);
