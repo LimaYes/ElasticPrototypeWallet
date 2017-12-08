@@ -16,4 +16,7 @@ public class Int32_t extends IntegerType {
     public Int32_t(String value) {
         super(4, safeLong(value), false);
     }
+    public Int32_t(long value) {
+        super(4, value, false);
+    }
 }

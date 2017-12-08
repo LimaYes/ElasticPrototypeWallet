@@ -16,4 +16,7 @@ public class Uint64_t extends IntegerType {
     public Uint64_t(String value) {
         super(8, safeLong(value), true);
     }
+    public Uint64_t(long value) {
+        super(8, value, true);
+    }
 }
