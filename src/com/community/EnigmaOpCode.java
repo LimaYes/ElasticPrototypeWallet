@@ -49,7 +49,7 @@ public enum EnigmaOpCode {
     // Push Data To Stack
     ENIGMA_PUSHDATA((byte) 0x13, 0, 2, "pushdata"), // This one is tricky since it does not use input from stack but
     // from the bytecode following this opcode
-    ENIGMA_POPDATA((byte) 0x14, 0, 2, "popdata"),
+    ENIGMA_PUSH_TYPED_DATA((byte) 0x14, 0, 2, "pushtypeddata"),
 
     // Verification Ops
     ENIGMA_VERIFY_BTY((byte) 0x15, 1, 2, "verify_bty"),

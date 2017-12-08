@@ -28,11 +28,32 @@ public class EnigmaProgram {
 
 
     static class StackElement {
-        public byte[] content;
-        public MEM_TARGET_STORE type;
+        private byte[] content;
+        private MEM_TARGET_STORE type;
+
+        public byte[] getContent() {
+            return content;
+        }
+
+        public MEM_TARGET_STORE getType() {
+            return type;
+        }
 
         public StackElement(byte[] content, MEM_TARGET_STORE type) {
             this.content = content;
+            this.type = type;
+        }
+
+        public StackElement(){
+            this.content = null;
+            this.type = null;
+        }
+
+        public void setContent(byte[] content) {
+            this.content = content;
+        }
+
+        public void setType(MEM_TARGET_STORE type) {
             this.type = type;
         }
     }

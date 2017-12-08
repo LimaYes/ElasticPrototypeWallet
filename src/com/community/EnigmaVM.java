@@ -38,6 +38,8 @@ public class EnigmaVM {
         byte[] key;
         int integerKey;
 
+        EnigmaProgram.MEM_TARGET_STORE estimatedType = null;
+
         if(prog.isStopped())
             return;
 
@@ -62,85 +64,85 @@ public class EnigmaVM {
             BEGIN SECTION: STORE AND LOAD
              */
             case ENIGMA_ARRAY_INT_STORE:
-                value = Convert.truncate(prog.stackPop().content, 32);
-                key = Convert.truncate(prog.stackPop().content, 32); // truncated to 32bit, we allow 2^32 keys
+                value = Convert.truncate(prog.stackPop().getContent(), 32);
+                key = Convert.truncate(prog.stackPop().getContent(), 32); // truncated to 32bit, we allow 2^32 keys
                 integerKey = Convert.bytesToInt(key);
                 prog.store(EnigmaProgram.MEM_TARGET_STORE.I, integerKey, value);
                 prog.stepForward();
                 break;
             case ENIGMA_ARRAY_UINT_STORE:
-                value = Convert.truncate(prog.stackPop().content, 32);
-                key = Convert.truncate(prog.stackPop().content, 32); // truncated to 32bit, we allow 2^32 keys
+                value = Convert.truncate(prog.stackPop().getContent(), 32);
+                key = Convert.truncate(prog.stackPop().getContent(), 32); // truncated to 32bit, we allow 2^32 keys
                 integerKey = Convert.bytesToInt(key);
                 prog.store(EnigmaProgram.MEM_TARGET_STORE.U, integerKey, value);
                 prog.stepForward();
                 break;
             case ENIGMA_ARRAY_LONG_STORE:
-                value = prog.stackPop().content;
-                key = Convert.truncate(prog.stackPop().content, 32); // truncated to 32bit, we allow 2^32 keys
+                value = prog.stackPop().getContent();
+                key = Convert.truncate(prog.stackPop().getContent(), 32); // truncated to 32bit, we allow 2^32 keys
                 integerKey = Convert.bytesToInt(key);
                 prog.store(EnigmaProgram.MEM_TARGET_STORE.L, integerKey, value);
                 prog.stepForward();
                 break;
             case ENIGMA_ARRAY_ULONG_STORE:
-                value = prog.stackPop().content;
-                key = Convert.truncate(prog.stackPop().content, 32); // truncated to 32bit, we allow 2^32 keys
+                value = prog.stackPop().getContent();
+                key = Convert.truncate(prog.stackPop().getContent(), 32); // truncated to 32bit, we allow 2^32 keys
                 integerKey = Convert.bytesToInt(key);
                 prog.store(EnigmaProgram.MEM_TARGET_STORE.UL, integerKey, value);
                 prog.stepForward();
                 break;
             case ENIGMA_ARRAY_FLOAT_STORE:
-                value = prog.stackPop().content;
-                key = Convert.truncate(prog.stackPop().content, 32); // truncated to 32bit, we allow 2^32 keys
+                value = prog.stackPop().getContent();
+                key = Convert.truncate(prog.stackPop().getContent(), 32); // truncated to 32bit, we allow 2^32 keys
                 integerKey = Convert.bytesToInt(key);
                 prog.store(EnigmaProgram.MEM_TARGET_STORE.F, integerKey, value);
                 prog.stepForward();
                 break;
             case ENIGMA_ARRAY_DOUBLE_STORE:
-                value = prog.stackPop().content;
-                key = Convert.truncate(prog.stackPop().content, 32); // truncated to 32bit, we allow 2^32 keys
+                value = prog.stackPop().getContent();
+                key = Convert.truncate(prog.stackPop().getContent(), 32); // truncated to 32bit, we allow 2^32 keys
                 integerKey = Convert.bytesToInt(key);
                 prog.store(EnigmaProgram.MEM_TARGET_STORE.D, integerKey, value);
                 prog.stepForward();
                 break;
             case ENIGMA_ARRAY_INT_LOAD:
-                key = Convert.truncate(prog.stackPop().content, 32); // truncated to 32bit, we allow 2^32 keys
+                key = Convert.truncate(prog.stackPop().getContent(), 32); // truncated to 32bit, we allow 2^32 keys
                 integerKey = Convert.bytesToInt(key);
                 prog.load(EnigmaProgram.MEM_TARGET_GET.GET_I, integerKey);
                 prog.stepForward();
                 break;
             case ENIGMA_ARRAY_UINT_LOAD:
-                key = Convert.truncate(prog.stackPop().content, 32); // truncated to 32bit, we allow 2^32 keys
+                key = Convert.truncate(prog.stackPop().getContent(), 32); // truncated to 32bit, we allow 2^32 keys
                 integerKey = Convert.bytesToInt(key);
                 prog.load(EnigmaProgram.MEM_TARGET_GET.GET_U, integerKey);
                 prog.stepForward();
                 break;
             case ENIGMA_ARRAY_LONG_LOAD:
-                key = Convert.truncate(prog.stackPop().content, 32); // truncated to 32bit, we allow 2^32 keys
+                key = Convert.truncate(prog.stackPop().getContent(), 32); // truncated to 32bit, we allow 2^32 keys
                 integerKey = Convert.bytesToInt(key);
                 prog.load(EnigmaProgram.MEM_TARGET_GET.GET_L, integerKey);
                 prog.stepForward();
                 break;
             case ENIGMA_ARRAY_ULONG_LOAD:
-                key = Convert.truncate(prog.stackPop().content, 32); // truncated to 32bit, we allow 2^32 keys
+                key = Convert.truncate(prog.stackPop().getContent(), 32); // truncated to 32bit, we allow 2^32 keys
                 integerKey = Convert.bytesToInt(key);
                 prog.load(EnigmaProgram.MEM_TARGET_GET.GET_UL, integerKey);
                 prog.stepForward();
                 break;
             case ENIGMA_ARRAY_FLOAT_LOAD:
-                key = Convert.truncate(prog.stackPop().content, 32); // truncated to 32bit, we allow 2^32 keys
+                key = Convert.truncate(prog.stackPop().getContent(), 32); // truncated to 32bit, we allow 2^32 keys
                 integerKey = Convert.bytesToInt(key);
                 prog.load(EnigmaProgram.MEM_TARGET_GET.GET_F, integerKey);
                 prog.stepForward();
                 break;
             case ENIGMA_ARRAY_DOUBLE_LOAD:
-                key = Convert.truncate(prog.stackPop().content, 32); // truncated to 32bit, we allow 2^32 keys
+                key = Convert.truncate(prog.stackPop().getContent(), 32); // truncated to 32bit, we allow 2^32 keys
                 integerKey = Convert.bytesToInt(key);
                 prog.load(EnigmaProgram.MEM_TARGET_GET.GET_D, integerKey);
                 prog.stepForward();
                 break;
             case ENIGMA_ARRAY_M_LOAD:
-                key = Convert.truncate(prog.stackPop().content, 32); // truncated to 32bit, we allow 2^32 keys
+                key = Convert.truncate(prog.stackPop().getContent(), 32); // truncated to 32bit, we allow 2^32 keys
                 integerKey = Convert.bytesToInt(key);
                 prog.load(EnigmaProgram.MEM_TARGET_GET.GET_M, integerKey);
                 prog.stepForward();
@@ -149,6 +151,13 @@ public class EnigmaVM {
             /*
             BEGIN SECTION: PUSHDATA
              */
+            // TODO: Make sure to check what happens if ops array is at end before stepForward() the calls.
+            case ENIGMA_PUSH_TYPED_DATA:
+                prog.stepForward();
+                integerKey = (int) prog.getCurrentOperation();
+                if( integerKey >= EnigmaProgram.MEM_TARGET_STORE.U.ordinal() && integerKey <= EnigmaProgram.MEM_TARGET_STORE.F.ordinal())
+                    estimatedType = EnigmaProgram.MEM_TARGET_STORE.values()[integerKey];
+                // passthrough
             case ENIGMA_PUSHDATA:
                 // This is tricky, a push opcode always is followed by one byte describing the length between 1 and
                 // 64 and the data directy afterwards
@@ -162,8 +171,18 @@ public class EnigmaVM {
                             "stack"));
                 prog.stepForward();
                 byte[] toPush = prog.sweepNextOperations(numberToSweep);
-                prog.stackPush(new EnigmaProgram.StackElement(Convert.nullToEmptyPacked(toPush, 64/8), null)); // type==null means unknown
+                prog.stackPush(new EnigmaProgram.StackElement(Convert.nullToEmptyPacked(toPush, 64/8), estimatedType)); // type==null means unknown
                 break;
+
+            /*
+            BEGIN SECTION: SIMPLE MATHEMATICAL OPERATORS
+             */
+            case ENIGMA_ADD:
+                EnigmaProgram.StackElement a = prog.stackPop();
+                EnigmaProgram.StackElement b = prog.stackPop();
+                prog.stackPush(EnigmaMathOps.add(a,b));
+                prog.stepForward();
+
         }
     }
 
