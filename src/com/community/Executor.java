@@ -1,4 +1,5 @@
 package com.community;
+import com.community.CTypeInts.Uint32_t;
 import nxt.Appendix;
 import nxt.crypto.Crypto;
 import nxt.util.Convert;
@@ -168,6 +169,8 @@ public class Executor {
             sandbox.setInstructionLimit(Constants.INSTRUCTION_LIMIT);
             sandbox.setMaxDuration(Constants.SAFE_TIME_LIMIT);
             sandbox.allow(ExposedToRhino.class);
+
+
 
             if(storage != null) {
                 sandbox.inject("s", storage); // todo, add extra elements to S[] as coralreefer proposed

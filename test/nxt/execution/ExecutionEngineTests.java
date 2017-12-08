@@ -1,5 +1,8 @@
 package nxt.execution;
 
+import com.community.CTypeInts.Int32_t;
+import com.community.CTypeInts.Uint32_t;
+import com.community.CTypeInts.Uint64_t;
 import com.community.Executor;
 import com.community.Primitives;
 import org.junit.Assert;
@@ -41,6 +44,11 @@ public class ExecutionEngineTests {
     public void initEngine() {
         sandbox.setInstructionLimit(10000000);
         sandbox.setMaxDuration(15 * 1000);
+        sandbox.allow(Uint32_t.class);
+        sandbox.allow(Int32_t.class);
+
+        sandbox.allow(Uint64_t.class);
+        sandbox.allow(java.lang.String.class);
     }
 
     @Test
@@ -356,5 +364,25 @@ public class ExecutionEngineTests {
             threw_exception = true;
         }
         Assert.assertFalse(threw_exception);
+    }
+
+    @Test
+    public void uint_objects(){
+        Object res = sandbox.eval("epl", "function test1(a) { return new com.community.CTypeInts.Uint32_t(a); } test1(\"-1\").half();");
+        System.out.println("Test 1: 2147483647 !== " + res);
+        Assert.assertEquals(res.toString(), "2147483647"); // Halving unsigned int
+
+        res = sandbox.eval("epl", "function test1(a) { return new com.community.CTypeInts.Int32_t(a); } test1(\"-1\").half();");
+        System.out.println("Test 2: 0 !== " + res);
+        Assert.assertEquals(res.toString(), "0"); // halfing -1 with rounding down
+
+        res = sandbox.eval("epl", "function test1(a) { return new com.community.CTypeInts.Uint64_t(a); } test1(\"-1\").half();");
+        System.out.println("Test 1: 9223372036854775807 !== " + res);
+        Assert.assertEquals(res.toString(), "9223372036854775807"); // Halving unsigned long
+
+        res = sandbox.eval("epl", "function test1(a) { return new com.community.CTypeInts.Int64_t(a); } test1(\"-1\").half();");
+        System.out.println("Test 2: 0 !== " + res);
+        Assert.assertEquals(res.toString(), "0"); // halfing -1 as signed long with rounding down
+
     }
 }
