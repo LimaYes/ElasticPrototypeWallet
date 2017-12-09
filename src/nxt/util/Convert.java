@@ -229,24 +229,20 @@ public final class Convert {
         return value;
     }
 
-    public static byte[] pack(byte[] b, int maxlen){
-        if(b.length==0) return b;
-
+    public static byte[] pack(byte[] b, int fixedlen){
+        byte[] r = new byte[fixedlen];
+        if(b == null || b.length==0) return r;
         int firstIndex = 0;
-        if(b.length>maxlen){
-            firstIndex = b.length - maxlen;
+        if(b.length>fixedlen){
+            firstIndex = b.length - fixedlen;
         }
-        while(firstIndex<b.length && b[firstIndex]==0x00) firstIndex++;
-
-        if(firstIndex == b.length) return new byte[0]; // Empty if only zeros
         int copylen = b.length-firstIndex;
-        byte[] r = new byte[copylen];
         System.arraycopy(b, firstIndex, r, 0, copylen);
         return r;
     }
 
-    public static byte[] nullToEmptyPacked(byte[] bytes, int maxlen) {
-        return bytes == null ? EMPTY_BYTE : pack(bytes, maxlen);
+    public static byte[] nullToEmptyPacked(byte[] bytes, int fixedlen) {
+        return pack( bytes, fixedlen);
     }
 
     public static long[] nullToEmpty(long[] array) {

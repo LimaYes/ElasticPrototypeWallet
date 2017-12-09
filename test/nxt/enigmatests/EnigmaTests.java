@@ -2,6 +2,7 @@ package nxt.enigmatests;
 
 import com.community.EnigmaProgram;
 import com.community.EnigmaVM;
+import com.community.EnigmaStackElement;
 import nxt.util.Convert;
 import org.junit.Assert;
 import org.junit.Test;
@@ -71,5 +72,34 @@ public class EnigmaTests {
         byte[] bytecode = Convert.parseHexString(opcode);
         EnigmaProgram p = new EnigmaProgram(bytecode, new int[10]);
         EnigmaVM.execute(p, true);
+
+        // TODO: Add assert
+    }
+
+    @Test
+    public void Enigma_Add_Two_Small_Unsigned(){
+        // 1404020001:     push 1 as unsigned long
+        // 14040102:     push 2 as unsigned long
+        // 23:           add
+        String opcode = "14040201001404010223";
+        byte[] bytecode = Convert.parseHexString(opcode);
+        EnigmaProgram p = new EnigmaProgram(bytecode, new int[10]);
+        EnigmaVM.execute(p, true);
+        EnigmaStackElement res = p.stackPop();
+        Assert.assertTrue(res.getType() == EnigmaProgram.MEM_TARGET_STORE.UL && res.getLong() == 3);
+    }
+
+    @Test
+    // From C Reference: 1.f + 20000001 (int) should result in 20000000.00
+    public void Enigma_Strange_Float_Add_Test(){
+        // 1405040000803f:         push 1 as float (float bytes are 3f800000, and 0000803f in BIG ENDIAN notation)
+        // 140104012d3101:     push 20000001 as int (bytes 012d3101 in BIG ENDIAN)
+        // 23:           add
+        String opcode = "1405040000803f140104012d310123";
+        byte[] bytecode = Convert.parseHexString(opcode);
+        EnigmaProgram p = new EnigmaProgram(bytecode, new int[10]);
+        EnigmaVM.execute(p, true);
+        EnigmaStackElement res = p.stackPop();
+        Assert.assertTrue(res.getType() == EnigmaProgram.MEM_TARGET_STORE.F && res.getFloat() == 20000.0f);
     }
 }

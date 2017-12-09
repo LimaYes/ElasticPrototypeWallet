@@ -2,8 +2,6 @@ package com.community;
 
 import nxt.util.Convert;
 
-import java.util.Stack;
-
 /******************************************************************************
  * Copyright © 2017 The XEL Core Developers.                                  *
  *                                                                            *
@@ -22,6 +20,7 @@ import java.util.Stack;
 public class EnigmaVM {
 
     static class EnigmaException extends Exception {
+
         // Parameterless Constructor
         public EnigmaException() {
         }
@@ -171,15 +170,15 @@ public class EnigmaVM {
                             "stack"));
                 prog.stepForward();
                 byte[] toPush = prog.sweepNextOperations(numberToSweep);
-                prog.stackPush(new EnigmaProgram.StackElement(Convert.nullToEmptyPacked(toPush, 64/8), estimatedType)); // type==null means unknown
+                prog.stackPush(new EnigmaStackElement(Convert.nullToEmptyPacked(toPush, 64/8), estimatedType)); // type==null means unknown
                 break;
 
             /*
             BEGIN SECTION: SIMPLE MATHEMATICAL OPERATORS
              */
             case ENIGMA_ADD:
-                EnigmaProgram.StackElement a = prog.stackPop();
-                EnigmaProgram.StackElement b = prog.stackPop();
+                EnigmaStackElement a = prog.stackPop();
+                EnigmaStackElement b = prog.stackPop();
                 prog.stackPush(EnigmaMathOps.add(a,b));
                 prog.stepForward();
 
@@ -198,6 +197,8 @@ public class EnigmaVM {
                 prog.dumpStorage(EnigmaProgram.MEM_TARGET_STORE.I);
                 prog.dumpStorage(EnigmaProgram.MEM_TARGET_STORE.UL);
                 prog.dumpStorage(EnigmaProgram.MEM_TARGET_STORE.L);
+                prog.dumpStorage(EnigmaProgram.MEM_TARGET_STORE.F);
+                prog.dumpStorage(EnigmaProgram.MEM_TARGET_STORE.D);
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -1,7 +1,5 @@
 package com.community;
 
-import com.community.CTypeInts.IntegerType;
-import com.community.CTypeInts.Uint32_t;
 import nxt.util.Convert;
 
 import java.util.*;
@@ -27,36 +25,7 @@ import static com.community.EnigmaProgram.MEM_TARGET_STORE.*;
 public class EnigmaProgram {
 
 
-    static class StackElement {
-        private byte[] content;
-        private MEM_TARGET_STORE type;
 
-        public byte[] getContent() {
-            return content;
-        }
-
-        public MEM_TARGET_STORE getType() {
-            return type;
-        }
-
-        public StackElement(byte[] content, MEM_TARGET_STORE type) {
-            this.content = content;
-            this.type = type;
-        }
-
-        public StackElement(){
-            this.content = null;
-            this.type = null;
-        }
-
-        public void setContent(byte[] content) {
-            this.content = content;
-        }
-
-        public void setType(MEM_TARGET_STORE type) {
-            this.type = type;
-        }
-    }
 
     enum MEM_TARGET_GET {
         GET_U,
@@ -68,13 +37,13 @@ public class EnigmaProgram {
         GET_M
     }
 
-    enum MEM_TARGET_STORE {
+    public enum MEM_TARGET_STORE {
         U,
         I,
         D,
         L,
         UL,
-        F
+        F;
     }
 
     // Limits
@@ -142,16 +111,16 @@ public class EnigmaProgram {
         if (tgt_map == null) {
             // special case, M array
             if (key.intValue() < 0 || key.intValue() >= m_array.length) {
-                stackPush(new StackElement(new byte[0], mapMemTarget(target)));
+                stackPush(new EnigmaStackElement(new byte[0], mapMemTarget(target)));
             } else {
-                stackPush(new StackElement(Convert.nullToEmptyPacked(Convert.int2byte(new int[]{m_array[key.intValue
+                stackPush(new EnigmaStackElement(Convert.nullToEmptyPacked(Convert.int2byte(new int[]{m_array[key.intValue
                         ()]}), 32 / 8), mapMemTarget(target)));
             }
         } else {
             if (!tgt_map.containsKey(key)) {
-                stackPush(new StackElement(new byte[0], mapMemTarget(target)));
+                stackPush(new EnigmaStackElement(new byte[0], mapMemTarget(target)));
             } else {
-                stackPush(new StackElement(tgt_map.get(key), mapMemTarget(target)));
+                stackPush(new EnigmaStackElement(tgt_map.get(key), mapMemTarget(target)));
             }
         }
     }
@@ -177,7 +146,7 @@ public class EnigmaProgram {
             cap = 64;
         } else if (target == F) {
             tgt_map = f_storage;
-            cap = 64;
+            cap = 32;
         } else if (target == D) {
             tgt_map = d_storage;
             cap = 64;
@@ -204,7 +173,7 @@ public class EnigmaProgram {
         System.out.println("Final Stack Dump:");
         System.out.println("=================");
         for (int i = 0; i < getStackSize(); ++i) {
-            System.out.println(i + ": " + Convert.toHexString((byte[]) stack.get(i)));
+            System.out.println("[" + i + "]\t" + ((EnigmaStackElement)stack.get(i)).toString());
         }
     }
 
@@ -274,7 +243,7 @@ public class EnigmaProgram {
         return operations[pc];
     }
 
-    public void stackPush(StackElement ctype) {
+    public void stackPush(EnigmaStackElement ctype) {
         stack.push(ctype);
     }
 
@@ -286,8 +255,8 @@ public class EnigmaProgram {
         return this.stack;
     }
 
-    public StackElement stackPop() {
-        return (StackElement) stack.pop();
+    public EnigmaStackElement stackPop() {
+        return (EnigmaStackElement) stack.pop();
     }
 
     public byte[] getProgramByteCode() {
