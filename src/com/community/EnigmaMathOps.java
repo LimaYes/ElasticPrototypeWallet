@@ -46,6 +46,8 @@ public class EnigmaMathOps {
         } else if (b.getType() == EnigmaProgram.MEM_TARGET_STORE.L && a.getType() == EnigmaProgram.MEM_TARGET_STORE.U) {
             // (Part 2) In this case, assume "b" is the higher rank SIGNED (IMPORTANT) op, and "a"'s value range entirely fits in a (only the case when it's a uint)
             // ... in this case just cast a to signed long (value won't get changed)
+        } else{
+            // What remains is U,I and I,U
         }
 
 
