@@ -100,4 +100,208 @@ public class EnigmaMathOps {
         }
         return result;
     }
+
+    public static EnigmaStackElement sub(EnigmaStackElement a, EnigmaStackElement b) {
+
+        EnigmaStackElement result = new EnigmaStackElement(); // create new stack element
+        getCastAndTransformResult(a, b, result); // cast everything
+        switch(result.getType()){
+            case I:
+            case U:
+                int x1 = a.getInt();
+                int y1 = b.getInt();
+                result.setInt(x1-y1);
+                break;
+            case L:
+            case UL:
+                long x2 = a.getLong();
+                long y2 = b.getLong();
+                result.setLong(x2-y2);
+                break;
+            case F:
+                float x3 = a.getFloat();
+                float y3 = b.getFloat();
+                result.setFloat(x3-y3);
+                break;
+            case D:
+                double x4 = a.getDouble();
+                double y4 = b.getDouble();
+                result.setDouble(x4-y4);
+                break;
+        }
+        return result;
+    }
+    public static EnigmaStackElement mul(EnigmaStackElement a, EnigmaStackElement b) {
+
+        EnigmaStackElement result = new EnigmaStackElement(); // create new stack element
+        getCastAndTransformResult(a, b, result); // cast everything
+        switch(result.getType()){
+            case I:
+            case U:
+                int x1 = a.getInt();
+                int y1 = b.getInt();
+                result.setInt(x1*y1);
+                break;
+            case L:
+            case UL:
+                long x2 = a.getLong();
+                long y2 = b.getLong();
+                result.setLong(x2*y2);
+                break;
+            case F:
+                float x3 = a.getFloat();
+                float y3 = b.getFloat();
+                result.setFloat(x3*y3);
+                break;
+            case D:
+                double x4 = a.getDouble();
+                double y4 = b.getDouble();
+                result.setDouble(x4*y4);
+                break;
+        }
+        return result;
+    }
+    public static EnigmaStackElement div(EnigmaStackElement a, EnigmaStackElement b) {
+
+        EnigmaStackElement result = new EnigmaStackElement(); // create new stack element
+        getCastAndTransformResult(a, b, result); // cast everything
+        switch(result.getType()){
+            case I:
+                int x1a = a.getInt();
+                int y1a = b.getInt();
+                result.setInt(x1a/y1a);
+                break;
+            case U:
+                int x1 = a.getInt();
+                int y1 = b.getInt();
+                result.setInt(Integer.divideUnsigned(x1,y1));
+                break;
+            case L:
+                long x2a = a.getLong();
+                long y2a = b.getLong();
+                result.setLong(x2a*y2a);
+                break;
+            case UL:
+                long x2 = a.getLong();
+                long y2 = b.getLong();
+                result.setLong(Long.divideUnsigned(x2,y2));
+                break;
+            case F:
+                float x3 = a.getFloat();
+                float y3 = b.getFloat();
+                result.setFloat(x3/y3);
+                break;
+            case D:
+                double x4 = a.getDouble();
+                double y4 = b.getDouble();
+                result.setDouble(x4/y4);
+                break;
+        }
+        return result;
+    }
+    public static EnigmaStackElement mod(EnigmaStackElement a, EnigmaStackElement b) {
+
+        EnigmaStackElement result = new EnigmaStackElement(); // create new stack element
+        getCastAndTransformResult(a, b, result); // cast everything
+        switch(result.getType()){
+            case I:
+            case U:
+                int x1 = a.getInt();
+                int y1 = b.getInt();
+                result.setInt(x1 % y1);
+                break;
+            case L:
+            case UL:
+                long x2 = a.getLong();
+                long y2 = b.getLong();
+                result.setLong(x2 % y2);
+                break;
+            case F:
+                float x3 = a.getFloat();
+                float y3 = b.getFloat();
+                result.setFloat(x3 % y3);
+                break;
+            case D:
+                double x4 = a.getDouble();
+                double y4 = b.getDouble();
+                result.setDouble(x4 % y4);
+                break;
+        }
+        return result;
+    }
+
+    public static EnigmaStackElement band(EnigmaStackElement a, EnigmaStackElement b) throws EnigmaVM.EnigmaException {
+
+        EnigmaStackElement result = new EnigmaStackElement(); // create new stack element
+        getCastAndTransformResult(a, b, result); // cast everything
+        switch(result.getType()){
+            case I:
+            case U:
+                int x1 = a.getInt();
+                int y1 = b.getInt();
+                result.setInt(x1 & y1);
+                break;
+            case L:
+            case UL:
+                long x2 = a.getLong();
+                long y2 = b.getLong();
+                result.setLong(x2 & y2);
+                break;
+            case F:
+                throw new EnigmaVM.EnigmaException("Cannot apply & to float");
+            case D:
+                throw new EnigmaVM.EnigmaException("Cannot apply & to double");
+        }
+        return result;
+    }
+
+    public static EnigmaStackElement bor(EnigmaStackElement a, EnigmaStackElement b) throws EnigmaVM.EnigmaException {
+
+        EnigmaStackElement result = new EnigmaStackElement(); // create new stack element
+        getCastAndTransformResult(a, b, result); // cast everything
+        switch(result.getType()){
+            case I:
+            case U:
+                int x1 = a.getInt();
+                int y1 = b.getInt();
+                result.setInt(x1 | y1);
+                break;
+            case L:
+            case UL:
+                long x2 = a.getLong();
+                long y2 = b.getLong();
+                result.setLong(x2 | y2);
+                break;
+            case F:
+                throw new EnigmaVM.EnigmaException("Cannot apply | to float");
+            case D:
+                throw new EnigmaVM.EnigmaException("Cannot apply | to double");
+        }
+        return result;
+    }
+
+    public static EnigmaStackElement bxor(EnigmaStackElement a, EnigmaStackElement b) throws EnigmaVM.EnigmaException {
+
+        EnigmaStackElement result = new EnigmaStackElement(); // create new stack element
+        getCastAndTransformResult(a, b, result); // cast everything
+        switch(result.getType()){
+            case I:
+            case U:
+                int x1 = a.getInt();
+                int y1 = b.getInt();
+                result.setInt(x1 ^ y1);
+                break;
+            case L:
+            case UL:
+                long x2 = a.getLong();
+                long y2 = b.getLong();
+                result.setLong(x2 ^ y2);
+                break;
+            case F:
+                throw new EnigmaVM.EnigmaException("Cannot apply ^ to float");
+            case D:
+                throw new EnigmaVM.EnigmaException("Cannot apply ^ to double");
+        }
+        return result;
+    }
 }

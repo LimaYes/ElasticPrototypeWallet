@@ -36,6 +36,8 @@ public class EnigmaVM {
         byte[] value;
         byte[] key;
         int integerKey;
+        EnigmaStackElement a;
+        EnigmaStackElement b;
 
         EnigmaProgram.MEM_TARGET_STORE estimatedType = null;
 
@@ -177,11 +179,45 @@ public class EnigmaVM {
             BEGIN SECTION: SIMPLE MATHEMATICAL OPERATORS
              */
             case ENIGMA_ADD:
-                EnigmaStackElement a = prog.stackPop();
-                EnigmaStackElement b = prog.stackPop();
+                a = prog.stackPop();
+                 b = prog.stackPop();
                 prog.stackPush(EnigmaMathOps.add(a,b));
                 prog.stepForward();
-
+            case ENIGMA_SUB:
+                a = prog.stackPop();
+                b = prog.stackPop();
+                prog.stackPush(EnigmaMathOps.sub(a,b));
+                prog.stepForward();
+            case ENIGMA_MUL:
+                a = prog.stackPop();
+                b = prog.stackPop();
+                prog.stackPush(EnigmaMathOps.mul(a,b));
+                prog.stepForward();
+            case ENIGMA_DIV:
+                a = prog.stackPop();
+                b = prog.stackPop();
+                prog.stackPush(EnigmaMathOps.div(a,b));
+                prog.stepForward();
+            case ENIGMA_MOD:
+                a = prog.stackPop();
+                b = prog.stackPop();
+                prog.stackPush(EnigmaMathOps.mod(a,b));
+                prog.stepForward();
+            case ENIGMA_BITWISE_AND:
+                a = prog.stackPop();
+                b = prog.stackPop();
+                prog.stackPush(EnigmaMathOps.band(a,b));
+                prog.stepForward();
+            case ENIGMA_BITWISE_OR:
+                a = prog.stackPop();
+                b = prog.stackPop();
+                prog.stackPush(EnigmaMathOps.bor(a,b));
+                prog.stepForward();
+            case ENIGMA_BITWISE_XOR:
+                a = prog.stackPop();
+                b = prog.stackPop();
+                prog.stackPush(EnigmaMathOps.bxor(a,b));
+                prog.stepForward();
         }
     }
 
