@@ -801,7 +801,7 @@ public class ASTBuilder {
                         create_exp(state, state.token_list.get(token_id), token_id);
 
                         // Stop Linking If An Else Is The Next Statement
-                        if ((i < (state.token_list.size() - 1)) && (state.token_list.get(i + 1).type == TOKEN_ELSE))
+                        if ((i < (state.token_list.size() - 1)) && (state.token_list.get(i + 1).type == TOKEN_ELSE)) // TODO: -1 needed?
                             break;
                     }
                     break;
@@ -840,7 +840,7 @@ public class ASTBuilder {
                     // Validate That "Break" & "Continue" Are Tied To "Repeat"
                     found = false;
 
-                    for (j = 0; j < (state.stack_exp.size() - 1); j++) {
+                    for (j = 0; j < (state.stack_exp.size()); j++) {
                         if (state.token_list.get(state.stack_op.get(j)).type == TOKEN_REPEAT) {
                             found = true;
                             push_op(state, i);
@@ -1456,7 +1456,7 @@ public class ASTBuilder {
 
 
     public static void dump_vm_ast(Primitives.STATE state) {
-        for (int i = state.ast_func_idx; i < state.stack_exp.size(); i++) {
+        for (int i = 0; i < state.stack_exp.size(); i++) {
             dump_vm_ast(state, state.stack_exp.get(i));
         }
     }
@@ -1464,6 +1464,8 @@ public class ASTBuilder {
     public static void dump_vm_ast(Primitives.STATE state, AST root) {
         boolean downward = true;
         AST ast_ptr = root;
+
+        if(root == null) return;
 
         if (root.type == NODE_FUNCTION) {
             System.out.println(String.format("FUNCTION '%s'", root.svalue));
@@ -1480,7 +1482,7 @@ public class ASTBuilder {
                 while (ast_ptr.left != null) {
 
                     // Print Left Node
-                    if (ast_ptr.right != null)
+                    if (ast_ptr.right == null)
                         print_node(ast_ptr);
 
                     ast_ptr = ast_ptr.left;
@@ -1533,7 +1535,7 @@ public class ASTBuilder {
                     if (node.is_signed)
                         System.out.print(String.format("\tType: %d,\t%d\t\t\t", node.type.ordinal(), node.ivalue));
                     else
-                        System.out.print(String.format("\tType: %d,\t%d (wrong converted)\t\t\t", node.type.ordinal(), node.uvalue)); // TODO uint
+                        System.out.print(String.format("\tType: %d,\t%s\t\t\t", node.type.ordinal(), Long.toUnsignedString(node.uvalue))); // TODO uint
                 }
                 break;
             case NODE_VAR_CONST:
@@ -1596,7 +1598,7 @@ public class ASTBuilder {
                 break;
             case NODE_BLOCK:
                 if (node.parent.type != NODE_FUNCTION)
-                    System.out.println(String.format("\t-------------------------------------------------\n"));
+                    System.out.println(String.format("\t-------------------------------------------------"));
                 return;
             case NODE_ARRAY_INT:
             case NODE_ARRAY_UINT:
@@ -1631,10 +1633,10 @@ public class ASTBuilder {
                 System.out.println(String.format("(double)"));
                 break;
             case DT_STRING:
-                System.out.println(String.format("(string)\n"));
+                System.out.println(String.format("(string)"));
                 break;
             default:
-                System.out.println(String.format("(N/A)\n"));
+                System.out.println(String.format("(N/A)"));
                 break;
         }
     }
@@ -1813,11 +1815,16 @@ public class ASTBuilder {
     private static void validate_function_calls(Primitives.STATE state) throws Exceptions.SyntaxErrorException {
         int i, j;
         boolean downward = true;
+        dump_vm_ast(state);
+
         AST root = null;
         AST ast_ptr = null;
         Stack<AST> call_stack = new Stack<>();
         Stack<AST> rpt_stack = new Stack<>();
         // First Validate 'main' Then 'verify'
+
+        System.out.println(String.format("Call Function: 'main()'"));
+
         for (j = 0; j < 2; j++) {
 
             if (j == 0) {
@@ -1829,10 +1836,13 @@ public class ASTBuilder {
                 // Reset To Navigate Downward
                 downward = true;
             }
+
+            rpt_stack.clear();
+            call_stack.clear();
+
             call_stack.push(root);
             ast_ptr = root;
             while (ast_ptr != null) {
-                //System.out.println(downward + " . " + ast_ptr.data_type + " (" + ast_ptr.svalue + ")");
                 // Navigate Down The Tree
                 if (downward) {
                     // Navigate To Lowest Left Parent Node
@@ -1863,12 +1873,11 @@ public class ASTBuilder {
                         if (ast_ptr.left != null)
                             ast_ptr = ast_ptr.left;
 
-                        //System.out.println(String.format("Call Function: '%s()'", ast_ptr.svalue));
+                        System.out.println(String.format("Call Function: '%s()'", ast_ptr.svalue));
 
 
                         // Get AST Index For The Function
                         if (ast_ptr.uvalue == 0) {
-
                             for (i = 0; i < state.stack_exp.size(); i++) {
                                 if ((state.stack_exp.get(i).type == NODE_FUNCTION) && !strcmp(state.stack_exp.get(i).svalue, ast_ptr.svalue))
                                     ast_ptr.uvalue = i;
@@ -1877,7 +1886,7 @@ public class ASTBuilder {
 
                         // Validate Function Exists
                         if (ast_ptr.uvalue == 0) {
-                            throw new Exceptions.SyntaxErrorException("Syntax Error: Line: " + ast_ptr.line_num + "  - Function '" + ast_ptr.line_num + "' not found");
+                            throw new Exceptions.SyntaxErrorException("Syntax Error: Line: " + ast_ptr.line_num + "  - Function '" + ast_ptr.svalue + "' not found");
                         }
 
                         // Validate That "main" Function Is Not Called
@@ -1886,7 +1895,7 @@ public class ASTBuilder {
                         }
 
                         // Validate That Functions Is Not Recursively Called
-                        for (i = 0; i < call_stack.size(); i++) { // todo: check if -1 required
+                        for (i = 0; i < call_stack.size(); i++) {
                             if (ast_ptr.svalue != null && call_stack.get(i).svalue != null && !strcmp(ast_ptr.svalue, call_stack.get(i).svalue)) {
                                 throw new Exceptions.SyntaxErrorException("Syntax Error: Line: " + ast_ptr.line_num + "  - Illegal recursive function call");
                             }
@@ -1932,7 +1941,6 @@ public class ASTBuilder {
                 }
                 // Navigate Back Up The Tree
                 else {
-                    //System.out.println("  up");
                     // Quit When We Reach The Root Of Main Function
                     if (ast_ptr == root)
                         break;
@@ -1945,9 +1953,9 @@ public class ASTBuilder {
                     // Return To Calling Function When We Reach The Root Of Called Function
 
                     if (ast_ptr.parent.type == NODE_FUNCTION) {
-                        call_stack.pop();
-                        ast_ptr = call_stack.peek(); // is this the top element
-                        //System.out.println(String.format("Return From:   '%s()'\n", call_stack.get(call_stack.size()-1).svalue));
+
+                        ast_ptr = call_stack.pop();
+                        System.out.println(String.format("Return From:   '%s()'", ast_ptr.svalue));
                     } else {
                         // Check If We Need To Navigate Back Down A Right Branch
                         if ((ast_ptr == ast_ptr.parent.left) && (ast_ptr.parent.right != null)) {
