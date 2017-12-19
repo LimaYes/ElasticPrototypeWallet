@@ -43,8 +43,8 @@ public enum EnigmaOpCode {
 
     // Jump and Compare
     ENIGMA_JUMP((byte) 0x10, 1, 2, "jump"),
-    ENIGMA_JUMP_EQUAL((byte) 0x11, 2, 2, "jump_eq"),
-    ENIGMA_JUMP_NOT_EQUAL((byte) 0x12, 2, 2, "jump_neq"),
+    ENIGMA_JUMP_TRUE((byte) 0x11, 2, 2, "jump_true"),
+    ENIGMA_JUMP_FALSE((byte) 0x12, 2, 2, "jump_false"),
 
     // Push Data To Stack
     ENIGMA_PUSHDATA((byte) 0x13, 0, 2, "pushdata"), // This one is tricky since it does not use input from stack but

@@ -36,8 +36,8 @@ public class EnigmaVM {
         byte[] value;
         byte[] key;
         int integerKey;
-        EnigmaStackElement a;
-        EnigmaStackElement b;
+        EnigmaStackElement a,b,c,d;
+
 
         EnigmaProgram.MEM_TARGET_STORE estimatedType = null;
 
@@ -307,6 +307,37 @@ public class EnigmaVM {
                 b = prog.stackPop();
                 prog.stackPush(EnigmaMathOps.oror(a,b));
                 prog.stepForward();
+                break;
+            case ENIGMA_JUMP:
+                a = prog.stackPop();
+                prog.setPc(a.getInt());
+                break;
+            case ENIGMA_JUMP_TRUE:
+                a = prog.stackPop();
+                b = prog.stackPop();
+                if(a.isNotZero())
+                    prog.setPc(b.getInt());
+                else
+                    prog.stepForward();
+                break;
+            case ENIGMA_JUMP_FALSE:
+                a = prog.stackPop();
+                b = prog.stackPop();
+                if(!a.isNotZero())
+                    prog.setPc(b.getInt());
+                else
+                    prog.stepForward();
+                break;
+            case ENIGMA_VERIFY_BTY:
+                a = prog.stackPop();
+                prog.setBounty(a.isNotZero());
+                break;
+            case ENIGMA_VERIFY_POW: // sprintf(str, "if (verify_pow == 1)\n\t\t*pow_found = check_pow(%s, &m[0], &target[0], &hash[0]);\n\telse\n\t\t*pow_found = 0", lstr);
+                a = prog.stackPop();
+                b = prog.stackPop();
+                c = prog.stackPop();
+                d = prog.stackPop();
+                prog.setPow(a.getInt(),b.getInt(),c.getInt(),d.getInt());
                 break;
 
 

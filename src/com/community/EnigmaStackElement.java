@@ -142,4 +142,20 @@ public class EnigmaStackElement {
     public void convertType(EnigmaProgram.MEM_TARGET_STORE cast) {
         this.type = cast;
     }
+
+    public boolean isNotZero() {
+        switch(this.getType()){
+            case L:
+            case UL:
+                return this.getLong()!=0;
+            case I:
+            case U:
+                return this.getInt()!=0;
+            case D:
+                return this.getDouble()!=0;
+            case F:
+                return this.getFloat()!=0;
+        }
+        return false;
+    }
 }

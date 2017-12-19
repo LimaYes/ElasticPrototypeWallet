@@ -71,6 +71,24 @@ public class EnigmaProgram {
     private boolean stopped;
     private long currently_used_memory;
 
+    private boolean bounty;
+    private BigInteger pow_hash;
+
+    public boolean isBounty() {
+        return bounty;
+    }
+
+    public void setBounty(boolean bounty) {
+        this.bounty = bounty;
+    }
+
+    public boolean isPow() {
+        return pow;
+    }
+
+    public void setPow(int a, int b, int c, int d) {
+    }
+
     private MEM_TARGET_STORE mapMemTarget(MEM_TARGET_GET t) {
         switch (t) {
             case GET_U:
