@@ -2,6 +2,7 @@ package com.community;
 
 import nxt.util.Convert;
 
+import java.math.BigInteger;
 import java.util.*;
 
 import static com.community.EnigmaProgram.MEM_TARGET_GET.*;
@@ -71,8 +72,8 @@ public class EnigmaProgram {
     private boolean stopped;
     private long currently_used_memory;
 
-    private boolean bounty;
-    private BigInteger pow_hash;
+    private boolean bounty = false;
+    private BigInteger pow_hash = null;
 
     public boolean isBounty() {
         return bounty;
@@ -82,8 +83,9 @@ public class EnigmaProgram {
         this.bounty = bounty;
     }
 
-    public boolean isPow() {
-        return pow;
+    public boolean isPow(BigInteger currentTarget) {
+        if(pow_hash==null) return false;
+        return pow_hash.compareTo(currentTarget)<=0;
     }
 
     public void setPow(int a, int b, int c, int d) {
