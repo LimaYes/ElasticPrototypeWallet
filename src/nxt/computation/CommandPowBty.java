@@ -1,7 +1,6 @@
 package nxt.computation;
 
 import com.community.Executor;
-import com.community.ExposedToRhino;
 import com.community.Primitives;
 import nxt.*;
 import nxt.crypto.Crypto;
@@ -296,9 +295,6 @@ public class CommandPowBty extends IComputationAttachment {
         // safeguard
         if(target.length!=4) target = new int[]{0,0,0,0};
 
-        // reset last pow cache so we safely can detect a faulty execution / abortion
-        ExposedToRhino.lastCalculatedPowHash = null;
-
         // TODO, RECREATE FALSE STATE WHICH CONTAINS INT NUMBERS !!!!!!!!!!!!!!!!!!!!!!!!!
         Primitives.STATE state = new Primitives.STATE();
         state.ast_vm_longs = 0;
@@ -323,15 +319,15 @@ public class CommandPowBty extends IComputationAttachment {
 
         // At this point we have already called the "Exposed to Rhino function" which made sure t hat the POW hash is in the temporary static value. See if it matches
         // in case of a bounty submission
-        if(this.is_proof_of_work==false && ExposedToRhino.lastCalculatedPowHash == null){
+      /*  if(this.is_proof_of_work==false){
             Logger.logInfoMessage("Work " + String.valueOf(w.getId()) + " verification failed: the pow hash could not be calculated in the last code execution run.");
             return false; // this should not happen at all!
         }
-        if(this.is_proof_of_work==false && Arrays.equals(ExposedToRhino.lastCalculatedPowHash, this.hash) == false){
+        if(this.is_proof_of_work==false){
             Logger.logInfoMessage("Work " + String.valueOf(w.getId()) + " verification failed: supplied pow hash does not match the real one (" + Convert.toHexString(this.hash) + " != " + Convert.toHexString(ExposedToRhino.lastCalculatedPowHash) + ").");
             return false; // return false if the POW Hash does not match
         }
-
+*/
 
         if(this.is_proof_of_work) {
             transaction.itWasAPow();

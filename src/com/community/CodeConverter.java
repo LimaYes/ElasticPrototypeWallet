@@ -42,56 +42,6 @@ public class CodeConverter {
         return true;
     }
 
-    /*private static void get_cast(lrcast mylrcast, Primitives.DATA_TYPE ldata_type, Primitives.DATA_TYPE rdata_type,
-                                 boolean right_only) {
-        mylrcast.lcast = null;
-        mylrcast.rcast = null;
-
-        if (ldata_type == rdata_type)
-            return;
-        else if (right_only || (rdata_type.ordinal() < ldata_type.ordinal())) {
-            switch (ldata_type) {
-                case DT_UINT:
-                    mylrcast.rcast = String.format("uint32_t");
-                    break;
-                case DT_LONG:
-                    mylrcast.rcast = String.format("int64_t");
-                    break;
-                case DT_ULONG:
-                    mylrcast.rcast = String.format("uint64_t");
-                    break;
-                case DT_FLOAT:
-                    mylrcast.rcast = String.format("float");
-                    break;
-                case DT_DOUBLE:
-                    mylrcast.rcast = String.format("double");
-                    break;
-            }
-            return;
-        }
-        else {
-            switch (rdata_type) {
-                case DT_UINT:
-                    mylrcast.lcast = String.format("uint32_t");
-                    break;
-                case DT_LONG:
-                    mylrcast.lcast = String.format("int64_t");
-                    break;
-                case DT_ULONG:
-                    mylrcast.lcast = String.format("uint64_t");
-                    break;
-                case DT_FLOAT:
-                    mylrcast.lcast = String.format("float");
-                    break;
-                case DT_DOUBLE:
-                    mylrcast.lcast = String.format("double");
-                    break;
-            }
-            return;
-        }
-    }*/
-
-
     public static void convert_verify(Primitives.STATE state) throws Exceptions.SyntaxErrorException {
         for (int i = state.ast_func_idx; i < state.stack_exp.size(); i++) {
             convert_function(state, state.stack_exp.get(i));

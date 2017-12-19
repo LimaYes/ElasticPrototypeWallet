@@ -1,13 +1,9 @@
 package nxt.execution;
 
-import com.community.CTypeInts.Int32_t;
-import com.community.CTypeInts.Uint32_t;
-import com.community.CTypeInts.Uint64_t;
 import com.community.Constants;
 import com.community.Executor;
 import com.community.Primitives;
-import com.community.TokenManager;
-import org.h2.schema.Constant;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

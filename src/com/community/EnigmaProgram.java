@@ -2,7 +2,9 @@ package com.community;
 
 import nxt.util.Convert;
 
+import java.io.ByteArrayOutputStream;
 import java.math.BigInteger;
+import java.security.MessageDigest;
 import java.util.*;
 
 import static com.community.EnigmaProgram.MEM_TARGET_GET.*;
@@ -73,7 +75,7 @@ public class EnigmaProgram {
     private long currently_used_memory;
 
     private boolean bounty = false;
-    private BigInteger pow_hash = null;
+    private int[] pow_hash = null;
 
     public boolean isBounty() {
         return bounty;
@@ -83,12 +85,63 @@ public class EnigmaProgram {
         this.bounty = bounty;
     }
 
-    public boolean isPow(BigInteger currentTarget) {
+    public boolean isPow(int[] currentTarget) {
         if(pow_hash==null) return false;
-        return pow_hash.compareTo(currentTarget)<=0;
+        for (int i = 0; i < 4; i++) {
+            int res = Integer.compareUnsigned(pow_hash[i], currentTarget[i]);
+            if (res > 0)
+                return false;
+            else if (res < 0)
+                return true;    // POW Solution Found
+        }
+        return false;
+    }
+    private static final byte[] intToByteArray(int value)
+    {
+        return new byte[]  { (byte)(value&0xff), (byte)((value >> 8) & 0xff), (byte)((value >> 16) & 0xff), (byte)((value >>24) & 0xff) };
     }
 
-    public void setPow(int a, int b, int c, int d) {
+    public void setPow(int v0, int v1, int v2, int v3) {
+        System.out.println("GOT ARGUMENTS TO CHECKPOW: " + Integer.toHexString(v0) + ", " + Integer.toHexString(v1) + ", " + Integer.toHexString(v2) + ", " + Integer.toHexString(v3) + ", " + ", ...");
+        System.out.println("FIRST M HEXS: " + Integer.toHexString(m_array[0]) + ", " + Integer.toHexString(m_array[1]) + ", " + Integer.toHexString(m_array[2]) + ", " + Integer.toHexString(m_array[3]) + ", " + ", ...");
+        System.out.println("FIRST M INTS: " + Integer.toString(m_array[0]) + ", " + Integer.toString(m_array[1]) + ", " + Integer.toString(m_array[2]) + ", " + Integer.toString(m_array[3]) + ", " + ", ...");
+
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+            baos.write(intToByteArray(v0));
+            baos.write(intToByteArray(v1));
+            baos.write(intToByteArray(v2));
+            baos.write(intToByteArray(v3));
+
+            for (int i = 0; i < 8; i++) {
+                baos.write(intToByteArray(m_array[i]));
+            }
+            byte[] fullByteArray = baos.toByteArray();
+
+            // TODO: SOMEHOW THIS ROUTINE ALLOWS MULTIPLE SUBMISSIONS WITH THE SAME POW HASH! THIS SHOULD BE AVOIDED AT ALL COSTS!!!
+            System.out.println("INPUT FOR HASH CALCULATION:");
+
+            byte[] ret = MessageDigest.getInstance("MD5").digest(fullByteArray);
+
+            System.out.println("MD5 Debug:");
+            System.out.println("===================================");
+            System.out.println("Inp: " + Convert.toHexString(fullByteArray));
+            System.out.println("Out: " + Convert.toHexString(ret));
+
+            int[] hash32 = Convert.byte2int(ret);
+            // We need to swap that to match xel_miner which uses some strange endianness swap on its pow_hash
+            for (int i = 0; i < 4; i++)
+                hash32[i] = Convert.swap(hash32[i]);
+
+            pow_hash = hash32;
+
+            System.out.println("POW-Hash: " + Convert.toHexString(Convert.int2byte(hash32)) + " (swapped version as seen on xel_miner)");
+
+        }
+        catch(Exception e){
+            e.printStackTrace(); // todo: remove for production
+        }
     }
 
     private MEM_TARGET_STORE mapMemTarget(MEM_TARGET_GET t) {

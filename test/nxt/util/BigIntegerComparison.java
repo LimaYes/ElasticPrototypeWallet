@@ -1,4 +1,4 @@
-package nxt.execution;
+package nxt.util;
 
 import nxt.util.Convert;
 import org.junit.Assert;

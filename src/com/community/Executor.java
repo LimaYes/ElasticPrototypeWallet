@@ -1,15 +1,9 @@
 package com.community;
-import com.community.CTypeInts.Uint32_t;
-import nxt.Appendix;
-import nxt.crypto.Crypto;
 import nxt.util.Convert;
 import nxt.util.Pair;
-import org.mozilla.javascript.ContextFactory;
-import org.mozilla.javascript.NativeArray;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 
 import static com.community.Constants.MAX_SOURCE_SIZE;
 import static java.security.MessageDigest.getInstance;
@@ -32,7 +26,6 @@ import static java.security.MessageDigest.getInstance;
 public class Executor {
 
 
-    public static Object jsObj = new ExposedToRhino();
     public static MessageDigest dig = null;
 
     static {
@@ -71,29 +64,9 @@ public class Executor {
         for(int i=0;i<t.state.stack_code.size();++i){
             result += t.state.stack_code.get(i);
         }
-
-        // Add global variables and functions
-        String pre_code = "var pow_found = 0;\nvar bounty_found = 0;\n";
-        pre_code += "function rotr32(word, shift) {\n" +
-                "  return word << 32 - shift | word >>> shift;\n" +
-                "}\n";
-
-        pre_code += "function rotl32(word, shift) {\n" +
-                "  return word << shift | word >>> 32 - shift;\n" +
-                "}\n";
-
-        pre_code += "function gcd(a, b) {\n" +
-                "    if ( ! b) {\n" +
-                "        return a;\n" +
-                "    }\n" +
-                "\n" +
-                "    return gcd(b, a % b);\n" +
-                "};";
-
-        // todo, make this better (and more correct)
-
-        return pre_code + "\n" + result;
+        return result;
     }
+
     public static int toInt(final byte[] bytes, final int offset) {
         int ret = 0;
         for (int i = 0; (i < 4) && ((i + offset) < bytes.length); i++) {
@@ -157,108 +130,12 @@ public class Executor {
             verifyCode, byte[] multiplier, int[] storage, int[] validator, int validator_offset_index, boolean verify_pow, int[]
             target, byte[] pow_hash, Primitives.STATE state){
 
-        // TODO: IMPLEMENT POW_HASH CHECK
-
-        String vcode = "";
         CODE_RESULT result = new CODE_RESULT();
         result.bty = false;
         result.pow = false;
         result.error = false;
-        try {
-            delight.rhinosandox.RhinoSandbox sandbox = delight.rhinosandox.RhinoSandboxes.create();
-            sandbox.setInstructionLimit(Constants.INSTRUCTION_LIMIT);
-            sandbox.setMaxDuration(Constants.SAFE_TIME_LIMIT);
-            sandbox.allow(ExposedToRhino.class);
 
-
-
-            if(storage != null) {
-                sandbox.inject("s", storage); // todo, add extra elements to S[] as coralreefer proposed
-            }
-
-            sandbox.inject("target", target);
-            sandbox.inject("verify_pow", verify_pow?1:0);
-
-            // Inject temp arrays
-            int[] m = personalizedIntStream(publicKey, blockId, multiplier, workId);
-
-            int[] u = new int[state.ast_vm_uints];
-            float[] f = new float[state.ast_vm_floats];
-            double[] d = new double[state.ast_vm_doubles];
-            long[] l = new long[state.ast_vm_longs];
-            long[] ul = new long[state.ast_vm_ulongs];
-            int[] i = new int[state.ast_vm_ints];
-
-
-            // now, fill the validator uints! (also called "data" in xelminer)
-            for(int xx=0;xx<validator.length;++xx){
-                u[validator_offset_index+xx] = validator[xx];
-            }
-
-
-            sandbox.inject("u", u);
-            sandbox.inject("m", m);
-            sandbox.inject("i", i);
-            sandbox.inject("l", l);
-            sandbox.inject("ul", ul);
-            sandbox.inject("f", f);
-            sandbox.inject("d", d);
-
-
-            // Add native java object for Rhino exposed POW functions
-            sandbox.inject("ExposedToRhino", jsObj);
-
-            vcode = verifyCode + " verify(); function res(){ return [pow_found, " +
-                    "bounty_found]; } " +
-                    "res();";
-
-            org.mozilla.javascript.NativeArray array = (NativeArray) sandbox.eval("epl", vcode);
-
-
-
-            /*
-            // todo: here is a lot debug stuff
-            System.out.println("SZ: " + String.valueOf(storage.length) + ", VALIDATION_IDX: " + String.valueOf(validator_offset_index));
-            System.out.println("Last POW Hash:");
-            System.out.println("--------------------------");
-            System.out.println(Convert.toHexString(ExposedToRhino.lastCalculatedPowHash));
-            System.out.println("M Personalized Int Stream:");
-            System.out.println("--------------------------");
-            System.out.println(Arrays.toString(m));
-
-            if(storage != null) {
-                System.out.println("Storage Array (S Array):");
-                System.out.println("------------------------");
-                System.out.println(Arrays.toString(storage));
-            }
-
-            System.out.println("Validator/Data Array:");
-            System.out.println("---------------------");
-            System.out.println(Arrays.toString(validator));
-            System.out.println("Raw Multiplicator Was::");
-            System.out.println("---------------------");
-            System.out.println(Convert.toHexString(multiplier));
-            System.out.println("\n\n");
-            System.out.println(vcode); // todo, comment in to see what code is being executed, remove for production
-
-            //System.out.println(p + ", " + b);
-            */
-
-            double p = (double) array.get(0);
-            double b = (double) array.get(1);
-            result.bty = b==1.0;
-            result.pow = p==1.0;
-
-            return result;
-        }catch(Exception e){
-            e.printStackTrace(); // todo, remove for production
-            System.err.println("Executed Code was:");
-            System.err.println(vcode);
-            result.pow = false;
-            result.bty = false;
-            result.error = true;
-            return result; // Failed execution (reason does not matter)
-        }
+        return result;
     }
 
     public static Pair<Integer, Integer> checkCodeAndReturnStorageSizeAndVERIIDX(String elasticPL) throws Exceptions.SyntaxErrorException {
@@ -280,7 +157,7 @@ public class Executor {
             throw new Exceptions.SyntaxErrorException("Absolutely maximum verify function WCET of " + Constants
                     .ABSOLUTELY_MAXIMUM_VERIFY_WCET + " exceeded: your script has a verify function WCET of " + wcet + ".");
         }
-        return new Pair<Integer, Integer>(t.state.ast_submit_sz, t.state.ast_submit_idx);
+        return new Pair<>(t.state.ast_submit_sz, t.state.ast_submit_idx);
     }
 
     public static class CODE_RESULT {

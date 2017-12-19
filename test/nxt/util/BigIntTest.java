@@ -1,4 +1,4 @@
-package nxt.execution;
+package nxt.util;
 
 import nxt.Nxt;
 import nxt.computation.ComputationConstants;

@@ -1,0 +1,20 @@
+array_uint 50;
+submit_sz 32;
+submit_idx 0;
+
+function test1 {
+    u[3]=1000;
+    u[4]=99;
+}
+
+function main {
+    u[1]=u[1]*132;
+    u[2]=u[1]*54;
+    test1();
+    verify();
+}
+
+function verify {
+    verify_bty (u[2]%1000==0);
+    verify_pow (u[0],u[1],u[2],u[3]);
+}

@@ -6,7 +6,6 @@ import com.community.Constants;
 import nxt.computation.ComputationConstants;
 import nxt.util.Convert;
 import nxt.util.Logger;
-import org.mozilla.javascript.NativeArray;
 
 import java.io.*;
 import java.util.Arrays;
@@ -129,44 +128,6 @@ public class TestVm {
         return false;
     }
 
-
-    public static int[] getIntArray(Object x){
-        NativeArray arr = (NativeArray) x;
-        int [] array = new int[(int) arr.getLength()];
-        for (Object o : arr.getIds()) {
-            int index = (Integer) o;
-            array[index] = (int) arr.get(index, null);
-        }
-        return array;
-    }
-    public static float[] getFloatArray(Object x){
-        NativeArray arr = (NativeArray) x;
-        float [] array = new float[(int) arr.getLength()];
-        for (Object o : arr.getIds()) {
-            int index = (Integer) o;
-            array[index] = (int) arr.get(index, null);
-        }
-        return array;
-    }
-    public static double[] getDoubleArray(Object x){
-        NativeArray arr = (NativeArray) x;
-        double [] array = new double[(int) arr.getLength()];
-        for (Object o : arr.getIds()) {
-            int index = (Integer) o;
-            array[index] = (int) arr.get(index, null);
-        }
-        return array;
-    }
-    public static long[] getLongArray(Object x){
-        NativeArray arr = (NativeArray) x;
-        long [] array = new long[(int) arr.getLength()];
-        for (Object o : arr.getIds()) {
-            int index = (Integer) o;
-            array[index] = (int) arr.get(index, null);
-        }
-        return array;
-    }
-
     public static void main(String[] args) {
         String file = getStringProperty("nxt.test_file");
         String content = null;
@@ -234,24 +195,9 @@ public class TestVm {
                 result += t.state.stack_code.get(i);
             }
 
-            // Add global variables and functions
-            String pre_code = "var pow_found = 0;\nvar bounty_found = 0;\n";
-            pre_code += "function rotr32(word, shift) {\n" +
-                    "  return word << 32 - shift | word >>> shift;\n" +
-                    "}\n";
 
-            pre_code += "function rotl32(word, shift) {\n" +
-                    "  return word << shift | word >>> 32 - shift;\n" +
-                    "}\n";
-            pre_code += "function gcd(a, b) {\n" +
-                    "    if ( ! b) {\n" +
-                    "        return a;\n" +
-                    "    }\n" +
-                    "\n" +
-                    "    return gcd(b, a % b);\n" +
-                    "};";
+            String code = result;
 
-            String code = pre_code + "\n" + result;
             if (dumpCode) {
                 Logger.logMessage("Dumping generated source code");
                 System.out.flush();
@@ -264,125 +210,7 @@ public class TestVm {
                 int validator_offset_index = 0;
                 Logger.logMessage("We will now execute the code");
 
-                delight.rhinosandox.RhinoSandbox sandbox = delight.rhinosandox.RhinoSandboxes.create();
-                sandbox.setInstructionLimit(com.community.Constants.INSTRUCTION_LIMIT);
-                sandbox.setMaxDuration(Constants.SAFE_TIME_LIMIT); // TODO: Good idea?
-                sandbox.allow(ExposedToRhino.class);
-
-                // Add some dummy storae
-                int[] s = new int[10000];
-                sandbox.inject("s", s); // todo, add extra elements to S[] as coralreefer proposed
-
-                int[] target = Convert.bigintToInts(ComputationConstants.TESTVM_WORK_TARGET, 4);
-                sandbox.inject("target", target);
-                sandbox.inject("verify_pow", false); // always go for the bounty check here
-
-                // Inject temp arrays
-                int[] m = fakeInts();
-
-                int[] u = new int[t.state.ast_vm_uints];
-                float[] f = new float[t.state.ast_vm_floats];
-                double[] d = new double[t.state.ast_vm_doubles];
-                long[] l = new long[t.state.ast_vm_longs];
-                long[] ul = new long[t.state.ast_vm_ulongs];
-                int[] i = new int[t.state.ast_vm_ints];
-
-                // now, fill the validator uints! (also called "data" in xelminer)
-                    /*
-                    leave this out for now
-                    for (int i = 0; i < validator.length; ++i) {
-                        u[validator_offset_index + i] = validator[i];
-                    }*/
-
-                // TO CHECK; WE GIVE I ARRAY AS M-VARIABLE TO JS, BUT IT DOES NOT CONTAIN M IN ANY CASE! PLEASE ELABORATE ON THIS, THIS MIGHT BE THE ERROR! PUT I IN M AND YOURE POSSIBLY DONE
-
-
-                sandbox.inject("u", u);
-                sandbox.inject("m", m);
-                sandbox.inject("i", i);
-                sandbox.inject("l", l);
-                sandbox.inject("ul", ul);
-                sandbox.inject("f", f);
-                sandbox.inject("d", d);
-
-
-                // Add native java object for Rhino exposed POW functions
-                sandbox.inject("ExposedToRhino", Executor.jsObj);
-
-                code = code + " verify(); function res(){ return [pow_found, " +
-                        "bounty_found]; } " +
-                        "res();";
-
-                org.mozilla.javascript.NativeArray array = (NativeArray) sandbox.eval("epl", code);
-
-                u = (int[]) sandbox.getGlobalScopeObject("u");
-                m = (int[]) sandbox.getGlobalScopeObject("m");
-                i = (int[]) sandbox.getGlobalScopeObject("i");
-                l = (long[]) sandbox.getGlobalScopeObject("l");
-                ul = (long[]) sandbox.getGlobalScopeObject("ul");
-                f = (float[]) sandbox.getGlobalScopeObject("f");
-                d = (double[]) sandbox.getGlobalScopeObject("d");
-
-
-
-                // todo: here is a lot debug stuff
-                System.out.println("Storagesize: " + String.valueOf(s.length) + ", VALIDATION_IDX: " + String.valueOf(validator_offset_index));
-                System.out.println("\nM Personalized Int Stream:");
-                System.out.println("--------------------------");
-                System.out.println("MARR: " + Arrays.toString(m));
-
-                if(s != null) {
-                    System.out.println("\nStorage Array (S Array):");
-                    System.out.println("------------------------");
-                    System.out.println("ARR-S: " + Arrays.toString(s));
-                }
-
-                if(u.length>0){
-                    System.out.println("\nu Array");
-                    System.out.println("------------------------");
-                    System.out.println("ARR-U: " + Arrays.toString(u));
-                }
-                if(f.length>0){
-                    System.out.println("\nf Array");
-                    System.out.println("------------------------");
-                    System.out.println("ARR-F: " + Arrays.toString(f));
-                }
-
-                if(d.length>0){
-                    System.out.println("\nd Array");
-                    System.out.println("------------------------");
-                    System.out.println("ARR-D: " + Arrays.toString(d));
-                }
-                if(i.length>0){
-                    System.out.println("\ni Array");
-                    System.out.println("------------------------");
-                    System.out.println("ARR-I: " + Arrays.toString(i));
-                }
-                if(l.length>0){
-                    System.out.println("\nl Array");
-                    System.out.println("------------------------");
-                    System.out.println("ARR-L: " + Arrays.toString(l));
-                }
-                if(ul.length>0){
-                    System.out.println("\nul Array");
-                    System.out.println("------------------------");
-                    System.out.println("ARR-UL: " + Arrays.toString(ul));
-                }
-
-
-                /*System.out.println("Validator/Data Array:");
-                System.out.println("---------------------");
-                System.out.println(Arrays.toString(validator));
-                System.out.println("Raw Multiplicator Was::");
-                System.out.println("---------------------");
-                System.out.println(Convert.toHexString(multiplier));
-                System.out.println("\n\n");
-                System.out.println(vcode); // todo, comment in to see what code is being executed, remove for production
-                */
-                double p = (double) array.get(0);
-                double b = (double) array.get(1);
-                System.out.println("\nSolutions found?\nFound-POW:" + p + "\nFound-BTY:" + b);
-
+                // TODO: Execute code
 
             }
 
