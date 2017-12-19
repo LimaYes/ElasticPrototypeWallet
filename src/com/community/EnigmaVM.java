@@ -180,7 +180,7 @@ public class EnigmaVM {
              */
             case ENIGMA_ADD:
                 a = prog.stackPop();
-                 b = prog.stackPop();
+                b = prog.stackPop();
                 prog.stackPush(EnigmaMathOps.add(a,b));
                 prog.stepForward();
             case ENIGMA_SUB:
@@ -218,6 +218,35 @@ public class EnigmaVM {
                 b = prog.stackPop();
                 prog.stackPush(EnigmaMathOps.bxor(a,b));
                 prog.stepForward();
+            case ENIGMA_COMPL:
+                a = prog.stackPop();
+                prog.stackPush(EnigmaMathOps.compl(a));
+                prog.stepForward();
+            case ENIGMA_NOT:
+                a = prog.stackPop();
+                prog.stackPush(EnigmaMathOps.not(a));
+                prog.stepForward();
+            case ENIGMA_LROT:
+                a = prog.stackPop();
+                b = prog.stackPop();
+                prog.stackPush(EnigmaMathOps.rotl(a,b));
+                prog.stepForward();
+            case ENIGMA_RROT:
+                a = prog.stackPop();
+                b = prog.stackPop();
+                prog.stackPush(EnigmaMathOps.rotr(a,b));
+                prog.stepForward();
+            case ENIGMA_LSHIFT:
+                a = prog.stackPop();
+                b = prog.stackPop();
+                prog.stackPush(EnigmaMathOps.shl(a,b));
+                prog.stepForward();
+            case ENIGMA_RSHIFT:
+                a = prog.stackPop();
+                b = prog.stackPop();
+                prog.stackPush(EnigmaMathOps.shr(a,b));
+                prog.stepForward();
+
         }
     }
 

@@ -304,4 +304,134 @@ public class EnigmaMathOps {
         }
         return result;
     }
+
+    public static EnigmaStackElement compl(EnigmaStackElement a) throws EnigmaVM.EnigmaException {
+        EnigmaStackElement result = new EnigmaStackElement(); // create new stack element
+        result.setType(a.getType());
+        switch(result.getType()){
+            case I:
+            case U:
+                int x1 = a.getInt();
+                result.setInt(~x1);
+                break;
+            case L:
+            case UL:
+                long x2 = a.getLong();
+                result.setLong(~x2);
+                break;
+            case F:
+                throw new EnigmaVM.EnigmaException("Cannot apply ~ to float");
+            case D:
+                throw new EnigmaVM.EnigmaException("Cannot apply ~ to double");
+        }
+        return result;
+    }
+    public static EnigmaStackElement not(EnigmaStackElement a) {
+        EnigmaStackElement result = new EnigmaStackElement(); // create new stack element
+        result.setType(a.getType());
+        switch(result.getType()){
+            case I:
+            case U:
+                int x1 = a.getInt();
+                result.setInt((x1!=0)?0:1);
+                break;
+            case L:
+            case UL:
+                long x2 = a.getLong();
+                result.setLong((x2!=0)?0L:1L);
+                break;
+            case F:
+                float x3 = a.getFloat();
+                result.setFloat((x3!=0.0f)?0.0f:1.0f);
+                break;
+            case D:
+                double x4 = a.getDouble();
+                result.setDouble((x4!=0.0d)?0.0d:1.0d);
+        }
+        return result;
+    }
+    public static EnigmaStackElement rotl(EnigmaStackElement a, EnigmaStackElement b) throws EnigmaVM.EnigmaException {
+        EnigmaStackElement result = new EnigmaStackElement(); // create new stack element
+        result.setType(a.getType());
+        switch(result.getType()){
+            case I:
+            case U:
+                int x1 = a.getInt();
+                result.setInt(Integer.rotateLeft(x1, b.getInt()));
+                break;
+            case L:
+            case UL:
+                long x2 = a.getLong();
+                result.setLong(Long.rotateLeft(x2, b.getInt()));
+                break;
+            case F:
+                throw new EnigmaVM.EnigmaException("Cannot apply rotation to float");
+            case D:
+                throw new EnigmaVM.EnigmaException("Cannot apply rotation to double");
+        }
+        return result;
+    }
+    public static EnigmaStackElement rotr(EnigmaStackElement a, EnigmaStackElement b) throws EnigmaVM.EnigmaException {
+        EnigmaStackElement result = new EnigmaStackElement(); // create new stack element
+        result.setType(a.getType());
+        switch(result.getType()){
+            case I:
+            case U:
+                int x1 = a.getInt();
+                result.setInt((x1 << b.getInt()));
+                break;
+            case L:
+            case UL:
+                long x2 = a.getLong();
+                result.setLong((x2 << b.getInt()));
+                break;
+            case F:
+                throw new EnigmaVM.EnigmaException("Cannot apply rotation to float");
+            case D:
+                throw new EnigmaVM.EnigmaException("Cannot apply rotation to double");
+        }
+        return result;
+    }
+    public static EnigmaStackElement shl(EnigmaStackElement a, EnigmaStackElement b) throws EnigmaVM.EnigmaException {
+        EnigmaStackElement result = new EnigmaStackElement(); // create new stack element
+        result.setType(a.getType());
+        switch(result.getType()){
+            case I:
+            case U:
+                int x1 = a.getInt();
+                result.setInt(Integer.rotateLeft(x1, b.getInt()));
+                break;
+            case L:
+            case UL:
+                long x2 = a.getLong();
+                result.setLong(Long.rotateLeft(x2, b.getInt()));
+                break;
+            case F:
+                throw new EnigmaVM.EnigmaException("Cannot apply rotation to float");
+            case D:
+                throw new EnigmaVM.EnigmaException("Cannot apply rotation to double");
+        }
+        return result;
+    }
+    public static EnigmaStackElement shr(EnigmaStackElement a, EnigmaStackElement b) throws EnigmaVM.EnigmaException {
+        EnigmaStackElement result = new EnigmaStackElement(); // create new stack element
+        result.setType(a.getType());
+        switch(result.getType()){
+            case I:
+            case U:
+                int x1 = a.getInt();
+                result.setInt((x1 >>> b.getInt()));
+                break;
+            case L:
+            case UL:
+                long x2 = a.getLong();
+                result.setLong((x2 >>> b.getInt()));
+                break;
+            case F:
+                throw new EnigmaVM.EnigmaException("Cannot apply rotation to float");
+            case D:
+                throw new EnigmaVM.EnigmaException("Cannot apply rotation to double");
+        }
+        return result;
+    }
 }
