@@ -1,5 +1,7 @@
 package com.community;
 
+import static com.community.EnigmaProgram.MEM_TARGET_STORE.U;
+
 public class EnigmaMathOps {
 
     
@@ -22,11 +24,11 @@ public class EnigmaMathOps {
         } else if (a == b) {
             // Otherwise, both types must be integer types. If they have the same signedness AND the same bitlength, the result just adopts that common type
             return a;
-        } else if (a == EnigmaProgram.MEM_TARGET_STORE.UL && b == EnigmaProgram.MEM_TARGET_STORE.U) {
+        } else if (a == EnigmaProgram.MEM_TARGET_STORE.UL && b == U) {
             // (Part 1) Otherwise, if the signedness IS SAME (IMPORTANT) but the bit lengths are different, the operand with the shorter bit length is converted to the bigger one
             // > This if branch handles the case where "a" is unsigned long, means: b is converted to unsigned long
             return EnigmaProgram.MEM_TARGET_STORE.UL;
-        } else if (a == EnigmaProgram.MEM_TARGET_STORE.U && b == EnigmaProgram.MEM_TARGET_STORE.UL) {
+        } else if (a == U && b == EnigmaProgram.MEM_TARGET_STORE.UL) {
             // (Part 2) This if branch handles the same case, with the little change that now "b" is unsigned long, means: a is converted to unsigned long
             return EnigmaProgram.MEM_TARGET_STORE.UL;
         } else if (a == EnigmaProgram.MEM_TARGET_STORE.L && b == EnigmaProgram.MEM_TARGET_STORE.I) {
@@ -47,19 +49,19 @@ public class EnigmaMathOps {
             // (Part 2) Same as above, but assume "b" is the higher rank unsigned op, if so convert b to unsigned long
             // Note, due to the earlier checks, we can assume that a has either signed int or signed long type
             return EnigmaProgram.MEM_TARGET_STORE.UL;
-        } else if (a == EnigmaProgram.MEM_TARGET_STORE.L && b == EnigmaProgram.MEM_TARGET_STORE.U) {
+        } else if (a == EnigmaProgram.MEM_TARGET_STORE.L && b == U) {
             // Now, Check if there is an signed operand with a higher or equal rank / bit length.
             // (Part 1) In this case, assume "a" is the higher rank SIGNED (IMPORTANT) op, and "b"'s value range entirely fits in a (only the case when it's a uint)
             // ... in this case just cast b to signed long (value won't get changed)
             return EnigmaProgram.MEM_TARGET_STORE.L;
 
-        } else if (b == EnigmaProgram.MEM_TARGET_STORE.L && a == EnigmaProgram.MEM_TARGET_STORE.U) {
+        } else if (b == EnigmaProgram.MEM_TARGET_STORE.L && a == U) {
             // (Part 2) In this case, assume "b" is the higher rank SIGNED (IMPORTANT) op, and "a"'s value range entirely fits in a (only the case when it's a uint)
             // ... in this case just cast a to signed long (value won't get changed)
             return EnigmaProgram.MEM_TARGET_STORE.L;
         } else{
             // What remains is U,I and I,U
-            return EnigmaProgram.MEM_TARGET_STORE.U;
+            return U;
         }
     }
 
@@ -69,6 +71,7 @@ public class EnigmaMathOps {
         result.convertType(cast);
         return cast;
     }
+
 
     public static EnigmaStackElement add(EnigmaStackElement a, EnigmaStackElement b) {
 
@@ -434,4 +437,207 @@ public class EnigmaMathOps {
         }
         return result;
     }
+    public static EnigmaStackElement le(EnigmaStackElement a, EnigmaStackElement b) {
+        EnigmaStackElement result = new EnigmaStackElement(); // create new stack element
+        result.convertType(EnigmaProgram.MEM_TARGET_STORE.I);
+        EnigmaProgram.MEM_TARGET_STORE resType = getCast(a.getType(), b.getType()); // cast everything
+        switch(resType){
+            case I:
+                int x0 = a.getInt();
+                int x1 = b.getInt();
+                result.setInt((x0<=x1)?1:0);
+                break;
+            case U:
+                int a0 = a.getInt();
+                int a1 = b.getInt();
+                result.setInt((Integer.compareUnsigned(a0,a1)<=0)?1:0);
+                break;
+            case L:
+                long b0 = a.getLong();
+                long b1 = b.getLong();
+                result.setInt((b0<=b1)?1:0);
+                break;
+            case UL:
+                long c0 = a.getLong();
+                long c1 = b.getLong();
+                result.setInt((Long.compareUnsigned(c0,c1)<=0)?1:0);
+                break;
+            case F:
+                float f0 = a.getFloat();
+                float f1 = b.getFloat();
+                result.setInt((f0<=f1)?1:0);
+                break;
+            case D:
+                double d0 = a.getDouble();
+                double d1 = b.getDouble();
+                result.setInt((d0<=d1)?1:0);
+                break;
+        }
+        return result;
+    }
+    public static EnigmaStackElement lt(EnigmaStackElement a, EnigmaStackElement b) {
+        EnigmaStackElement result = new EnigmaStackElement(); // create new stack element
+        result.convertType(EnigmaProgram.MEM_TARGET_STORE.I);
+        EnigmaProgram.MEM_TARGET_STORE resType = getCast(a.getType(), b.getType()); // cast everything
+        switch(resType){
+            case I:
+                int x0 = a.getInt();
+                int x1 = b.getInt();
+                result.setInt((x0<x1)?1:0);
+                break;
+            case U:
+                int a0 = a.getInt();
+                int a1 = b.getInt();
+                result.setInt((Integer.compareUnsigned(a0,a1)<0)?1:0);
+                break;
+            case L:
+                long b0 = a.getLong();
+                long b1 = b.getLong();
+                result.setInt((b0<b1)?1:0);
+                break;
+            case UL:
+                long c0 = a.getLong();
+                long c1 = b.getLong();
+                result.setInt((Long.compareUnsigned(c0,c1)<0)?1:0);
+                break;
+            case F:
+                float f0 = a.getFloat();
+                float f1 = b.getFloat();
+                result.setInt((f0<f1)?1:0);
+                break;
+            case D:
+                double d0 = a.getDouble();
+                double d1 = b.getDouble();
+                result.setInt((d0<d1)?1:0);
+                break;
+        }
+        return result;
+    }
+    public static EnigmaStackElement ge(EnigmaStackElement a, EnigmaStackElement b) {
+        return le(b,a);
+    }
+    public static EnigmaStackElement gt(EnigmaStackElement a, EnigmaStackElement b) {
+        return lt(b,a);
+    }
+    public static EnigmaStackElement eq(EnigmaStackElement a, EnigmaStackElement b) {
+        EnigmaStackElement result = new EnigmaStackElement(); // create new stack element
+        result.convertType(EnigmaProgram.MEM_TARGET_STORE.I);
+        EnigmaProgram.MEM_TARGET_STORE resType = getCast(a.getType(), b.getType()); // cast everything
+        switch(resType){
+            case U:
+            case I:
+                int x0 = a.getInt();
+                int x1 = b.getInt();
+                result.setInt((x0==x1)?1:0);
+                break;
+            case UL:
+            case L:
+                long b0 = a.getLong();
+                long b1 = b.getLong();
+                result.setInt((b0==b1)?1:0);
+                break;
+            case F:
+                float f0 = a.getFloat();
+                float f1 = b.getFloat();
+                result.setInt((f0==f1)?1:0);
+                break;
+            case D:
+                double d0 = a.getDouble();
+                double d1 = b.getDouble();
+                result.setInt((d0==d1)?1:0);
+                break;
+        }
+        return result;
+    }
+    public static EnigmaStackElement neq(EnigmaStackElement a, EnigmaStackElement b) {
+        EnigmaStackElement result = new EnigmaStackElement(); // create new stack element
+        result.convertType(EnigmaProgram.MEM_TARGET_STORE.I);
+        EnigmaProgram.MEM_TARGET_STORE resType = getCast(a.getType(), b.getType()); // cast everything
+        switch(resType){
+            case U:
+            case I:
+                int x0 = a.getInt();
+                int x1 = b.getInt();
+                result.setInt((x0!=x1)?1:0);
+                break;
+            case UL:
+            case L:
+                long b0 = a.getLong();
+                long b1 = b.getLong();
+                result.setInt((b0!=b1)?1:0);
+                break;
+            case F:
+                float f0 = a.getFloat();
+                float f1 = b.getFloat();
+                result.setInt((f0!=f1)?1:0);
+                break;
+            case D:
+                double d0 = a.getDouble();
+                double d1 = b.getDouble();
+                result.setInt((d0!=d1)?1:0);
+                break;
+        }
+        return result;
+    }
+    public static EnigmaStackElement andand(EnigmaStackElement a, EnigmaStackElement b) {
+        EnigmaStackElement result = new EnigmaStackElement(); // create new stack element
+        result.convertType(EnigmaProgram.MEM_TARGET_STORE.I);
+        EnigmaProgram.MEM_TARGET_STORE resType = getCast(a.getType(), b.getType()); // cast everything
+        switch(resType){
+            case U:
+            case I:
+                int x0 = a.getInt();
+                int x1 = b.getInt();
+                result.setInt((x0!=0 && x1!=0)?1:0);
+                break;
+            case UL:
+            case L:
+                long b0 = a.getLong();
+                long b1 = b.getLong();
+                result.setInt((b0!=0 && b1!=0)?1:0);
+                break;
+            case F:
+                float f0 = a.getFloat();
+                float f1 = b.getFloat();
+                result.setInt((f0!=0 && f1!=0)?1:0);
+                break;
+            case D:
+                double d0 = a.getDouble();
+                double d1 = b.getDouble();
+                result.setInt((d0!=0 && d1!=0)?1:0);
+                break;
+        }
+        return result;
+    }
+    public static EnigmaStackElement oror(EnigmaStackElement a, EnigmaStackElement b) {
+        EnigmaStackElement result = new EnigmaStackElement(); // create new stack element
+        result.convertType(EnigmaProgram.MEM_TARGET_STORE.I);
+        EnigmaProgram.MEM_TARGET_STORE resType = getCast(a.getType(), b.getType()); // cast everything
+        switch(resType){
+            case U:
+            case I:
+                int x0 = a.getInt();
+                int x1 = b.getInt();
+                result.setInt((x0!=0 || x1!=0)?1:0);
+                break;
+            case UL:
+            case L:
+                long b0 = a.getLong();
+                long b1 = b.getLong();
+                result.setInt((b0!=0 || b1!=0)?1:0);
+                break;
+            case F:
+                float f0 = a.getFloat();
+                float f1 = b.getFloat();
+                result.setInt((f0!=0 || f1!=0)?1:0);
+                break;
+            case D:
+                double d0 = a.getDouble();
+                double d1 = b.getDouble();
+                result.setInt((d0!=0 || d1!=0)?1:0);
+                break;
+        }
+        return result;
+    }
+
 }

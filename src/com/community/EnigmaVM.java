@@ -183,69 +183,133 @@ public class EnigmaVM {
                 b = prog.stackPop();
                 prog.stackPush(EnigmaMathOps.add(a,b));
                 prog.stepForward();
+                break;
             case ENIGMA_SUB:
                 a = prog.stackPop();
                 b = prog.stackPop();
                 prog.stackPush(EnigmaMathOps.sub(a,b));
                 prog.stepForward();
+                break;
             case ENIGMA_MUL:
                 a = prog.stackPop();
                 b = prog.stackPop();
                 prog.stackPush(EnigmaMathOps.mul(a,b));
                 prog.stepForward();
+                break;
             case ENIGMA_DIV:
                 a = prog.stackPop();
                 b = prog.stackPop();
                 prog.stackPush(EnigmaMathOps.div(a,b));
                 prog.stepForward();
+                break;
             case ENIGMA_MOD:
                 a = prog.stackPop();
                 b = prog.stackPop();
                 prog.stackPush(EnigmaMathOps.mod(a,b));
                 prog.stepForward();
+                break;
             case ENIGMA_BITWISE_AND:
                 a = prog.stackPop();
                 b = prog.stackPop();
                 prog.stackPush(EnigmaMathOps.band(a,b));
                 prog.stepForward();
+                break;
             case ENIGMA_BITWISE_OR:
                 a = prog.stackPop();
                 b = prog.stackPop();
                 prog.stackPush(EnigmaMathOps.bor(a,b));
                 prog.stepForward();
+                break;
             case ENIGMA_BITWISE_XOR:
                 a = prog.stackPop();
                 b = prog.stackPop();
                 prog.stackPush(EnigmaMathOps.bxor(a,b));
                 prog.stepForward();
+                break;
             case ENIGMA_COMPL:
                 a = prog.stackPop();
                 prog.stackPush(EnigmaMathOps.compl(a));
                 prog.stepForward();
+                break;
             case ENIGMA_NOT:
                 a = prog.stackPop();
                 prog.stackPush(EnigmaMathOps.not(a));
                 prog.stepForward();
+                break;
             case ENIGMA_LROT:
                 a = prog.stackPop();
                 b = prog.stackPop();
                 prog.stackPush(EnigmaMathOps.rotl(a,b));
                 prog.stepForward();
+                break;
             case ENIGMA_RROT:
                 a = prog.stackPop();
                 b = prog.stackPop();
                 prog.stackPush(EnigmaMathOps.rotr(a,b));
                 prog.stepForward();
+                break;
             case ENIGMA_LSHIFT:
                 a = prog.stackPop();
                 b = prog.stackPop();
                 prog.stackPush(EnigmaMathOps.shl(a,b));
                 prog.stepForward();
+                break;
             case ENIGMA_RSHIFT:
                 a = prog.stackPop();
                 b = prog.stackPop();
                 prog.stackPush(EnigmaMathOps.shr(a,b));
                 prog.stepForward();
+                break;
+            case ENIGMA_LE:
+                a = prog.stackPop();
+                b = prog.stackPop();
+                prog.stackPush(EnigmaMathOps.le(a,b));
+                prog.stepForward();
+                break;
+            case ENIGMA_LT:
+                a = prog.stackPop();
+                b = prog.stackPop();
+                prog.stackPush(EnigmaMathOps.lt(a,b));
+                prog.stepForward();
+                break;
+            case ENIGMA_GE:
+                a = prog.stackPop();
+                b = prog.stackPop();
+                prog.stackPush(EnigmaMathOps.ge(a,b));
+                prog.stepForward();
+                break;
+            case ENIGMA_GT:
+                a = prog.stackPop();
+                b = prog.stackPop();
+                prog.stackPush(EnigmaMathOps.gt(a,b));
+                prog.stepForward();
+                break;
+            case ENIGMA_EQ:
+                a = prog.stackPop();
+                b = prog.stackPop();
+                prog.stackPush(EnigmaMathOps.eq(a,b));
+                prog.stepForward();
+                break;
+            case ENIGMA_NE:
+                a = prog.stackPop();
+                b = prog.stackPop();
+                prog.stackPush(EnigmaMathOps.neq(a,b));
+                prog.stepForward();
+                break;
+            case ENIGMA_AND:
+                a = prog.stackPop();
+                b = prog.stackPop();
+                prog.stackPush(EnigmaMathOps.andand(a,b));
+                prog.stepForward();
+                break;
+            case ENIGMA_OR:
+                a = prog.stackPop();
+                b = prog.stackPop();
+                prog.stackPush(EnigmaMathOps.oror(a,b));
+                prog.stepForward();
+                break;
+
+
 
         }
     }
