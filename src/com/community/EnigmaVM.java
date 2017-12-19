@@ -165,7 +165,7 @@ public class EnigmaVM {
                 prog.stepForward();
                 int numberToSweep = (int) prog.getCurrentOperation();
                 if (numberToSweep > 64)
-                    throw new EnigmaException(String.format("You can only push 64bit at once to the " +
+                    throw new EnigmaException(String.format("You can only push 64 byte at once to the " +
                             "stack"));
                 if (numberToSweep < 1)
                     throw new EnigmaException(String.format("You have to push at least 1 byte to the " +
