@@ -78,7 +78,7 @@ public class EnigmaTests {
 
     @Test
     public void Enigma_Add_Two_Small_Unsigned(){
-        // 1404020001:     push 1 as unsigned long
+        // 1404020001:   push 1 as unsigned long
         // 14040102:     push 2 as unsigned long
         // 23:           add
         String opcode = "14040201001404010223";
@@ -100,6 +100,6 @@ public class EnigmaTests {
         EnigmaProgram p = new EnigmaProgram(bytecode, new int[10]);
         EnigmaVM.execute(p, true);
         EnigmaStackElement res = p.stackPop();
-        Assert.assertTrue(res.getType() == EnigmaProgram.MEM_TARGET_STORE.F && res.getFloat() == 20000.0f);
+        Assert.assertTrue(res.getType() == EnigmaProgram.MEM_TARGET_STORE.F && res.getFloat() == 20000000.0);
     }
 }

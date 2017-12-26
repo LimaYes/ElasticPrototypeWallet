@@ -58,7 +58,7 @@ public class Executor {
             throw new Exceptions.SyntaxErrorException("Absolutely maximum verify function WCET of " + Constants
                     .ABSOLUTELY_MAXIMUM_VERIFY_WCET + " exceeded: your script has a verify function WCET of " + wcet + ".");
         }
-        CodeConverter.convert_verify(t.state);
+        ByteCodeCompiler.build_bytecode(t.state);
 
         String result = "";
         for(int i=0;i<t.state.stack_code.size();++i){
