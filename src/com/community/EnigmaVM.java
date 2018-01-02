@@ -37,6 +37,7 @@ public class EnigmaVM {
         byte[] key;
         int integerKey;
         EnigmaStackElement a,b,c,d;
+        int sweep_num = 0;
 
 
         EnigmaProgram.MEM_TARGET_STORE estimatedType = null;
@@ -174,6 +175,19 @@ public class EnigmaVM {
                 byte[] toPush = prog.sweepNextOperations(numberToSweep);
                 prog.stackPush(new EnigmaStackElement(Convert.nullToEmptyPacked(toPush, 64/8), estimatedType)); // type==null means unknown
                 break;
+            case ENIGMA_PUSHUINT_1: // easier push operations to be used in loops
+                sweep_num = 1;
+            case ENIGMA_PUSHUINT_2:
+                if(sweep_num==0) sweep_num = 2;
+            case ENIGMA_PUSHUINT_3:
+                if(sweep_num==0) sweep_num = 3;
+            case ENIGMA_PUSHUINT_4:
+                if(sweep_num==0) sweep_num = 4;
+                prog.stepForward();
+                byte[] toPush_1 = prog.sweepNextOperations(sweep_num);
+                prog.stackPush(new EnigmaStackElement(Convert.nullToEmptyPacked(toPush_1, 64/8), null)); // type==null means unknown, will be cast to either U or UL
+                break;
+
 
             /*
             BEGIN SECTION: SIMPLE MATHEMATICAL OPERATORS
@@ -325,6 +339,46 @@ public class EnigmaVM {
                 b = prog.stackPop();
                 if(!a.isNotZero())
                     prog.setPc(b.getInt());
+                else
+                    prog.stepForward();
+                break;
+            case ENIGMA_JUMP_REL:
+                a = prog.stackPop();
+                prog.setPc(prog.getPc()+a.getInt());
+                break;
+            case ENIGMA_JUMP_REL_TRUE:
+                a = prog.stackPop();
+                b = prog.stackPop();
+                if(a.isNotZero())
+                    prog.setPc(prog.getPc()+b.getInt());
+                else
+                    prog.stepForward();
+                break;
+            case ENIGMA_JUMP_REL_FALSE:
+                a = prog.stackPop();
+                b = prog.stackPop();
+                if(!a.isNotZero())
+                    prog.setPc(prog.getPc()+b.getInt());
+                else
+                    prog.stepForward();
+                break;
+            case ENIGMA_JUMP_REL_NEG:
+                a = prog.stackPop();
+                prog.setPc(prog.getPc()-a.getInt());
+                break;
+            case ENIGMA_JUMP_REL_NEG_TRUE:
+                a = prog.stackPop();
+                b = prog.stackPop();
+                if(a.isNotZero())
+                    prog.setPc(prog.getPc()-b.getInt());
+                else
+                    prog.stepForward();
+                break;
+            case ENIGMA_JUMP_REL_NEG_FALSE:
+                a = prog.stackPop();
+                b = prog.stackPop();
+                if(!a.isNotZero())
+                    prog.setPc(prog.getPc()-b.getInt());
                 else
                     prog.stepForward();
                 break;

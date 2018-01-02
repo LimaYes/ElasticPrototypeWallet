@@ -21,6 +21,10 @@ public class EnigmaStackElement {
 
     public EnigmaStackElement(byte[] content, EnigmaProgram.MEM_TARGET_STORE type) {
         this.content = content;
+
+        if(content.length<=4 && type==null) type=U;
+        else if(type==null) type=UL;
+
         this.type = type;
     }
 

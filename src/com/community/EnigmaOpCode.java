@@ -46,10 +46,22 @@ public enum EnigmaOpCode {
     ENIGMA_JUMP_TRUE((byte) 0x11, 2, 2, "jump_true"),
     ENIGMA_JUMP_FALSE((byte) 0x12, 2, 2, "jump_false"),
 
+    // RELATIVE JUMPS
+    ENIGMA_JUMP_REL((byte) 0x4f, 1, 2, "jumprel"),
+    ENIGMA_JUMP_REL_TRUE((byte) 0x50, 2, 2, "jumprel_true"),
+    ENIGMA_JUMP_REL_FALSE((byte) 0x51, 2, 2, "jumprel_false"),
+    ENIGMA_JUMP_REL_NEG((byte) 0x52, 1, 2, "jumprelneg"),
+    ENIGMA_JUMP_REL_NEG_TRUE((byte) 0x52, 2, 2, "jumprelneg_true"),
+    ENIGMA_JUMP_REL_NEG_FALSE((byte) 0x53, 2, 2, "jumprelneg_false"),
+
     // Push Data To Stack
     ENIGMA_PUSHDATA((byte) 0x13, 0, 2, "pushdata"), // This one is tricky since it does not use input from stack but
     // from the bytecode following this opcode
     ENIGMA_PUSH_TYPED_DATA((byte) 0x14, 0, 2, "pushtypeddata"),
+    ENIGMA_PUSHUINT_1((byte) 0x54, 0, 2, "pushuint1"),
+    ENIGMA_PUSHUINT_2((byte) 0x55, 0, 2, "pushuint2"),
+    ENIGMA_PUSHUINT_3((byte) 0x56, 0, 2, "pushuint3"),
+    ENIGMA_PUSHUINT_4((byte) 0x57, 0, 2, "pushuint4"),
 
     // Verification Ops
     ENIGMA_VERIFY_BTY((byte) 0x15, 1, 2, "verify_bty"),

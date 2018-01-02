@@ -102,4 +102,15 @@ public class EnigmaTests {
         EnigmaStackElement res = p.stackPop();
         Assert.assertTrue(res.getType() == EnigmaProgram.MEM_TARGET_STORE.F && res.getFloat() == 20000000.0);
     }
+
+    @Test
+    public void Enigma2(){
+
+        String opcode = "140004fe0100001405043333f442";
+        byte[] bytecode = Convert.parseHexString(opcode);
+        EnigmaProgram p = new EnigmaProgram(bytecode, new int[10]);
+        EnigmaVM.execute(p, true);
+
+        // TODO: Add assert
+    }
 }
