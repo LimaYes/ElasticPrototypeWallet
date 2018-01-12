@@ -199,6 +199,15 @@ public class ByteCodeCompiler {
 
 
             /**
+             * Assignment operators
+             */
+            case NODE_VAR_CONST:
+                break;
+            case NODE_ASSIGN:
+                break;
+
+
+            /**
              * These are here to push data on the stack (constant typed)
              */
 
@@ -282,7 +291,7 @@ public class ByteCodeCompiler {
         // Print all elements of second stack
         while (!s2.isEmpty()) {
             Primitives.AST temp = s2.pop();
-            System.out.print(temp.type + " (" + temp.svalue + ", " + temp.ivalue + ", " + temp.uvalue + ", " + temp.fvalue + ")\n");
+            System.out.print(temp.type + " (" + temp.svalue + ", " + temp.ivalue + ", " + temp.uvalue + ", " + temp.fvalue + ", @" + temp.data_type + ")\n");
             byteCode.addAll(compile(temp));
         }
         return byteCode;

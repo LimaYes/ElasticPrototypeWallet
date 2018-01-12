@@ -28,6 +28,7 @@ public enum EnigmaOpCode {
     ENIGMA_ARRAY_FLOAT_LOAD((byte) 0x05, 1, 0, "array_float_load"),
     ENIGMA_ARRAY_DOUBLE_LOAD((byte) 0x06, 1, 0, "array_double_load"),
     ENIGMA_ARRAY_M_LOAD((byte) 0x07, 1, 0, "array_m_load"),
+    ENIGMA_ARRAY_CUSTOM_LOAD((byte) 0x58, 2, 0, "array_load"),
 
     // Store into Arrays
     ENIGMA_ARRAY_INT_STORE((byte) 0x08, 2, 0, "array_int_store"),
@@ -36,6 +37,7 @@ public enum EnigmaOpCode {
     ENIGMA_ARRAY_ULONG_STORE((byte) 0x0b, 2, 0, "array_ulong_store"),
     ENIGMA_ARRAY_FLOAT_STORE((byte) 0x0c, 2, 0, "array_float_store"),
     ENIGMA_ARRAY_DOUBLE_STORE((byte) 0x0d, 2, 0, "array_double_store"),
+    ENIGMA_ARRAY_CUSTOM_STORE((byte) 0x59, 3, 0, "array_load"),
 
     // Store other stuff
     ENIGMA_SUBMIT_SZ_STORE((byte) 0x0e, 2, 0, "submit_sz"),
