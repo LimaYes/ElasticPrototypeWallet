@@ -202,6 +202,7 @@ public class ByteCodeCompiler {
              * Assignment operators
              */
             case NODE_VAR_CONST:
+                // Here we have to detect if it will be an assignment or a read! Best we walk up the AST tree one level and check if the parent is an assignment operator!
                 break;
             case NODE_ASSIGN:
                 break;

@@ -37,7 +37,7 @@ public enum EnigmaOpCode {
     ENIGMA_ARRAY_ULONG_STORE((byte) 0x0b, 2, 0, "array_ulong_store"),
     ENIGMA_ARRAY_FLOAT_STORE((byte) 0x0c, 2, 0, "array_float_store"),
     ENIGMA_ARRAY_DOUBLE_STORE((byte) 0x0d, 2, 0, "array_double_store"),
-    ENIGMA_ARRAY_CUSTOM_STORE((byte) 0x59, 3, 0, "array_load"),
+    ENIGMA_ARRAY_CUSTOM_STORE((byte) 0x59, 3, 0, "array_store"),
 
     // Store other stuff
     ENIGMA_SUBMIT_SZ_STORE((byte) 0x0e, 2, 0, "submit_sz"),
