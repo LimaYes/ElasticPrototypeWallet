@@ -24,7 +24,7 @@ public class EnigmaStackElement {
 
         if(content.length<=4 && type==null) type=U;
         else if(type==null) type=UL;
-
+ 
         this.type = type;
     }
 

@@ -106,7 +106,7 @@ public class EnigmaTests {
     @Test
     public void Enigma2(){
 
-        String opcode = "140004fe0100001405043333f442";
+        String opcode = "14000404000000140004020000001400040300000026231400040100000023";
         byte[] bytecode = Convert.parseHexString(opcode);
         EnigmaProgram p = new EnigmaProgram(bytecode, new int[10]);
         EnigmaVM.execute(p, true);

@@ -1,6 +1,8 @@
 package com.community;
 
 
+import jdk.nashorn.internal.runtime.regexp.joni.constants.OPCode;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
@@ -40,6 +42,166 @@ public class ByteCodeCompiler {
     public static ArrayList<Byte> compile(Primitives.AST node){
         ArrayList<Byte> code = new ArrayList<>();
         switch(node.type){
+            /**
+             * These here are very straightforward
+             */
+            case NODE_MUL:
+                code.add(EnigmaOpCode.ENIGMA_MUL.getOp());
+                break;
+            case NODE_ADD:
+                code.add(EnigmaOpCode.ENIGMA_ADD.getOp());
+                break;
+            case NODE_SUB:
+                code.add(EnigmaOpCode.ENIGMA_SUB.getOp());
+                break;
+            case NODE_DIV:
+                code.add(EnigmaOpCode.ENIGMA_DIV.getOp());
+                break;
+            case NODE_BITWISE_AND:
+                code.add(EnigmaOpCode.ENIGMA_BITWISE_AND.getOp());
+                break;
+            case NODE_BITWISE_OR:
+                code.add(EnigmaOpCode.ENIGMA_BITWISE_OR.getOp());
+                break;
+            case NODE_BITWISE_XOR:
+                code.add(EnigmaOpCode.ENIGMA_BITWISE_XOR.getOp());
+                break;
+            case NODE_MOD:
+                code.add(EnigmaOpCode.ENIGMA_MOD.getOp());
+                break;
+            case NODE_ABS:
+                code.add(EnigmaOpCode.ENIGMA_ABS.getOp());
+                break;
+            case NODE_ACOS:
+                code.add(EnigmaOpCode.ENIGMA_ACOS.getOp());
+                break;
+            case NODE_SIN:
+                code.add(EnigmaOpCode.ENIGMA_SIN.getOp());
+                break;
+            case NODE_SINH:
+                code.add(EnigmaOpCode.ENIGMA_SINH.getOp());
+                break;
+            case NODE_TAN:
+                code.add(EnigmaOpCode.ENIGMA_TAN.getOp());
+                break;
+            case NODE_TANH:
+                code.add(EnigmaOpCode.ENIGMA_TANH.getOp());
+                break;
+            case NODE_OR:
+                code.add(EnigmaOpCode.ENIGMA_OR.getOp());
+                break;
+            case NODE_AND:
+                code.add(EnigmaOpCode.ENIGMA_AND.getOp());
+                break;
+            case NODE_ASIN:
+                code.add(EnigmaOpCode.ENIGMA_ASIN.getOp());
+                break;
+            case NODE_ATAN:
+                code.add(EnigmaOpCode.ENIGMA_ATAN.getOp());
+                break;
+            case NODE_ATAN2:
+                code.add(EnigmaOpCode.ENIGMA_ATAN2.getOp());
+                break;
+            case NODE_POW:
+                code.add(EnigmaOpCode.ENIGMA_POW.getOp());
+                break;
+            case NODE_CEIL:
+                code.add(EnigmaOpCode.ENIGMA_CEIL.getOp());
+                break;
+            case NODE_COMPL:
+                code.add(EnigmaOpCode.ENIGMA_COMPL.getOp());
+                break;
+            case NODE_SQRT:
+                code.add(EnigmaOpCode.ENIGMA_SQRT.getOp());
+                break;
+            case NODE_COSH:
+                code.add(EnigmaOpCode.ENIGMA_COSH.getOp());
+                break;
+            case NODE_FLOOR:
+                code.add(EnigmaOpCode.ENIGMA_FLOOR.getOp());
+                break;
+            case NODE_FABS:
+                code.add(EnigmaOpCode.ENIGMA_FABS.getOp());
+                break;
+            case NODE_FMOD:
+                code.add(EnigmaOpCode.ENIGMA_FMOD.getOp());
+                break;
+            case NODE_FALSE:
+                code.add(EnigmaOpCode.ENIGMA_PUSHUINT_1.getOp());
+                code.add((byte)0x00);
+                break;
+            case NODE_TRUE:
+                code.add(EnigmaOpCode.ENIGMA_PUSHUINT_1.getOp());
+                code.add((byte)0x01);
+                break;
+            case NODE_EQ:
+                code.add(EnigmaOpCode.ENIGMA_EQ.getOp());
+                break;
+            case NODE_LE:
+                code.add(EnigmaOpCode.ENIGMA_LE.getOp());
+                break;
+            case NODE_LT:
+                code.add(EnigmaOpCode.ENIGMA_LT.getOp());
+                break;
+            case NODE_GE:
+                code.add(EnigmaOpCode.ENIGMA_GE.getOp());
+                break;
+            case NODE_GT:
+                code.add(EnigmaOpCode.ENIGMA_GT.getOp());
+                break;
+            case NODE_NE:
+                code.add(EnigmaOpCode.ENIGMA_NE.getOp());
+                break;
+            case NODE_EXPNT:
+                code.add(EnigmaOpCode.ENIGMA_EXPNT.getOp());
+                break;
+            case NODE_GCD:
+                code.add(EnigmaOpCode.ENIGMA_GCD.getOp());
+                break;
+            case NODE_LOG:
+                code.add(EnigmaOpCode.ENIGMA_LOG.getOp());
+                break;
+            case NODE_LOG10:
+                code.add(EnigmaOpCode.ENIGMA_LOG10.getOp());
+                break;
+            case NODE_RSHIFT:
+                code.add(EnigmaOpCode.ENIGMA_RSHIFT.getOp());
+                break;
+            case NODE_LSHIFT:
+                code.add(EnigmaOpCode.ENIGMA_LSHIFT.getOp());
+                break;
+            case NODE_LROT:
+                code.add(EnigmaOpCode.ENIGMA_LROT.getOp());
+                break;
+            case NODE_RROT:
+                code.add(EnigmaOpCode.ENIGMA_RROT.getOp());
+                break;
+            case NODE_VERIFY_BTY:
+                code.add(EnigmaOpCode.ENIGMA_VERIFY_BTY.getOp());
+                break;
+            case NODE_VERIFY_POW:
+                code.add(EnigmaOpCode.ENIGMA_VERIFY_POW.getOp());
+                break;
+            case NODE_COS:
+                code.add(EnigmaOpCode.ENIGMA_COS.getOp());
+                break;
+            case NODE_NOT:
+                code.add(EnigmaOpCode.ENIGMA_NOT.getOp());
+                break;
+            /*case NODE:
+                code.add(EnigmaOpCode.ENIGMA_LOG10.getOp());
+                break;
+            case NODE_LOG10:
+                code.add(EnigmaOpCode.ENIGMA_LOG10.getOp());
+                break;
+
+*/
+
+
+            /**
+             * These are here to push data on the stack (constant typed)
+             */
+
             case NODE_CONSTANT:
                 code.add(EnigmaOpCode.ENIGMA_PUSH_TYPED_DATA.getOp());
                 if(node.data_type == Primitives.DATA_TYPE.DT_FLOAT)
@@ -80,7 +242,7 @@ public class ByteCodeCompiler {
 
                 break;
             default:
-
+                code.add((byte)0xff);
                 break;
         }
         return code;
@@ -120,7 +282,7 @@ public class ByteCodeCompiler {
         // Print all elements of second stack
         while (!s2.isEmpty()) {
             Primitives.AST temp = s2.pop();
-            System.out.print(temp.type + " (" + temp.svalue + ")\n");
+            System.out.print(temp.type + " (" + temp.svalue + ", " + temp.ivalue + ", " + temp.uvalue + ", " + temp.fvalue + ")\n");
             byteCode.addAll(compile(temp));
         }
         return byteCode;

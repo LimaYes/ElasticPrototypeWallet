@@ -2,14 +2,8 @@ array_uint 50;
 submit_sz 32;
 submit_idx 0;
 
-function test1 {
-    510+122.1;
-}
-
 function main {
-    u[1]=u[1]*132;
-    u[2]=u[1]*54;
-    test1();
+    u[1]=4+2*3+1;
     verify();
 }
 
